@@ -111,9 +111,9 @@
     </div>
     <script>
         // Detectar si estamos en desarrollo local o producción
-        const API_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
-            ? 'http://localhost:3000' 
-            : '';
+        const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+        const isProdMain = window.location.hostname === 'juliaydavid.onrender.com';
+        const API_URL = isLocal ? 'http://localhost:3000' : (isProdMain ? 'https://juliaydavid-backend.onrender.com' : '');
 
         // Verificar si ya está logueado
         if (localStorage.getItem('token')) {
