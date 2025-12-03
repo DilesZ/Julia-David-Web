@@ -12,7 +12,8 @@ const authMiddleware = (req, res, next) => {
         const token = authHeader.split(' ')[1];
 
         // Verificar token
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        const secret = process.env.JWT_SECRET || 'secreto_super_seguro_por_defecto';
+        const decoded = jwt.verify(token, secret);
 
         // Agregar información del usuario a la request
         req.user = decoded;

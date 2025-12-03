@@ -34,20 +34,26 @@ router.post('/login', (req, res) => {
             }
 
             // Generar token JWT
-            const token = jwt.sign(
-                { id: user.id, username: user.username },
-                process.env.JWT_SECRET,
-                { expiresIn: '7d' } // Token válido por 7 días
-            );
+            const secret = process.env.JWT_SECRET || 'secreto_super_seguro_por_defecto';
+            try {
+                const token = jwt.sign(
+                    { id: user.id, username: user.username },
+                    secret,
+                    { expiresIn: '7d' } // Token válido por 7 días
+                );
 
-            res.json({
-                message: 'Login exitoso',
-                token,
-                user: {
-                    id: user.id,
-                    username: user.username
-                }
-            });
+                res.json({
+                    message: 'Login exitoso',
+                    token,
+                    user: {
+                        id: user.id,
+                        username: user.username
+                    }
+                });
+            } catch (error) {
+                console.error('Error al generar token:', error);
+                res.status(500).json({ error: 'Error al generar token de autenticación' });
+            }
         }
     );
 });
