@@ -26,16 +26,16 @@ router.post('/login', (req, res) => {
                 return res.status(401).json({ error: 'Usuario o contraseña incorrectos' });
             }
 
-            // Verificar contraseña
-            const isValidPassword = await bcrypt.compare(password, user.password);
-
-            if (!isValidPassword) {
-                return res.status(401).json({ error: 'Usuario o contraseña incorrectos' });
-            }
-
-            // Generar token JWT
-            const secret = process.env.JWT_SECRET || 'secreto_super_seguro_por_defecto';
             try {
+                // Verificar contraseña
+                const isValidPassword = await bcrypt.compare(password, user.password);
+
+                if (!isValidPassword) {
+                    return res.status(401).json({ error: 'Usuario o contraseña incorrectos' });
+                }
+
+                // Generar token JWT
+                const secret = process.env.JWT_SECRET || 'secreto_super_seguro_por_defecto';
                 const token = jwt.sign(
                     { id: user.id, username: user.username },
                     secret,
@@ -51,8 +51,8 @@ router.post('/login', (req, res) => {
                     }
                 });
             } catch (error) {
-                console.error('Error al generar token:', error);
-                res.status(500).json({ error: 'Error al generar token de autenticación' });
+                console.error('Error crítico en login:', error);
+                res.status(500).json({ error: 'Error interno al procesar login' });
             }
         }
     );
