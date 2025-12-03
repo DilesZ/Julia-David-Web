@@ -46,4 +46,26 @@ router.post('/', authMiddleware, (req, res) => {
     );
 });
 
+// DELETE - Eliminar mensaje (protegido)
+router.delete('/:id', authMiddleware, (req, res) => {
+    const messageId = req.params.id;
+    
+    db.run(
+        "DELETE FROM messages WHERE id = ?",
+        [messageId],
+        function (err) {
+            if (err) {
+                console.error('Error al eliminar mensaje:', err);
+                return res.status(500).json({ error: 'Error al eliminar mensaje' });
+            }
+            
+            if (this.changes === 0) {
+                return res.status(404).json({ error: 'Mensaje no encontrado' });
+            }
+            
+            res.json({ message: 'Mensaje eliminado correctamente' });
+        }
+    );
+});
+
 module.exports = router;

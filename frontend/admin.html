@@ -81,6 +81,18 @@
         .back-link:hover {
             color: #ff6f61;
         }
+        .delete-btn {
+            background: #ff6f61;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 3px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        .delete-btn:hover {
+            background: #d65a7b;
+        }
     </style>
 </head>
 <body>
@@ -105,15 +117,17 @@
             <button id="upload-image-btn">Subir Imagen</button>
             <h3>Calendario</h3>
             <a href="https://calendar.google.com/calendar/u/0?cid=juliaydavid20092025@gmail.com" target="_blank" class="calendar-link">Administrar Calendario en Google Calendar</a>
+            
+            <h3>Mensajes de Usuarios</h3>
+            <div id="messages-container"></div>
+            
             <button class="logout-btn" id="logout-btn">Cerrar Sesión</button>
             <a href="/" class="back-link">← Volver a la página principal</a>
         </div>
     </div>
     <script>
         // Detectar si estamos en desarrollo local o producción
-        const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-        const isProdMain = window.location.hostname === 'juliaydavid.onrender.com';
-        const API_URL = isLocal ? 'http://localhost:3000' : (isProdMain ? 'https://juliaydavid-backend.onrender.com' : '');
+        const API_URL = '';
 
         // Verificar si ya está logueado
         if (localStorage.getItem('token')) {
@@ -159,8 +173,78 @@
                 const planes = contents.find(c => c.section === 'planes');
                 document.getElementById('historia-text').value = historia ? historia.text : '';
                 document.getElementById('planes-text').value = planes ? planes.text : '';
+                
+                // Cargar mensajes
+                await loadMessages();
             } catch (err) {
                 alert('Error al cargar el contenido.');
+            }
+        }
+        
+        // Cargar mensajes de usuarios
+        async function loadMessages() {
+            try {
+                const token = localStorage.getItem('token');
+                const response = await fetch(`${API_URL}/api/messages`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const messages = await response.json();
+                
+                const container = document.getElementById('messages-container');
+                container.innerHTML = '';
+                
+                if (messages.length === 0) {
+                    container.innerHTML = '<p>No hay mensajes aún.</p>';
+                    return;
+                }
+                
+                messages.forEach(message => {
+                    const messageDiv = document.createElement('div');
+                    messageDiv.style.border = '1px solid #d65a7b';
+                    messageDiv.style.padding = '10px';
+                    messageDiv.style.margin = '10px 0';
+                    messageDiv.style.borderRadius = '5px';
+                    
+                    messageDiv.innerHTML = `
+                        <p><strong>${message.author}</strong> - ${new Date(message.date).toLocaleString()}</p>
+                        <p>${message.text}</p>
+                        <button class="delete-btn" data-id="${message.id}">Eliminar</button>
+                    `;
+                    
+                    container.appendChild(messageDiv);
+                });
+                
+                // Añadir event listeners a los botones de eliminar
+                document.querySelectorAll('.delete-btn').forEach(btn => {
+                    btn.addEventListener('click', async (e) => {
+                        const messageId = e.target.getAttribute('data-id');
+                        if (confirm('¿Estás seguro de que quieres eliminar este mensaje?')) {
+                            await deleteMessage(messageId);
+                        }
+                    });
+                });
+            } catch (err) {
+                console.error('Error al cargar mensajes:', err);
+            }
+        }
+        
+        // Eliminar mensaje
+        async function deleteMessage(messageId) {
+            try {
+                const token = localStorage.getItem('token');
+                const response = await fetch(`${API_URL}/api/messages/${messageId}`, {
+                    method: 'DELETE',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                
+                if (response.ok) {
+                    alert('Mensaje eliminado correctamente.');
+                    await loadMessages(); // Recargar mensajes
+                } else {
+                    alert('Error al eliminar el mensaje.');
+                }
+            } catch (err) {
+                alert('Error de conexión al eliminar mensaje.');
             }
         }
 
