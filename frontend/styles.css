@@ -498,6 +498,233 @@ body.dark-mode .message-display p {
     text-decoration: none;
 }
 
+/* Media Queries para Responsive Design */
+
+/* Tablets (768px - 1024px) */
+@media (max-width: 1024px) {
+    header h1 {
+        font-size: 3.5rem;
+    }
+    
+    header p {
+        font-size: 1.4rem;
+    }
+    
+    section {
+        padding: 60px 20px;
+    }
+    
+    section h2 {
+        font-size: 2.5rem;
+    }
+    
+    #calendar iframe {
+        height: 500px;
+    }
+    
+    nav ul li {
+        margin: 0 15px;
+    }
+    
+    nav ul li a {
+        font-size: 1.3rem;
+    }
+}
+
+/* Móviles grandes (576px - 768px) */
+@media (max-width: 768px) {
+    header h1 {
+        font-size: 2.8rem;
+    }
+    
+    header p {
+        font-size: 1.2rem;
+    }
+    
+    section {
+        padding: 40px 15px;
+        min-height: 40vh;
+    }
+    
+    section h2 {
+        font-size: 2.2rem;
+    }
+    
+    section h2::before {
+        left: -25px;
+        font-size: 1.2rem;
+    }
+    
+    section p {
+        font-size: 1.1rem;
+        line-height: 1.6;
+    }
+    
+    #calendar iframe {
+        height: 400px;
+    }
+    
+    nav ul {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    nav ul li {
+        margin: 5px 0;
+    }
+    
+    nav ul li a {
+        font-size: 1.2rem;
+    }
+    
+    .slider-slide img {
+        max-width: 100%;
+        height: auto;
+    }
+    
+    .slider-prev, .slider-next {
+        padding: 8px;
+        font-size: 1.2rem;
+    }
+    
+    .dark-mode-toggle, .admin-link {
+        bottom: 10px;
+        right: 10px;
+        padding: 8px 15px;
+        font-size: 0.9rem;
+    }
+    
+    .admin-link {
+        bottom: 60px;
+    }
+    
+    .romantic-quote {
+        font-size: 1rem;
+        margin-top: 30px;
+    }
+}
+
+/* Móviles pequeños (hasta 576px) */
+@media (max-width: 576px) {
+    header h1 {
+        font-size: 2.2rem;
+    }
+    
+    header p {
+        font-size: 1rem;
+    }
+    
+    section {
+        padding: 30px 10px;
+        min-height: 35vh;
+    }
+    
+    section h2 {
+        font-size: 1.8rem;
+    }
+    
+    section h2::before {
+        left: -20px;
+        font-size: 1rem;
+        top: 3px;
+    }
+    
+    section p {
+        font-size: 1rem;
+        line-height: 1.5;
+    }
+    
+    #calendar iframe {
+        height: 300px;
+    }
+    
+    nav {
+        padding: 5px 0;
+    }
+    
+    nav ul li a {
+        font-size: 1rem;
+    }
+    
+    .slider-prev, .slider-next {
+        padding: 6px;
+        font-size: 1rem;
+    }
+    
+    .slider-prev {
+        left: 5px;
+    }
+    
+    .slider-next {
+        right: 5px;
+    }
+    
+    .dark-mode-toggle, .admin-link {
+        bottom: 5px;
+        right: 5px;
+        padding: 6px 12px;
+        font-size: 0.8rem;
+    }
+    
+    .admin-link {
+        bottom: 50px;
+    }
+    
+    .message-form textarea {
+        font-size: 0.9rem;
+    }
+    
+    .message-form button {
+        font-size: 0.9rem;
+    }
+    
+    .countdown {
+        font-size: 1rem;
+    }
+    
+    footer {
+        padding: 20px 10px;
+        font-size: 0.9rem;
+    }
+    
+    .upload-section p {
+        font-size: 0.8rem;
+    }
+}
+
+/* Dispositivos muy pequeños (hasta 375px) */
+@media (max-width: 375px) {
+    header h1 {
+        font-size: 1.8rem;
+    }
+    
+    header p {
+        font-size: 0.9rem;
+    }
+    
+    section h2 {
+        font-size: 1.6rem;
+    }
+    
+    section h2::before {
+        left: -15px;
+        font-size: 0.9rem;
+    }
+    
+    nav ul li a {
+        font-size: 0.9rem;
+    }
+    
+    .dark-mode-toggle, .admin-link {
+        font-size: 0.7rem;
+        padding: 5px 10px;
+    }
+    
+    #calendar iframe {
+        height: 250px;
+    }
+}
+
 .admin-link:hover {
     background: #ff6f61;
 }
