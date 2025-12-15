@@ -1,19 +1,19 @@
 {
-  "name": "juliaydavid",
+  "name": "juliaydavid-backend",
   "version": "1.0.0",
-  "description": "Página web romántica para Julia y David con backend completo",
-  "main": "backend/server.js",
+  "description": "Backend para la web de Julia y David",
+  "main": "server.js",
   "engines": {
     "node": ">=14.0.0"
   },
   "scripts": {
-    "start": "node backend/server.js",
-    "dev": "node backend/server.js"
+    "start": "node server.js",
+    "dev": "node server.js"
   },
   "keywords": [
     "love",
     "romantic",
-    "web"
+    "backend"
   ],
   "author": "Julia & David",
   "license": "ISC",
