@@ -1,4 +1,3 @@
-
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
@@ -28,14 +27,12 @@ app.get('/api/health', (req, res) => {
     res.status(200).json({ status: 'ok' });
 });
 
-// Definir la ruta de subidas de forma explícita y simplificada
-const UPLOADS_PATH = process.env.NODE_ENV === 'production'
-    ? '/var/data/uploads' // Nueva ruta para producción
-    : path.join(__dirname, '..', 'uploads'); // Ruta para desarrollo local
+// Servir la carpeta de subidas persistentes
+const UPLOADS_PATH = path.join(__dirname, '..', 'uploads');
+app.use('/uploads', express.static(UPLOADS_PATH));
 
-// Servir archivos estáticos
+// Servir los archivos estáticos del frontend
 app.use(express.static(path.join(__dirname, '..', 'frontend')));
-app.use('/uploads', express.static(UPLOADS_PATH)); // Usar la ruta explícita
 
 // El "atrapa-todo" para la SPA - Va al final
 app.get('*', (req, res) => {

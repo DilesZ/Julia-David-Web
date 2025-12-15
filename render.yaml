@@ -20,5 +20,5 @@ services:
         value: production
     disk:
       name: uploads
-      mountPath: /var/data/uploads # RUTA SIMPLIFICADA
+      mountPath: ./uploads # Ruta relativa al proyecto
       sizeGB: 1

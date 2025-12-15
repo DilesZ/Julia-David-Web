@@ -6,16 +6,14 @@ const fs = require('fs');
 const db = require('../database');
 const authMiddleware = require('../middleware/auth');
 
-const UPLOAD_DIR = process.env.NODE_ENV === 'production'
-    ? '/var/data/uploads' 
-    : path.join(__dirname, '..', '..', 'uploads'); 
+// Usar una ruta relativa al directorio raíz del proyecto.
+// Esto es más robusto en entornos como Render.
+const UPLOAD_DIR = path.join(__dirname, '..', '..', 'uploads');
 
-// En desarrollo, asegúrate de que el directorio de subidas exista.
-// En producción, Render garantiza que el directorio montado existe.
-if (process.env.NODE_ENV !== 'production') {
-    if (!fs.existsSync(UPLOAD_DIR)) {
-        fs.mkdirSync(UPLOAD_DIR, { recursive: true });
-    }
+// Asegurarse de que el directorio de subidas exista, creándolo si es necesario.
+// Esto ahora funcionará porque estamos dentro del directorio del proyecto.
+if (!fs.existsSync(UPLOAD_DIR)) {
+    fs.mkdirSync(UPLOAD_DIR, { recursive: true });
 }
 
 const storage = multer.diskStorage({
