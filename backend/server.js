@@ -28,12 +28,16 @@ app.get('/api/health', (req, res) => {
     res.status(200).json({ status: 'ok' });
 });
 
-// Servir archivos estáticos del frontend - Va Después de la API
+// Definir la ruta de subidas de forma explícita
+const UPLOADS_PATH = process.env.NODE_ENV === 'production'
+    ? '/opt/render/project/src/uploads'
+    : path.join(__dirname, '..', 'uploads');
+
+// Servir archivos estáticos
 app.use(express.static(path.join(__dirname, '..', 'frontend')));
-app.use('/uploads', express.static(path.join(__dirname, '..', 'uploads'))); // Para las imágenes subidas
+app.use('/uploads', express.static(UPLOADS_PATH)); // Usar la ruta explícita
 
 // El "atrapa-todo" para la SPA - Va al final
-// Esto asegura que si el usuario refresca en /momentos, la app cargue
 app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname, '..', 'frontend', 'index.html'));
 });
@@ -50,4 +54,3 @@ app.listen(PORT, () => {
 });
 
 module.exports = app;
-
