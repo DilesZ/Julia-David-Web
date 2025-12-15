@@ -183,12 +183,35 @@
 
     <footer>
         <p>Con amor, Julia & David</p>
+        <p id="health-status" style="font-size: 0.8rem; margin-top: 10px; color: #888;">Comprobando estado del servidor...</p>
     </footer>
 
     <button class="dark-mode-toggle" id="dark-mode-toggle">Modo Oscuro</button>
 
     <script>
         const API_URL = 'https://juliaydavid-backend.onrender.com';
+
+        // --- Diagnóstico del Servidor ---
+        async function checkServerHealth() {
+            const statusEl = document.getElementById('health-status');
+            try {
+                const response = await fetch(`${API_URL}/api/health`);
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.status === 'ok') {
+                        statusEl.textContent = 'Estado del Servidor: Conectado ✔️';
+                        statusEl.style.color = '#28a745'; // Verde
+                    } else {
+                        throw new Error('Respuesta no válida');
+                    }
+                } else {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+            } catch (error) {
+                statusEl.textContent = `Estado del Servidor: Desconectado ❌ (${error.message})`;
+                statusEl.style.color = '#dc3545'; // Rojo
+            }
+        }
 
         // Lógica de Modales
         const loginModal = document.getElementById('login-modal');
@@ -376,10 +399,11 @@
 
         // Inicialización
         document.addEventListener('DOMContentLoaded', () => {
+            checkServerHealth(); // Comprobar estado del servidor al cargar
             loadContent();
             loadImages();
             checkLoginStatus();
-            // El resto de funciones de UI (slider, dark mode, etc.) se quedan igual
+            // El resto de funciones de UI se quedan igual
         });
         
         // --- Pegar aquí el resto del JavaScript original (slider, dark mode, countdown, etc.) ---

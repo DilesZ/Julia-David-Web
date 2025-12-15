@@ -29,6 +29,12 @@ app.use(express.static(path.join(__dirname, '..', 'frontend')));
 app.use('/uploads', express.static(path.join(__dirname, '..', 'uploads')));
 
 // Rutas de la API
+
+// Ruta de diagnóstico (Health Check)
+app.get('/api/health', (req, res) => {
+    res.status(200).json({ status: 'ok' });
+});
+
 const authRoutes = require('./routes/authRoutes');
 const contentRoutes = require('./routes/contentRoutes');
 const imageRoutes = require('./routes/imageRoutes');
