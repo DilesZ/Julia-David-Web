@@ -305,13 +305,18 @@
                         headers: { 'Authorization': `Bearer ${token}` },
                         body: formData
                     });
+
                     if (response.ok) {
                         alert('Imagen subida. La página se recargará.');
-                        location.reload(); // Forzar recarga de la página
+                        location.reload();
                     } else {
-                        alert('Error al subir la imagen.');
+                        // Modificación para mostrar el error del servidor
+                        const errorData = await response.json().catch(() => ({ error: 'No se pudo leer el error del servidor' }));
+                        alert(`Error al subir la imagen: ${errorData.error || 'Error desconocido'}`);
                     }
-                } catch (err) { alert('Error de conexión al subir imagen.'); }
+                } catch (err) {
+                    alert(`Error de conexión al subir imagen: ${err.message}`);
+                }
             }
             
             async function loadMessages() { /* ... sin cambios ... */ }

@@ -6,11 +6,12 @@ const fs = require('fs');
 const db = require('../database');
 const authMiddleware = require('../middleware/auth');
 
-// La carpeta de subidas ahora está garantizada por el build command de Render.
 const UPLOAD_DIR = path.join(__dirname, '..', '..', 'uploads');
 
+// Configuración de Multer
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
+        // Multer se ejecutará en el contexto del disco persistente montado en /uploads
         cb(null, UPLOAD_DIR);
     },
     filename: (req, file, cb) => {
@@ -24,11 +25,10 @@ const fileFilter = (req, file, cb) => {
     const allowedTypes = /jpeg|jpg|png|gif|webp/;
     const extname = allowedTypes.test(path.extname(file.originalname).toLowerCase());
     const mimetype = allowedTypes.test(file.mimetype);
-
     if (mimetype && extname) {
-        return cb(null, true);
+        cb(null, true);
     } else {
-        cb(new Error('Solo se permiten imágenes (jpeg, jpg, png, gif, webp)'));
+        cb(new Error('Tipo de archivo no permitido. Solo imágenes.'));
     }
 };
 
@@ -38,19 +38,41 @@ const upload = multer({
     fileFilter: fileFilter
 });
 
+// Middleware para manejar los errores de Multer de forma explícita
+const handleUpload = (req, res, next) => {
+    const uploadMiddleware = upload.single('image');
+
+    uploadMiddleware(req, res, (err) => {
+        if (err instanceof multer.MulterError) {
+            // Un error conocido de Multer (ej. tamaño del archivo)
+            console.error('Error de Multer:', err);
+            return res.status(400).json({ error: `Error de Multer: ${err.message}` });
+        } else if (err) {
+            // Un error desconocido o del fileFilter
+            console.error('Error en la subida:', err);
+            return res.status(500).json({ error: `Error en la subida: ${err.message}` });
+        }
+        // Todo fue bien, continuar
+        next();
+    });
+};
+
+
+// --- RUTAS ---
+
 router.get('/', (req, res) => {
-    db.all("SELECT * FROM images ORDER BY created_at DESC", (err, rows) => {
+    db.all("SELECT * FROM images ORDER BY created_at DESC", [], (err, rows) => {
         if (err) {
-            console.error('Error al obtener imágenes:', err);
-            return res.status(500).json({ error: 'Error al obtener imágenes' });
+            console.error("Error al obtener imágenes:", err);
+            return res.status(500).json({ error: 'Error interno del servidor' });
         }
         res.json(rows);
     });
 });
 
-router.post('/', authMiddleware, upload.single('image'), (req, res) => {
+router.post('/', authMiddleware, handleUpload, (req, res) => {
     if (!req.file) {
-        return res.status(400).json({ error: 'No se proporcionó ninguna imagen' });
+        return res.status(400).json({ error: 'No se ha subido ningún archivo o ha sido rechazado.' });
     }
 
     const description = req.body.description || 'Sin descripción';
@@ -61,45 +83,20 @@ router.post('/', authMiddleware, upload.single('image'), (req, res) => {
         [imagePath, description, req.user.username],
         function (err) {
             if (err) {
-                console.error('Error al guardar imagen en BD:', err);
-                return res.status(500).json({ error: 'Error al guardar imagen' });
+                console.error("Error al guardar imagen en BD:", err);
+                 // Si falla la BD, borramos el archivo subido para no dejar huérfanos
+                const physicalPath = path.join(UPLOAD_DIR, req.file.filename);
+                fs.unlink(physicalPath, (unlinkErr) => {
+                    if (unlinkErr) console.error('Error al borrar archivo huérfano:', unlinkErr);
+                });
+                return res.status(500).json({ error: 'Error al guardar la información en la base de datos' });
             }
-
-            res.json({
-                message: 'Imagen subida correctamente',
-                image: {
-                    id: this.lastID,
-                    path: imagePath,
-                    description: description,
-                    uploaded_by: req.user.username
-                }
+            res.status(201).json({ 
+                message: 'Imagen subida correctamente', 
+                image: { id: this.lastID, path: imagePath }
             });
         }
     );
-});
-
-router.delete('/:id', authMiddleware, (req, res) => {
-    const imageId = req.params.id;
-
-    db.get("SELECT * FROM images WHERE id = ?", [imageId], (err, image) => {
-        if (err || !image) {
-            return res.status(404).json({ error: 'Imagen no encontrada' });
-        }
-
-        const filePath = path.join(UPLOAD_DIR, path.basename(image.path));
-
-        if (fs.existsSync(filePath)) {
-            fs.unlinkSync(filePath);
-        }
-
-        db.run("DELETE FROM images WHERE id = ?", [imageId], (err) => {
-            if (err) {
-                console.error('Error al eliminar imagen de BD:', err);
-                return res.status(500).json({ error: 'Error al eliminar imagen' });
-            }
-            res.json({ message: 'Imagen eliminada correctamente' });
-        });
-    });
 });
 
 module.exports = router;
