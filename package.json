@@ -1,15 +1,23 @@
 {
-  "name": "juliaydavid-web-root",
+  "name": "juliaydavid-web",
   "version": "1.0.0",
-  "description": "Root configuration for Render deployment",
+  "description": "La web de nuestra historia - Julia y David",
   "main": "backend/server.js",
   "engines": {
     "node": ">=14.0.0"
   },
   "scripts": {
-    "start": "node backend/server.js",
-    "build": "cd backend && npm install"
+    "start": "node backend/server.js"
   },
-  "author": "Julia & David",
-  "license": "ISC"
+  "author": "David con la ayuda de Gemini",
+  "license": "ISC",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "jsonwebtoken": "^9.0.2",
+    "multer": "^1.4.5-lts.1",
+    "sqlite3": "^5.1.6"
+  }
 }
