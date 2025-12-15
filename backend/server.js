@@ -13,6 +13,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Servir archivos estáticos
+// Servimos el contenido de 'frontend' y 'uploads' desde la raíz
 app.use(express.static(path.join(__dirname, '..', 'frontend')));
 app.use('/uploads', express.static(path.join(__dirname, '..', 'uploads')));
 
@@ -27,14 +28,9 @@ app.use('/api/content', contentRoutes);
 app.use('/api/images', imageRoutes);
 app.use('/api/messages', messageRoutes);
 
-// Ruta raíz - servir index.html
-app.get('/', (req, res) => {
+// Todas las rutas no-API sirven index.html para una SPA (Single Page Application)
+app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname, '..', 'frontend', 'index.html'));
-});
-
-// Ruta admin
-app.get('/admin', (req, res) => {
-    res.sendFile(path.join(__dirname, '..', 'frontend', 'admin.html'));
 });
 
 // Manejo de errores global
@@ -45,11 +41,6 @@ app.use((err, req, res, next) => {
     });
 });
 
-// Manejo de rutas no encontradas
-app.use((req, res) => {
-    res.status(404).json({ error: 'Ruta no encontrada' });
-});
-
 // Iniciar servidor
 app.listen(PORT, () => {
     console.log(`
@@ -58,7 +49,6 @@ app.listen(PORT, () => {
 ║       ❤️  Julia y David - Servidor Activo  ❤️         ║
 ║                                                       ║
 ║   🌐 URL: http://localhost:${PORT}                     ║
-║   📁 Admin: http://localhost:${PORT}/admin             ║
 ║                                                       ║
 ║   👤 Usuario Julia - Password: julia2025             ║
 ║   👤 Usuario David - Password: david2025             ║
