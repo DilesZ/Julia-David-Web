@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -173,12 +174,6 @@
     <section id="planes" class="fade-in">
         <h2>Nuestros Planes</h2>
         <p id="planes-text"></p>
-        <div class="message-form">
-            <h3>Envíame un mensaje romántico</h3>
-            <textarea id="message-input" placeholder="Escribe tu mensaje aquí..." rows="4"></textarea>
-            <button id="send-message">Enviar</button>
-        </div>
-        <div class="message-display" id="message-display"></div>
     </section>
 
     <footer>
@@ -189,8 +184,41 @@
     <button class="dark-mode-toggle" id="dark-mode-toggle">Modo Oscuro</button>
 
     <script>
-        const API_URL = ''; // Las peticiones serán relativas al dominio actual
+        const API_URL = ''; // Las peticiones son relativas al dominio actual
 
+        const defaultContent = {
+            historia: `Nuestra historia comenzó el 20 de septiembre de 2025, cuando nuestros caminos se cruzaron de una manera que solo el destino podría haber planeado. Desde ese primer momento, supimos que algo especial estaba naciendo entre nosotros. Cada día juntos es una nueva aventura, llena de risas, complicidad y un amor que crece más fuerte con el tiempo.`,
+            planes: `Nuestros sueños están llenos de planes increíbles: viajar por el mundo, crear recuerdos inolvidables y construir juntos el futuro que siempre imaginamos. Queremos explorar nuevos lugares, disfrutar de cada momento y seguir escribiendo nuestra historia de amor, capítulo a capítulo, día a día.`
+        };
+
+        function setContent(content) {
+            const historiaText = content.find(c => c.section === 'historia')?.text || defaultContent.historia;
+            const planesText = content.find(c => c.section === 'planes')?.text || defaultContent.planes;
+            document.getElementById('historia-text').textContent = historiaText;
+            document.getElementById('planes-text').textContent = planesText;
+        }
+
+        async function loadContent() {
+            try {
+                const response = await fetch(`${API_URL}/api/content`);
+                if (!response.ok) {
+                    throw new Error('La respuesta del servidor no fue OK');
+                }
+                const contents = await response.json();
+                
+                if (contents && contents.length > 0) {
+                    setContent(contents);
+                } else {
+                    // Si el servidor responde con una lista vacía, usar el contenido por defecto
+                    setContent([]); 
+                }
+            } catch (error) {
+                console.error('Error al cargar contenido. Usando contenido por defecto.', error);
+                // Si hay un error de red o de parsing, usar el contenido por defecto
+                setContent([]);
+            }
+        }
+        
         // --- Diagnóstico del Servidor ---
         async function checkServerHealth() {
             const statusEl = document.getElementById('health-status');
@@ -275,21 +303,6 @@
             document.getElementById('message-display').innerHTML = '';
         });
 
-        // Cargar contenido principal
-        async function loadContent() {
-            try {
-                const res = await fetch(`${API_URL}/api/content`);
-                if (!res.ok) throw new Error('Failed to load content');
-                const contents = await res.json();
-                document.getElementById('historia-text').textContent = contents.find(c => c.section === 'historia')?.text || '';
-                document.getElementById('planes-text').textContent = contents.find(c => c.section === 'planes')?.text || '';
-            } catch (e) {
-                console.error(e);
-                document.getElementById('historia-text').textContent = "Error al cargar la historia. El servidor no responde.";
-                document.getElementById('planes-text').textContent = "Error al cargar los planes. El servidor no responde.";
-            }
-        }
-
         // Cargar imágenes
         async function loadImages() {
            try {
@@ -312,10 +325,16 @@
         
         // Cargar contenido del panel de admin
         async function loadAdminContent() {
-            const res = await fetch(`${API_URL}/api/content`);
-            const contents = await res.json();
-            document.getElementById('historia-text-admin').value = contents.find(c => c.section === 'historia')?.text || '';
-            document.getElementById('planes-text-admin').value = contents.find(c => c.section === 'planes')?.text || '';
+            // Usa el contenido por defecto si la carga falla
+            try {
+                const res = await fetch(`${API_URL}/api/content`);
+                const contents = await res.json();
+                document.getElementById('historia-text-admin').value = contents.find(c => c.section === 'historia')?.text || defaultContent.historia;
+                document.getElementById('planes-text-admin').value = contents.find(c => c.section === 'planes')?.text || defaultContent.planes;
+            } catch {
+                document.getElementById('historia-text-admin').value = defaultContent.historia;
+                document.getElementById('planes-text-admin').value = defaultContent.planes;
+            }
         }
 
         // Acciones del Panel de Admin
@@ -328,7 +347,7 @@
                 body: JSON.stringify({ section, text })
             });
             alert('Contenido actualizado.');
-            loadContent();
+            loadContent(); // Recargar contenido en la página principal
             adminModal.style.display = 'none';
         }
         document.getElementById('save-historia').onclick = () => saveData('historia', document.getElementById('historia-text-admin').value);
@@ -411,14 +430,13 @@
 
         // Inicialización
         document.addEventListener('DOMContentLoaded', () => {
-            checkServerHealth(); // Comprobar estado del servidor al cargar
+            checkServerHealth();
             loadContent();
             loadImages();
             checkLoginStatus();
-            // El resto de funciones de UI se quedan igual
+            initSlider();
+            updateCountdown();
         });
-        
-        // --- Pegar aquí el resto del JavaScript original (slider, dark mode, countdown, etc.) ---
         
         // Slider personalizado
         let currentIndex = 0;
