@@ -1,22 +1,24 @@
-
-# Build configuration
-schema_version: 2
-
 services:
   - type: web
-    name: juliaydavid
-    runtime: node
+    name: Julia-David-Web
+    env: node
     plan: free
-    buildCommand: npm install
-    startCommand: node backend/server.js
+    buildCommand: | # Build script
+      npm install --prefix backend &&
+      npm install --prefix frontend &&
+      npm run build --prefix frontend
+    startCommand: node backend/server.js # Start command
+    healthCheckPath: /api/health # Health check path
     envVars:
-      - key: NODE_ENV
-        value: production
+      - key: DATABASE_URL
+        fromDatabase:
+          name: julia-david-db
+          property: connectionString
       - key: JWT_SECRET
         generateValue: true
-      - key: PORT
-        value: 3000
-    disks:
-      - name: uploads
-        mountPath: /opt/render/project/src/uploads
-        sizeGB: 1 # El tamaño mínimo para el plan gratuito
+      - key: NODE_ENV
+        value: production
+    disk:
+      name: uploads
+      mountPath: /var/data/uploads # RUTA SIMPLIFICADA
+      sizeGB: 1

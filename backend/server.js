@@ -28,10 +28,10 @@ app.get('/api/health', (req, res) => {
     res.status(200).json({ status: 'ok' });
 });
 
-// Definir la ruta de subidas de forma explícita
+// Definir la ruta de subidas de forma explícita y simplificada
 const UPLOADS_PATH = process.env.NODE_ENV === 'production'
-    ? '/opt/render/project/src/uploads'
-    : path.join(__dirname, '..', 'uploads');
+    ? '/var/data/uploads' // Nueva ruta para producción
+    : path.join(__dirname, '..', 'uploads'); // Ruta para desarrollo local
 
 // Servir archivos estáticos
 app.use(express.static(path.join(__dirname, '..', 'frontend')));

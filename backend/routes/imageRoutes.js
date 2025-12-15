@@ -7,10 +7,10 @@ const fs = require('fs');
 const db = require('../database');
 const authMiddleware = require('../middleware/auth');
 
-// Correcta ubicación del directorio de subidas según render.yaml
+// Nueva ruta de subidas, más simple y directa
 const UPLOAD_DIR = process.env.NODE_ENV === 'production'
-    ? '/opt/render/project/src/uploads'
-    : path.join(__dirname, '..', '..', 'uploads');
+    ? '/var/data/uploads' // Nueva ruta para producción
+    : path.join(__dirname, '..', '..', 'uploads'); // Ruta para desarrollo local
 
 // Asegurarse de que el directorio de subidas exista
 if (!fs.existsSync(UPLOAD_DIR)) {
