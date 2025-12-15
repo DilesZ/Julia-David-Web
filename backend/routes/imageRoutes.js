@@ -1,3 +1,4 @@
+
 const express = require('express');
 const router = express.Router();
 const multer = require('multer');
@@ -6,17 +7,20 @@ const fs = require('fs');
 const db = require('../database');
 const authMiddleware = require('../middleware/auth');
 
+// Correcta ubicación del directorio de subidas según render.yaml
+const UPLOAD_DIR = process.env.NODE_ENV === 'production'
+    ? '/opt/render/project/src/uploads'
+    : path.join(__dirname, '..', '..', 'uploads');
+
+// Asegurarse de que el directorio de subidas exista
+if (!fs.existsSync(UPLOAD_DIR)) {
+    fs.mkdirSync(UPLOAD_DIR, { recursive: true });
+}
+
 // Configurar almacenamiento de multer
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
-        const uploadDir = path.join(__dirname, '..', '..', 'uploads');
-
-        // Crear carpeta si no existe
-        if (!fs.existsSync(uploadDir)) {
-            fs.mkdirSync(uploadDir, { recursive: true });
-        }
-
-        cb(null, uploadDir);
+        cb(null, UPLOAD_DIR);
     },
     filename: (req, file, cb) => {
         const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
@@ -44,7 +48,7 @@ const upload = multer({
     fileFilter: fileFilter
 });
 
-// GET - Obtener todas las imágenes (público)
+// GET - Obtener todas las imágenes
 router.get('/', (req, res) => {
     db.all("SELECT * FROM images ORDER BY created_at DESC", (err, rows) => {
         if (err) {
@@ -55,14 +59,14 @@ router.get('/', (req, res) => {
     });
 });
 
-// POST - Subir nueva imagen (protegido)
+// POST - Subir nueva imagen
 router.post('/', authMiddleware, upload.single('image'), (req, res) => {
     if (!req.file) {
         return res.status(400).json({ error: 'No se proporcionó ninguna imagen' });
     }
 
     const description = req.body.description || 'Sin descripción';
-    const imagePath = '/uploads/' + req.file.filename;
+    const imagePath = '/uploads/' + req.file.filename; // La URL se mantiene igual
 
     db.run(
         "INSERT INTO images (path, description, uploaded_by) VALUES (?, ?, ?)",
@@ -86,36 +90,27 @@ router.post('/', authMiddleware, upload.single('image'), (req, res) => {
     );
 });
 
-// DELETE - Eliminar imagen (protegido)
+// DELETE - Eliminar imagen
 router.delete('/:id', authMiddleware, (req, res) => {
     const imageId = req.params.id;
 
-    // Primero obtener la ruta de la imagen
     db.get("SELECT * FROM images WHERE id = ?", [imageId], (err, image) => {
-        if (err) {
-            console.error('Error al buscar imagen:', err);
-            return res.status(500).json({ error: 'Error al buscar imagen' });
-        }
-
-        if (!image) {
+        if (err || !image) {
             return res.status(404).json({ error: 'Imagen no encontrada' });
         }
 
-        // Eliminar archivo físico si está en uploads
-        if (image.path.startsWith('/uploads/')) {
-            const filePath = path.join(__dirname, '..', '..', image.path);
-            if (fs.existsSync(filePath)) {
-                fs.unlinkSync(filePath);
-            }
+        // Construir la ruta completa al archivo físico en el disco persistente
+        const filePath = path.join(UPLOAD_DIR, path.basename(image.path));
+
+        if (fs.existsSync(filePath)) {
+            fs.unlinkSync(filePath);
         }
 
-        // Eliminar de la base de datos
         db.run("DELETE FROM images WHERE id = ?", [imageId], (err) => {
             if (err) {
-                console.error('Error al eliminar imagen:', err);
+                console.error('Error al eliminar imagen de BD:', err);
                 return res.status(500).json({ error: 'Error al eliminar imagen' });
             }
-
             res.json({ message: 'Imagen eliminada correctamente' });
         });
     });
