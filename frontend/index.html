@@ -189,7 +189,7 @@
     <button class="dark-mode-toggle" id="dark-mode-toggle">Modo Oscuro</button>
 
     <script>
-        const API_URL = 'https://juliaydavid-backend.onrender.com';
+        const API_URL = ''; // Las peticiones serán relativas al dominio actual
 
         // --- Diagnóstico del Servidor ---
         async function checkServerHealth() {
@@ -208,7 +208,7 @@
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
             } catch (error) {
-                statusEl.textContent = `Estado del Servidor: Desconectado ❌ (${error.message})`;
+                statusEl.textContent = `Estado del Servidor: Desconectado ❌ (Failed to fetch)`;
                 statusEl.style.color = '#dc3545'; // Rojo
             }
         }
@@ -277,25 +277,37 @@
 
         // Cargar contenido principal
         async function loadContent() {
-            const res = await fetch(`${API_URL}/api/content`);
-            const contents = await res.json();
-            document.getElementById('historia-text').textContent = contents.find(c => c.section === 'historia')?.text || '';
-            document.getElementById('planes-text').textContent = contents.find(c => c.section === 'planes')?.text || '';
+            try {
+                const res = await fetch(`${API_URL}/api/content`);
+                if (!res.ok) throw new Error('Failed to load content');
+                const contents = await res.json();
+                document.getElementById('historia-text').textContent = contents.find(c => c.section === 'historia')?.text || '';
+                document.getElementById('planes-text').textContent = contents.find(c => c.section === 'planes')?.text || '';
+            } catch (e) {
+                console.error(e);
+                document.getElementById('historia-text').textContent = "Error al cargar la historia. El servidor no responde.";
+                document.getElementById('planes-text').textContent = "Error al cargar los planes. El servidor no responde.";
+            }
         }
 
         // Cargar imágenes
         async function loadImages() {
-            const res = await fetch(`${API_URL}/api/images`);
-            const images = await res.json();
-            const sliderContainer = document.getElementById('slider-container');
-            sliderContainer.innerHTML = '';
-            images.forEach(img => {
-                const slide = document.createElement('div');
-                slide.classList.add('slider-slide');
-                slide.innerHTML = `<img src="${API_URL}${img.path}" alt="${img.description}">`;
-                sliderContainer.appendChild(slide);
-            });
-            initSlider();
+           try {
+                const res = await fetch(`${API_URL}/api/images`);
+                if (!res.ok) throw new Error('Failed to load images');
+                const images = await res.json();
+                const sliderContainer = document.getElementById('slider-container');
+                sliderContainer.innerHTML = '';
+                images.forEach(img => {
+                    const slide = document.createElement('div');
+                    slide.classList.add('slider-slide');
+                    slide.innerHTML = `<img src="${API_URL}${img.path}" alt="${img.description}">`;
+                    sliderContainer.appendChild(slide);
+                });
+                initSlider();
+            } catch(e) {
+                console.error(e);
+            }
         }
         
         // Cargar contenido del panel de admin
