@@ -7,20 +7,8 @@ const db = require('./database');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Configuración de CORS
-const whitelist = ['http://localhost:3000', 'https://juliaydavid.mooo.com'];
-const corsOptions = {
-    origin: function (origin, callback) {
-        if (whitelist.indexOf(origin) !== -1 || !origin) {
-            callback(null, true);
-        } else {
-            callback(new Error('Not allowed by CORS'));
-        }
-    }
-};
-
 // Middleware
-app.use(cors(corsOptions));
+app.use(cors()); // Permitir todos los orígenes temporalmente para depuración
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
