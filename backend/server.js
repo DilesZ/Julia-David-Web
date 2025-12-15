@@ -7,13 +7,24 @@ const db = require('./database');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// Configuración de CORS
+const whitelist = ['http://localhost:3000', 'https://juliaydavid.mooo.com'];
+const corsOptions = {
+    origin: function (origin, callback) {
+        if (whitelist.indexOf(origin) !== -1 || !origin) {
+            callback(null, true);
+        } else {
+            callback(new Error('Not allowed by CORS'));
+        }
+    }
+};
+
 // Middleware
-app.use(cors());
+app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Servir archivos estáticos
-// Servimos el contenido de 'frontend' y 'uploads' desde la raíz
 app.use(express.static(path.join(__dirname, '..', 'frontend')));
 app.use('/uploads', express.static(path.join(__dirname, '..', 'uploads')));
 
@@ -28,7 +39,7 @@ app.use('/api/content', contentRoutes);
 app.use('/api/images', imageRoutes);
 app.use('/api/messages', messageRoutes);
 
-// Todas las rutas no-API sirven index.html para una SPA (Single Page Application)
+// Todas las rutas no-API sirven index.html
 app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname, '..', 'frontend', 'index.html'));
 });
