@@ -6,9 +6,8 @@ services:
     name: juliaydavid
     runtime: node
     plan: free
-    rootDir: ./backend
     buildCommand: npm install
-    startCommand: npm start
+    startCommand: node backend/server.js
     envVars:
       - key: NODE_ENV
         value: production
