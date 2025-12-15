@@ -306,10 +306,8 @@
                         body: formData
                     });
                     if (response.ok) {
-                        alert('Imagen subida.');
-                        loadImages();
-                        fileInput.value = '';
-                        if(adminModal.style.display === 'block') adminModal.style.display = 'none';
+                        alert('Imagen subida. La página se recargará.');
+                        location.reload(); // Forzar recarga de la página
                     } else {
                         alert('Error al subir la imagen.');
                     }
