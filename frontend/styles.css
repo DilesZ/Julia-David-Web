@@ -514,6 +514,10 @@ body.dark-mode .message-display p {
     text-decoration: none;
 }
 
+.admin-link:hover {
+    background: #ff6f61;
+}
+
 /* Media Queries para Responsive Design */
 
 /* Tablets (768px - 1024px) */
@@ -547,9 +551,8 @@ body.dark-mode .message-display p {
     }
 }
 
-/* Móviles grandes (576px - 768px) */
+/* Móviles grandes (hasta 768px) */
 @media (max-width: 768px) {
-    /* Hamburger menu styles */
     .menu-toggle {
         display: block;
     }
@@ -557,7 +560,7 @@ body.dark-mode .message-display p {
     nav ul {
         position: fixed;
         top: 0;
-        left: -250px;
+        left: -250px; /* Oculto por defecto */
         width: 250px;
         height: 100vh;
         background: rgba(255, 255, 255, 0.98);
@@ -570,7 +573,7 @@ body.dark-mode .message-display p {
     }
     
     nav ul.active {
-        left: 0;
+        left: 0; /* Se muestra al activar */
     }
     
     nav ul li {
@@ -735,6 +738,10 @@ body.dark-mode .message-display p {
     .upload-section p {
         font-size: 0.8rem;
     }
+    
+    .heart-particle {
+        font-size: 15px;
+    }
 }
 
 /* Dispositivos muy pequeños (hasta 375px) */
@@ -767,49 +774,5 @@ body.dark-mode .message-display p {
     
     #calendar iframe {
         height: 250px;
-    }
-}
-
-.admin-link:hover {
-    background: #ff6f61;
-}
-
-/* Responsive */
-@media (max-width: 600px) {
-    header h1 {
-        font-size: 3rem;
-    }
-    header p {
-        font-size: 1.3rem;
-    }
-    nav ul {
-        flex-direction: column;
-        text-align: center;
-    }
-    nav ul li {
-        margin: 10px 0;
-    }
-    nav ul li a {
-        font-size: 1.3rem;
-    }
-    #calendar {
-        padding: 10px;
-    }
-    #calendar iframe {
-        height: 400px;
-    }
-    .slider-slide img {
-        max-width: 100%;
-        border-width: 2px;
-    }
-    .slider-prev, .slider-next {
-        padding: 8px;
-        font-size: 1.2rem;
-    }
-    .heart-particle {
-        font-size: 15px;
-    }
-    .countdown {
-        font-size: 1rem;
     }
 }
