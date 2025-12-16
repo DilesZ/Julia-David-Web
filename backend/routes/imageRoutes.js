@@ -6,12 +6,15 @@ const fs = require('fs');
 const db = require('../database');
 const authMiddleware = require('../middleware/auth');
 
-const UPLOAD_DIR = path.join(__dirname, '..', '..', 'uploads');
+const UPLOAD_DIR = path.join(__dirname, '..', '..', 'frontend', 'uploads');
+
+if (!fs.existsSync(UPLOAD_DIR)) {
+    fs.mkdirSync(UPLOAD_DIR, { recursive: true });
+}
 
 // Configuración de Multer
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
-        // Multer se ejecutará en el contexto del disco persistente montado en /uploads
         cb(null, UPLOAD_DIR);
     },
     filename: (req, file, cb) => {
@@ -44,15 +47,12 @@ const handleUpload = (req, res, next) => {
 
     uploadMiddleware(req, res, (err) => {
         if (err instanceof multer.MulterError) {
-            // Un error conocido de Multer (ej. tamaño del archivo)
             console.error('Error de Multer:', err);
             return res.status(400).json({ error: `Error de Multer: ${err.message}` });
         } else if (err) {
-            // Un error desconocido o del fileFilter
             console.error('Error en la subida:', err);
             return res.status(500).json({ error: `Error en la subida: ${err.message}` });
         }
-        // Todo fue bien, continuar
         next();
     });
 };
@@ -84,7 +84,6 @@ router.post('/', authMiddleware, handleUpload, (req, res) => {
         function (err) {
             if (err) {
                 console.error("Error al guardar imagen en BD:", err);
-                 // Si falla la BD, borramos el archivo subido para no dejar huérfanos
                 const physicalPath = path.join(UPLOAD_DIR, req.file.filename);
                 fs.unlink(physicalPath, (unlinkErr) => {
                     if (unlinkErr) console.error('Error al borrar archivo huérfano:', unlinkErr);
