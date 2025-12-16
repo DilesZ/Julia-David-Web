@@ -12,6 +12,10 @@ app.use(cors({ origin: true }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// Servir archivos estáticos para las imágenes
+app.use('/IMG', express.static(path.join(__dirname, '..', 'frontend', 'IMG')));
+app.use('/uploads', express.static(path.join(__dirname, '..', 'uploads')));
+
 // Rutas de la API
 const authRoutes = require('./routes/authRoutes');
 const contentRoutes = require('./routes/contentRoutes');
@@ -35,5 +39,3 @@ app.use((err, req, res, next) => {
 
 // Expose the Express app as a Cloud Function named 'api'
 exports.api = functions.https.onRequest(app);
-
-// Force redeploy
