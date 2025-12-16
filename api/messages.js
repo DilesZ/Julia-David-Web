@@ -82,13 +82,51 @@ async function handlePost(req, res) {
     }
 }
 
+async function handleDelete(req, res) {
+    const token = req.headers.authorization?.split(' ')[1];
+    if (!token) {
+        return res.status(401).json({ error: 'No autenticado' });
+    }
+
+    try {
+        jwt.verify(token, process.env.JWT_SECRET);
+        const { id } = req.query;
+
+        if (!id) {
+            return res.status(400).json({ error: 'Falta el ID del mensaje' });
+        }
+
+        const client = await pool.connect();
+        try {
+            const result = await client.query('DELETE FROM messages WHERE id = $1 RETURNING id', [id]);
+            if (result.rowCount === 0) {
+                return res.status(404).json({ error: 'Mensaje no encontrado' });
+            }
+            res.status(200).json({ message: 'Mensaje eliminado con éxito' });
+        } finally {
+            client.release();
+        }
+    } catch (error) {
+        if (error.name === 'JsonWebTokenError') {
+            return res.status(401).json({ error: 'Token inválido' });
+        }
+        console.error('Error al eliminar mensaje:', error);
+        res.status(500).json({ error: 'Error al eliminar el mensaje' });
+    }
+}
+
 module.exports = async (req, res) => {
-    if (req.method === 'GET') {
+    // Para las peticiones de borrado, el id vendrá en la query string
+    // por ejemplo: /api/messages?id=123
+    if (req.method === 'DELETE') {
+        req.query.id = req.url.split('=')[1];
+        await handleDelete(req, res);
+    } else if (req.method === 'GET') {
         await handleGet(req, res);
     } else if (req.method === 'POST') {
         await handlePost(req, res);
     } else {
-        res.setHeader('Allow', ['GET', 'POST']);
+        res.setHeader('Allow', ['GET', 'POST', 'DELETE']);
         res.status(405).end('Método no permitido');
     }
 };

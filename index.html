@@ -13,7 +13,7 @@
     <style>
         .modal{display:none;position:fixed;z-index:2000;left:0;top:0;width:100%;height:100%;overflow:auto;background-color:rgba(0,0,0,.6);animation:fadeIn .5s}.modal-content{background-color:#fefefe;margin:10% auto;padding:30px;border:1px solid #888;width:80%;max-width:500px;border-radius:15px;box-shadow:0 5px 15px rgba(0,0,0,.3);position:relative}.close-btn{color:#aaa;position:absolute;top:10px;right:20px;font-size:28px;font-weight:700;cursor:pointer}.close-btn:focus,.close-btn:hover{color:#d65a7b;text-decoration:none}.modal h2{font-family:'Parisienne',cursive;color:#d65a7b;text-align:center}.modal button,.modal input,.modal textarea{width:100%;padding:12px;margin:8px 0;border-radius:5px;border:1px solid #ccc}.modal button{background-color:#d65a7b;color:#fff;border:none;cursor:pointer;transition:background-color .3s}.modal button:hover{background-color:#ff6f61}#user-status{display:none;align-items:center;gap:15px}#user-status span{font-family:'Roboto',sans-serif;color:#d65a7b;font-size:1.1rem}#logout-btn{background:#ff6f61;color:#fff;border:none;padding:8px 15px;border-radius:5px;cursor:pointer;font-size:.9rem}
         .delete-btn{position:absolute;top:10px;right:10px;background:rgba(255,0,0,0.7);color:white;border:none;padding:5px 10px;cursor:pointer;border-radius:5px;font-size:0.8rem;display:none}
-        #mensajes{text-align:center}#messages-container{max-width:800px;margin:0 auto 20px;display:flex;flex-direction:column;gap:15px;text-align:left}.message-item{background-color:#f9f9f9;border:1px solid #ddd;border-radius:10px;padding:15px;box-shadow:0 2px 4px rgba(0,0,0,.05);opacity:0;animation:slideIn .5s forwards}.message-header{font-weight:700;color:#d65a7b;margin-bottom:5px;font-size:1.1em}.message-header span{font-size:.8em;color:#888;font-weight:400;float:right}.message-body{color:#333}#message-form-container{max-width:800px;margin:auto}#message-form textarea{width:100%;padding:10px;border-radius:5px;border:1px solid #ccc;font-family:'Roboto',sans-serif;margin-bottom:10px}#message-form button{background-color:#ff6f61;color:#fff;padding:10px 20px;border:none;border-radius:5px;cursor:pointer;width:auto;float:right}.dark-mode .message-item{background-color:#383838;border-color:#555}.dark-mode .message-body{color:#f1f1f1}.dark-mode #message-form textarea{background-color:#444;color:#f1f1f1;border-color:#666}@keyframes slideIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+        #mensajes{text-align:center}#messages-container{max-width:800px;margin:0 auto 20px;display:flex;flex-direction:column;gap:15px;text-align:left}.message-item{position:relative;background-color:#f9f9f9;border:1px solid #ddd;border-radius:10px;padding:15px;box-shadow:0 2px 4px rgba(0,0,0,.05);opacity:0;animation:slideIn .5s forwards;transition:opacity .5s ease,transform .5s ease,max-height .5s ease;max-height:200px}.message-item.deleting{opacity:0;transform:scale(.9);max-height:0;margin-top:0;margin-bottom:0;padding-top:0;padding-bottom:0;border:none}.message-header{font-weight:700;color:#d65a7b;margin-bottom:5px;font-size:1.1em}.message-header span{font-size:.8em;color:#888;font-weight:400;float:right}.message-body{color:#333}#message-form-container{max-width:800px;margin:auto}#message-form textarea{width:100%;padding:10px;border-radius:5px;border:1px solid #ccc;font-family:'Roboto',sans-serif;margin-bottom:10px}#message-form button{background-color:#ff6f61;color:#fff;padding:10px 20px;border:none;border-radius:5px;cursor:pointer;width:auto;float:right}.dark-mode .message-item{background-color:#383838;border-color:#555}.dark-mode .message-body{color:#f1f1f1}.dark-mode #message-form textarea{background-color:#444;color:#f1f1f1;border-color:#666}@keyframes slideIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
     </style>
 </head>
 <body>
@@ -194,18 +194,17 @@
                 const token = localStorage.getItem('token');
                 const username = localStorage.getItem('username');
                 const messageForm = document.getElementById('message-form-container');
-                if (token && username) {
-                    document.getElementById('login-nav-item').style.display = 'none';
-                    document.getElementById('user-status').style.display = 'flex';
+                const isLoggedIn = token && username;
+
+                document.getElementById('login-nav-item').style.display = isLoggedIn ? 'none' : 'block';
+                document.getElementById('user-status').style.display = isLoggedIn ? 'flex' : 'none';
+                if (isLoggedIn) {
                     document.getElementById('user-name').textContent = `Conectado: ${username}`;
-                    document.querySelectorAll('.delete-btn').forEach(btn => btn.style.display = 'block');
-                    if(messageForm) messageForm.style.display = 'block';
-                } else {
-                    document.getElementById('login-nav-item').style.display = 'block';
-                    document.getElementById('user-status').style.display = 'none';
-                    document.querySelectorAll('.delete-btn').forEach(btn => btn.style.display = 'none');
-                    if(messageForm) messageForm.style.display = 'none';
                 }
+                if(messageForm) messageForm.style.display = isLoggedIn ? 'block' : 'none';
+                
+                document.querySelectorAll('.delete-btn').forEach(btn => btn.style.display = isLoggedIn ? 'block' : 'none');
+                document.querySelectorAll('.delete-message-btn').forEach(btn => btn.style.display = isLoggedIn ? 'block' : 'none');
             }
 
             document.getElementById('login-modal-btn').addEventListener('click', async () => {
@@ -345,8 +344,10 @@
             function renderMessage(msg, atStart = false) {
                 const msgDiv = document.createElement('div');
                 msgDiv.className = 'message-item';
+                msgDiv.dataset.messageId = msg.id;
                 const date = new Date(msg.created_at).toLocaleString('es-ES', { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' });
                 msgDiv.innerHTML = `
+                    <button class="delete-btn delete-message-btn" onclick="handleMessageDelete(${msg.id})">Eliminar</button>
                     <div class="message-header">
                         ${msg.username}
                         <span>${date}</span>
@@ -360,6 +361,7 @@
                 } else {
                     messagesContainer.appendChild(msgDiv);
                 }
+                checkLoginStatus(); // Para mostrar/ocultar el botón de borrado
             }
 
             async function loadMessages() {
@@ -376,6 +378,38 @@
                 } catch (error) {
                     console.error(error);
                     messagesContainer.innerHTML = '<p style="text-align: center; color: red;">No se pudieron cargar los mensajes.</p>';
+                }
+            }
+
+            window.handleMessageDelete = async function(messageId) {
+                if (!confirm('¿Estás seguro de que quieres eliminar este mensaje?')) return;
+
+                const token = localStorage.getItem('token');
+                if (!token) { alert('Debes iniciar sesión para eliminar mensajes.'); return; }
+
+                try {
+                    const res = await fetch(`/api/messages?id=${messageId}`, {
+                        method: 'DELETE',
+                        headers: { 'Authorization': `Bearer ${token}` }
+                    });
+
+                    const result = await res.json();
+                    if (!res.ok) throw new Error(result.error || 'Error al eliminar el mensaje');
+                    
+                    const messageDiv = document.querySelector(`.message-item[data-message-id='${messageId}']`);
+                    if (messageDiv) {
+                        messageDiv.classList.add('deleting');
+                        setTimeout(() => {
+                            messageDiv.remove();
+                            allMessages = allMessages.filter(m => m.id !== messageId);
+                            if (allMessages.length === 0) {
+                                messagesContainer.innerHTML = '<p style="text-align: center; color: #888;">Aún no hay mensajes. ¡Sé el primero en escribir!</p>';
+                            }
+                        }, 500);
+                    }
+
+                } catch (error) {
+                    alert(`Error: ${error.message}`);
                 }
             }
 
@@ -411,7 +445,6 @@
                     
                     document.getElementById('message-text').value = '';
                     
-                    // Si es el primer mensaje, limpiamos el contenedor
                     if (allMessages.length === 0) {
                         messagesContainer.innerHTML = '';
                     }
