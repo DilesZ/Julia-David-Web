@@ -1,0 +1,788 @@
+/* CSS Reset */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    -webkit-text-size-adjust: 100%;
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+}
+
+body {
+    line-height: 1.5;
+    font-family: 'Roboto', sans-serif;
+    background-color: #f9f5f2;
+    color: #333;
+    overflow-x: hidden;
+    transition: background-color 0.5s ease, color 0.5s ease;
+}
+
+
+/* Estilos para Julia y David - Página Romántica */
+
+body.dark-mode {
+    background-color: #2c2c2c;
+    color: #f9f5f2;
+}
+
+/* Navegación */
+nav {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    background: rgba(255, 255, 255, 0.9);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    padding: 10px 0;
+    transition: background 0.5s ease;
+}
+
+body.dark-mode nav {
+    background: rgba(44, 44, 44, 0.9);
+    box-shadow: 0 2px 5px rgba(255, 255, 255, 0.1);
+}
+
+.menu-toggle {
+    display: none;
+    background: none;
+    border: none;
+    font-size: 1.8rem;
+    color: #d65a7b;
+    cursor: pointer;
+    position: absolute;
+    top: 10px;
+    left: 15px;
+    z-index: 1001;
+}
+
+nav ul {
+    list-style: none;
+    display: flex;
+    justify-content: center;
+    transition: transform 0.3s ease;
+}
+
+nav ul li {
+    margin: 0 20px;
+}
+
+nav ul li a {
+    text-decoration: none;
+    color: #d65a7b;
+    font-family: 'Parisienne', cursive;
+    font-size: 1.5rem;
+    transition: color 0.3s ease;
+}
+
+nav ul li a:hover {
+    color: #ff6f61;
+}
+
+/* Header */
+header {
+    background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('IMG/IMG1.jpg');
+    background-size: cover;
+    background-position: center;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: white;
+    padding-top: 60px;
+    position: relative;
+}
+
+header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to bottom, rgba(255, 255, 255, 0), rgba(214, 90, 123, 0.2));
+    z-index: 1;
+}
+
+header > div {
+    z-index: 2;
+}
+
+header h1 {
+    font-family: 'Parisienne', cursive;
+    font-size: 4.5rem;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    animation: fadeInText 2s ease-in-out;
+}
+
+@keyframes fadeInText {
+    from {
+        opacity: 0;
+        transform: translateY(-50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+header p {
+    font-size: 1.6rem;
+    margin-top: 10px;
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+}
+
+/* Secciones */
+section {
+    padding: 80px 20px;
+    max-width: 900px;
+    margin: 0 auto;
+    text-align: center;
+    min-height: 50vh;
+    position: relative;
+}
+
+section::after {
+    content: '♡';
+    position: absolute;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 2rem;
+    color: #d65a7b;
+    opacity: 0.3;
+}
+
+section h2 {
+    font-family: 'Parisienne', cursive;
+    font-size: 2.8rem;
+    color: #d65a7b;
+    margin-bottom: 20px;
+    position: relative;
+}
+
+section h2::before {
+    content: '♥';
+    font-size: 1.5rem;
+    color: #ff6f61;
+    position: absolute;
+    left: -30px;
+    top: 5px;
+    animation: heartbeat 1.5s infinite;
+}
+
+@keyframes heartbeat {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+}
+
+section p {
+    line-height: 1.7;
+    font-size: 1.2rem;
+    transition: color 0.5s ease;
+}
+
+body.dark-mode section p {
+    color: #f9f5f2;
+}
+
+/* Galería */
+.gallery {
+    padding: 20px;
+    background: linear-gradient(135deg, #f9e8eb 0%, #fff5f5 100%);
+    border-radius: 20px;
+    box-shadow: 0 0 20px rgba(214, 90, 123, 0.2);
+    transition: background 0.5s ease;
+}
+
+body.dark-mode .gallery {
+    background: linear-gradient(135deg, #4a2a3a 0%, #3a1a2a 100%);
+}
+
+/* Slider */
+.slider {
+    position: relative;
+    max-width: 100%;
+    margin: 0 auto;
+    overflow: hidden;
+}
+
+.slider-container {
+    display: flex;
+    transition: transform 0.5s ease;
+}
+
+.slider-slide {
+    flex: 0 0 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
+}
+
+.slider-slide img {
+    max-width: 600px;
+    width: auto;
+    height: auto;
+    display: block;
+    border-radius: 15px;
+    border: 3px solid #d65a7b;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.slider-slide img:hover {
+    transform: scale(1.05);
+    border-color: #ff6f61;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+}
+
+.slider-prev, .slider-next {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: #d65a7b;
+    color: white;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+    font-size: 1.5rem;
+    border-radius: 50%;
+    transition: background 0.3s ease;
+    z-index: 10;
+}
+
+.slider-prev:hover, .slider-next:hover {
+    background: #ff6f61;
+}
+
+.slider-prev {
+    left: 10px;
+}
+
+.slider-next {
+    right: 10px;
+}
+
+.slider-dots {
+    display: flex;
+    justify-content: center;
+    margin-top: 10px;
+}
+
+.slider-dot {
+    width: 10px;
+    height: 10px;
+    background: #d65a7b;
+    border-radius: 50%;
+    margin: 0 5px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.slider-dot.active {
+    background: #ff6f61;
+}
+
+/* Upload Section */
+.upload-section {
+    margin-top: 20px;
+}
+
+.upload-section input[type="file"] {
+    padding: 10px;
+    font-family: 'Roboto', sans-serif;
+    font-size: 1rem;
+    border: 2px solid #d65a7b;
+    border-radius: 5px;
+    background-color: #fff;
+    cursor: pointer;
+    transition: border-color 0.3s ease, background-color 0.5s ease;
+}
+
+.upload-section input[type="file"]:hover {
+    border-color: #ff6f61;
+}
+
+.upload-section p {
+    font-size: 0.9rem;
+    color: #666;
+    margin-top: 10px;
+    transition: color 0.5s ease;
+}
+
+body.dark-mode .upload-section p {
+    color: #ccc;
+}
+
+body.dark-mode .upload-section input[type="file"] {
+    background-color: #3a3a3a;
+    color: #f9f5f2;
+}
+
+/* Calendario */
+#calendar {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 20px;
+    border-radius: 20px;
+    box-shadow: 0 0 20px rgba(214, 90, 123, 0.2);
+    transition: box-shadow 0.5s ease;
+}
+
+body.dark-mode #calendar {
+    box-shadow: 0 0 20px rgba(255, 111, 97, 0.2);
+}
+
+#calendar iframe {
+    width: 100%;
+    height: 600px;
+    border: 0;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    transition: box-shadow 0.5s ease;
+}
+
+body.dark-mode #calendar iframe {
+    box-shadow: 0 4px 10px rgba(255, 255, 255, 0.1);
+}
+
+/* Footer */
+footer {
+    background-color: #d65a7b;
+    color: white;
+    text-align: center;
+    padding: 30px;
+    font-size: 1.1rem;
+    transition: background-color 0.5s ease;
+}
+
+body.dark-mode footer {
+    background-color: #ff6f61;
+}
+
+/* Animaciones */
+.fade-in {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 1s ease, transform 1s ease;
+}
+
+.fade-in.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Botón modo oscuro */
+.dark-mode-toggle {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: #d65a7b;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-family: 'Roboto', sans-serif;
+    transition: background 0.3s ease;
+    z-index: 1000;
+}
+
+.dark-mode-toggle:hover {
+    background: #ff6f61;
+}
+
+/* Citas románticas */
+.romantic-quote {
+    margin-top: 40px;
+    font-style: italic;
+    color: #d65a7b;
+    font-size: 1.1rem;
+    border-left: 4px solid #ff6f61;
+    padding-left: 20px;
+    animation: fadeInText 2s ease-in-out;
+}
+
+/* Partículas de corazones */
+.heart-particles {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: -1;
+}
+
+.heart-particle {
+    position: absolute;
+    font-size: 20px;
+    color: #d65a7b;
+    opacity: 0.5;
+    animation: floatHeart 10s linear infinite;
+}
+
+@keyframes floatHeart {
+    0% {
+        transform: translateY(100vh) rotate(0deg);
+        opacity: 0.5;
+    }
+    100% {
+        transform: translateY(-100vh) rotate(360deg);
+        opacity: 0;
+    }
+}
+
+/* Contador */
+.countdown {
+    margin-top: 30px;
+    font-size: 1.2rem;
+    color: #d65a7b;
+    transition: all 0.3s ease;
+}
+
+body.dark-mode .countdown {
+    color: #f9f5f2;
+}
+
+/* Formulario de mensajes */
+.message-form {
+    margin-top: 40px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.message-form textarea {
+    padding: 10px;
+    border: 2px solid #d65a7b;
+    border-radius: 5px;
+    resize: vertical;
+    transition: border-color 0.3s ease;
+}
+
+.message-form textarea:hover {
+    border-color: #ff6f61;
+}
+
+.message-form button {
+    background: #d65a7b;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-family: 'Roboto', sans-serif;
+    transition: background 0.3s ease;
+}
+
+.message-form button:hover {
+    background: #ff6f61;
+}
+
+/* Visualización de mensajes */
+.message-display {
+    margin-top: 20px;
+    border-top: 1px solid #d65a7b;
+    padding-top: 20px;
+}
+
+.message-display p {
+    background: #fff;
+    padding: 10px;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    margin-bottom: 10px;
+    transition: background 0.5s ease;
+}
+
+body.dark-mode .message-display p {
+    background: #3a3a3a;
+    color: #f9f5f2;
+}
+
+/* Link de administración */
+.admin-link {
+    position: fixed;
+    bottom: 70px;
+    right: 20px;
+    background: #d65a7b;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-family: 'Roboto', sans-serif;
+    transition: background 0.3s ease;
+    z-index: 1000;
+    text-decoration: none;
+}
+
+.admin-link:hover {
+    background: #ff6f61;
+}
+
+/* Media Queries para Responsive Design */
+
+/* Tablets (768px - 1024px) */
+@media (max-width: 1024px) {
+    header h1 {
+        font-size: 3.5rem;
+    }
+    
+    header p {
+        font-size: 1.4rem;
+    }
+    
+    section {
+        padding: 60px 20px;
+    }
+    
+    section h2 {
+        font-size: 2.5rem;
+    }
+    
+    #calendar iframe {
+        height: 500px;
+    }
+    
+    nav ul li {
+        margin: 0 15px;
+    }
+    
+    nav ul li a {
+        font-size: 1.3rem;
+    }
+}
+
+/* Móviles grandes (hasta 768px) */
+@media (max-width: 768px) {
+    .menu-toggle {
+        display: block;
+    }
+    
+    nav ul {
+        position: fixed;
+        top: 0;
+        left: -250px; /* Oculto por defecto */
+        width: 250px;
+        height: 100vh;
+        background: rgba(255, 255, 255, 0.98);
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 80px 20px 20px 20px;
+        box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+        transition: left 0.3s ease;
+        z-index: 999;
+    }
+    
+    nav ul.active {
+        left: 0; /* Se muestra al activar */
+    }
+    
+    nav ul li {
+        margin: 15px 0;
+        width: 100%;
+    }
+    
+    nav ul li a {
+        font-size: 1.2rem;
+        padding: 10px 15px;
+        display: block;
+        width: 100%;
+        border-radius: 5px;
+        transition: background 0.3s ease;
+    }
+    
+    nav ul li a:hover {
+        background: rgba(214, 90, 123, 0.1);
+    }
+    
+    header h1 {
+        font-size: 2.8rem;
+    }
+    
+    header p {
+        font-size: 1.2rem;
+    }
+    
+    section {
+        padding: 40px 15px;
+        min-height: 40vh;
+    }
+    
+    section h2 {
+        font-size: 2.2rem;
+    }
+    
+    section h2::before {
+        left: -25px;
+        font-size: 1.2rem;
+    }
+    
+    section p {
+        font-size: 1.1rem;
+        line-height: 1.6;
+    }
+    
+    #calendar iframe {
+        height: 400px;
+    }
+    
+    .slider-slide img {
+        max-width: 100%;
+        height: auto;
+    }
+    
+    .slider-prev, .slider-next {
+        padding: 8px;
+        font-size: 1.2rem;
+    }
+    
+    .dark-mode-toggle, .admin-link {
+        bottom: 10px;
+        right: 10px;
+        padding: 8px 15px;
+        font-size: 0.9rem;
+    }
+    
+    .admin-link {
+        bottom: 60px;
+    }
+    
+    .romantic-quote {
+        font-size: 1rem;
+        margin-top: 30px;
+    }
+}
+
+/* Móviles pequeños (hasta 576px) */
+@media (max-width: 576px) {
+    header h1 {
+        font-size: 2.2rem;
+    }
+    
+    header p {
+        font-size: 1rem;
+    }
+    
+    section {
+        padding: 30px 10px;
+        min-height: 35vh;
+    }
+    
+    section h2 {
+        font-size: 1.8rem;
+    }
+    
+    section h2::before {
+        left: -20px;
+        font-size: 1rem;
+        top: 3px;
+    }
+    
+    section p {
+        font-size: 1rem;
+        line-height: 1.5;
+    }
+    
+    #calendar iframe {
+        height: 300px;
+    }
+    
+    nav {
+        padding: 5px 0;
+    }
+    
+    nav ul li a {
+        font-size: 1rem;
+    }
+    
+    .slider-prev, .slider-next {
+        padding: 6px;
+        font-size: 1rem;
+    }
+    
+    .slider-prev {
+        left: 5px;
+    }
+    
+    .slider-next {
+        right: 5px;
+    }
+    
+    .dark-mode-toggle, .admin-link {
+        bottom: 5px;
+        right: 5px;
+        padding: 6px 12px;
+        font-size: 0.8rem;
+    }
+    
+    .admin-link {
+        bottom: 50px;
+    }
+    
+    .message-form textarea {
+        font-size: 0.9rem;
+    }
+    
+    .message-form button {
+        font-size: 0.9rem;
+    }
+    
+    .countdown {
+        font-size: 1rem;
+    }
+    
+    footer {
+        padding: 20px 10px;
+        font-size: 0.9rem;
+    }
+    
+    .upload-section p {
+        font-size: 0.8rem;
+    }
+    
+    .heart-particle {
+        font-size: 15px;
+    }
+}
+
+/* Dispositivos muy pequeños (hasta 375px) */
+@media (max-width: 375px) {
+    header h1 {
+        font-size: 1.8rem;
+    }
+    
+    header p {
+        font-size: 0.9rem;
+    }
+    
+    section h2 {
+        font-size: 1.6rem;
+    }
+    
+    section h2::before {
+        left: -15px;
+        font-size: 0.9rem;
+    }
+    
+    nav ul li a {
+        font-size: 0.9rem;
+    }
+    
+    .dark-mode-toggle, .admin-link {
+        font-size: 0.7rem;
+        padding: 5px 10px;
+    }
+    
+    #calendar iframe {
+        height: 250px;
+    }
+}
