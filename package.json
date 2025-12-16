@@ -1,18 +1,16 @@
+
 {
-  "name": "juliaydavid-web",
+  "name": "juliaydavid-web-vercel",
   "version": "1.0.0",
   "description": "La web de nuestra historia - Julia y David",
-  "main": "api/server.js",
-  "engines": {
-    "node": "24.x"
-  },
-  "scripts": {
-    "start": "npm run dev -w api",
-    "deploy": "firebase deploy"
-  },
   "author": "David con la ayuda de Gemini",
   "license": "ISC",
-  "workspaces": [
-    "api"
-  ]
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "cloudinary": "^1.41.3",
+    "jsonwebtoken": "^9.0.2",
+    "multer": "^1.4.5-lts.1",
+    "multer-storage-cloudinary": "^4.0.0",
+    "pg": "^8.11.3"
+  }
 }
