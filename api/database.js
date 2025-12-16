@@ -37,7 +37,8 @@ function initializeDB(db) {
       );
       CREATE TABLE IF NOT EXISTS images (
           id INTEGER PRIMARY KEY AUTOINCREMENT,
-          path TEXT NOT NULL,
+          path TEXT NOT NULL,         -- URL de la imagen (local o Cloudinary)
+          public_id TEXT,           -- ID para la gestión en Cloudinary
           description TEXT,
           uploaded_by TEXT,
           created_at DATETIME DEFAULT CURRENT_TIMESTAMP
