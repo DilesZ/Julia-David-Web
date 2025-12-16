@@ -98,4 +98,43 @@ router.post('/', authMiddleware, handleUpload, (req, res) => {
     );
 });
 
+// DELETE an image
+router.delete('/:id', authMiddleware, (req, res) => {
+    const { id } = req.params;
+
+    // 1. Get the image path from the database
+    db.get("SELECT path FROM images WHERE id = ?", [id], (err, row) => {
+        if (err) {
+            console.error("Error al buscar la imagen:", err);
+            return res.status(500).json({ error: 'Error interno del servidor' });
+        }
+        if (!row) {
+            return res.status(404).json({ error: 'Imagen no encontrada' });
+        }
+
+        const imagePath = path.join(__dirname, '..', '..', row.path);
+
+        // 2. Delete the file from the filesystem
+        fs.unlink(imagePath, (unlinkErr) => {
+            if (unlinkErr) {
+                // Log the error but proceed to delete from DB anyway, 
+                // as the file might already be gone.
+                console.error('Error al borrar el archivo físico:', unlinkErr);
+            }
+
+            // 3. Delete the image from the database
+            db.run("DELETE FROM images WHERE id = ?", [id], function (dbErr) {
+                if (dbErr) {
+                    console.error("Error al eliminar la imagen de la BD:", dbErr);
+                    return res.status(500).json({ error: 'Error al eliminar la imagen de la base de datos' });
+                }
+                if (this.changes === 0) {
+                    return res.status(404).json({ error: 'Imagen no encontrada en la base de datos' });
+                }
+                res.status(200).json({ message: 'Imagen eliminada correctamente' });
+            });
+        });
+    });
+});
+
 module.exports = router;

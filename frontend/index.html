@@ -11,14 +11,13 @@
     <link href="https://fonts.googleapis.com/css2?family=Parisienne&family=Roboto:wght@300;400&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
     <style>
-        /* Estilos para el Modal (sin cambios) */
         .modal{display:none;position:fixed;z-index:2000;left:0;top:0;width:100%;height:100%;overflow:auto;background-color:rgba(0,0,0,.6);animation:fadeIn .5s}.modal-content{background-color:#fefefe;margin:10% auto;padding:30px;border:1px solid #888;width:80%;max-width:500px;border-radius:15px;box-shadow:0 5px 15px rgba(0,0,0,.3);position:relative}.close-btn{color:#aaa;position:absolute;top:10px;right:20px;font-size:28px;font-weight:700;cursor:pointer}.close-btn:focus,.close-btn:hover{color:#d65a7b;text-decoration:none}.modal h2{font-family:'Parisienne',cursive;color:#d65a7b;text-align:center}.modal button,.modal input,.modal textarea{width:100%;padding:12px;margin:8px 0;border-radius:5px;border:1px solid #ccc}.modal button{background-color:#d65a7b;color:#fff;border:none;cursor:pointer;transition:background-color .3s}.modal button:hover{background-color:#ff6f61}#user-status{display:none;align-items:center;gap:15px}#user-status span{font-family:'Roboto',sans-serif;color:#d65a7b;font-size:1.1rem}#logout-btn{background:#ff6f61;color:#fff;border:none;padding:8px 15px;border-radius:5px;cursor:pointer;font-size:.9rem}
+        .delete-btn{position:absolute;top:10px;right:10px;background:rgba(255,0,0,0.7);color:white;border:none;padding:5px 10px;cursor:pointer;border-radius:5px;font-size:0.8rem;display:none}
     </style>
 </head>
 <body>
     <div class="heart-particles"></div>
 
-    <!-- Modales -->
     <div id="login-modal" class="modal">
         <div class="modal-content">
             <span class="close-btn" id="close-login-modal">&times;</span>
@@ -47,7 +46,6 @@
     </div>
 
     <nav>
-        <!-- BOTÓN DE MENÚ MÓVIL AÑADIDO -->
         <button class="menu-toggle" id="menu-toggle" aria-label="Abrir menú">☰</button>
         <ul id="nav-ul">
             <li><a href="#inicio">Inicio</a></li>
@@ -155,11 +153,10 @@
                 }
             }
             
-            // --- LÓGICA PARA ANIMACIÓN DE FADE-IN (LA PARTE QUE FALTABA) ---
             const faders = document.querySelectorAll('.fade-in');
             const appearOptions = {
-                threshold: 0.2, // El elemento se considera visible si el 20% está en pantalla
-                rootMargin: "0px 0px -50px 0px" // Acorta el viewport verticalmente 50px
+                threshold: 0.2,
+                rootMargin: "0px 0px -50px 0px"
             };
             const appearOnScroll = new IntersectionObserver(function(entries, observer) {
                 entries.forEach(entry => {
@@ -174,15 +171,11 @@
                 appearOnScroll.observe(fader);
             });
 
-            // --- LÓGICA PARA EL MENÚ MÓVIL (LA PARTE QUE FALTABA) ---
             const menuToggle = document.getElementById('menu-toggle');
             const navUl = document.getElementById('nav-ul');
             menuToggle.addEventListener('click', () => {
                 navUl.classList.toggle('active');
             });
-
-
-            // El resto de la lógica (modales, auth, imágenes, etc. sin cambios mayores)
             
             const loginModal = document.getElementById('login-modal');
             const adminModal = document.getElementById('admin-modal');
@@ -206,10 +199,11 @@
                     document.getElementById('login-nav-item').style.display = 'none';
                     document.getElementById('user-status').style.display = 'flex';
                     document.getElementById('user-name').textContent = `Conectado: ${username}`;
-                    loadMessages();
+                    document.querySelectorAll('.delete-btn').forEach(btn => btn.style.display = 'block');
                 } else {
                     document.getElementById('login-nav-item').style.display = 'block';
                     document.getElementById('user-status').style.display = 'none';
+                    document.querySelectorAll('.delete-btn').forEach(btn => btn.style.display = 'none');
                 }
             }
 
@@ -228,6 +222,7 @@
                         localStorage.setItem('username', data.username);
                         loginModal.style.display = 'none';
                         checkLoginStatus();
+                        location.reload(); 
                     } else {
                         alert(data.error || 'Error al iniciar sesión.');
                     }
@@ -240,7 +235,7 @@
                 localStorage.removeItem('token');
                 localStorage.removeItem('username');
                 checkLoginStatus();
-                document.getElementById('message-display').innerHTML = '';
+                location.reload();
             });
 
             async function loadImages() {
@@ -253,11 +248,55 @@
                     images.forEach(img => {
                         const slide = document.createElement('div');
                         slide.classList.add('slider-slide');
-                        slide.innerHTML = `<img src="${API_URL}${img.path}" alt="${img.description}">`;
+                        slide.style.position = 'relative';
+
+                        const imageEl = document.createElement('img');
+                        imageEl.src = `${API_URL}${img.path}`;
+                        imageEl.alt = img.description;
+                        slide.appendChild(imageEl);
+
+                        const deleteBtn = document.createElement('button');
+                        deleteBtn.textContent = 'Eliminar';
+                        deleteBtn.classList.add('delete-btn');
+                        deleteBtn.dataset.imageId = img.id;
+                        deleteBtn.onclick = () => handleImageDelete(img.id);
+                        slide.appendChild(deleteBtn);
+                        
                         sliderContainer.appendChild(slide);
                     });
                     initSlider();
+                    checkLoginStatus();
                 } catch(e) { console.error(e); }
+            }
+
+            async function handleImageDelete(imageId) {
+                if (!confirm('¿Estás seguro de que quieres eliminar esta imagen?')) {
+                    return;
+                }
+                const token = localStorage.getItem('token');
+                if (!token) {
+                    alert('Debes iniciar sesión para eliminar imágenes.');
+                    return;
+                }
+
+                try {
+                    const response = await fetch(`${API_URL}/api/images/${imageId}`, {
+                        method: 'DELETE',
+                        headers: {
+                            'Authorization': `Bearer ${token}`
+                        }
+                    });
+
+                    if (response.ok) {
+                        alert('Imagen eliminada correctamente. La página se recargará.');
+                        location.reload();
+                    } else {
+                        const errorData = await response.json();
+                        alert(`Error al eliminar la imagen: ${errorData.error || 'Error desconocido'}`);
+                    }
+                } catch (err) {
+                    alert(`Error de conexión al eliminar la imagen: ${err.message}`);
+                }
             }
             
             async function loadAdminContent() {
@@ -310,7 +349,6 @@
                         alert('Imagen subida. La página se recargará.');
                         location.reload();
                     } else {
-                        // Modificación para mostrar el error del servidor
                         const errorData = await response.json().catch(() => ({ error: 'No se pudo leer el error del servidor' }));
                         alert(`Error al subir la imagen: ${errorData.error || 'Error desconocido'}`);
                     }
@@ -318,11 +356,7 @@
                     alert(`Error de conexión al subir imagen: ${err.message}`);
                 }
             }
-            
-            async function loadMessages() { /* ... sin cambios ... */ }
-            document.getElementById('send-message')?.addEventListener('click', async () => { /* ... sin cambios ... */ });
 
-            // Inicialización General
             checkServerHealth();
             loadContent();
             loadImages();
@@ -331,7 +365,6 @@
             updateCountdown();
         });
         
-        // --- El resto del JavaScript (slider, dark mode, etc. sin cambios) ---
         let currentIndex = 0;
         function initSlider() {
             const slider = document.querySelector('.slider-container');
