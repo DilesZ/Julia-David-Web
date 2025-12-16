@@ -13,6 +13,7 @@
     <style>
         .modal{display:none;position:fixed;z-index:2000;left:0;top:0;width:100%;height:100%;overflow:auto;background-color:rgba(0,0,0,.6);animation:fadeIn .5s}.modal-content{background-color:#fefefe;margin:10% auto;padding:30px;border:1px solid #888;width:80%;max-width:500px;border-radius:15px;box-shadow:0 5px 15px rgba(0,0,0,.3);position:relative}.close-btn{color:#aaa;position:absolute;top:10px;right:20px;font-size:28px;font-weight:700;cursor:pointer}.close-btn:focus,.close-btn:hover{color:#d65a7b;text-decoration:none}.modal h2{font-family:'Parisienne',cursive;color:#d65a7b;text-align:center}.modal button,.modal input,.modal textarea{width:100%;padding:12px;margin:8px 0;border-radius:5px;border:1px solid #ccc}.modal button{background-color:#d65a7b;color:#fff;border:none;cursor:pointer;transition:background-color .3s}.modal button:hover{background-color:#ff6f61}#user-status{display:none;align-items:center;gap:15px}#user-status span{font-family:'Roboto',sans-serif;color:#d65a7b;font-size:1.1rem}#logout-btn{background:#ff6f61;color:#fff;border:none;padding:8px 15px;border-radius:5px;cursor:pointer;font-size:.9rem}
         .delete-btn{position:absolute;top:10px;right:10px;background:rgba(255,0,0,0.7);color:white;border:none;padding:5px 10px;cursor:pointer;border-radius:5px;font-size:0.8rem;display:none}
+        #mensajes{text-align:center}#messages-container{max-width:800px;margin:0 auto 20px;display:flex;flex-direction:column;gap:15px;text-align:left}.message-item{background-color:#f9f9f9;border:1px solid #ddd;border-radius:10px;padding:15px;box-shadow:0 2px 4px rgba(0,0,0,.05)}.message-header{font-weight:700;color:#d65a7b;margin-bottom:5px;font-size:1.1em}.message-header span{font-size:.8em;color:#888;font-weight:400;float:right}.message-body{color:#333}#message-form-container{max-width:800px;margin:auto}#message-form textarea{width:100%;padding:10px;border-radius:5px;border:1px solid #ccc;font-family:'Roboto',sans-serif;margin-bottom:10px}#message-form button{background-color:#ff6f61;color:#fff;padding:10px 20px;border:none;border-radius:5px;cursor:pointer;width:auto;float:right}.dark-mode .message-item{background-color:#383838;border-color:#555}.dark-mode .message-body{color:#f1f1f1}.dark-mode #message-form textarea{background-color:#444;color:#f1f1f1;border-color:#666}
     </style>
 </head>
 <body>
@@ -53,6 +54,7 @@
             <li><a href="#momentos">Momentos</a></li>
             <li><a href="#calendario">Nuestro Calendario</a></li>
             <li><a href="#planes">Nuestros Planes</a></li>
+            <li><a href="#mensajes">Mensajes</a></li>
             <li id="login-nav-item"><a href="#" id="login-nav-btn">Iniciar Sesión</a></li>
             <li id="user-status">
                 <span id="user-name"></span>
@@ -99,6 +101,17 @@
         <h2>Nuestros Planes</h2>
         <p id="planes-text"></p>
     </section>
+    
+    <section id="mensajes" class="fade-in">
+        <h2>Mensajes para Nosotros</h2>
+        <div id="messages-container"></div>
+        <div id="message-form-container" style="display: none;">
+            <form id="message-form">
+                <textarea id="message-text" placeholder="Escribe tu mensaje aquí..." required rows="4"></textarea>
+                <button type="submit">Enviar Mensaje</button>
+            </form>
+        </div>
+    </section>
 
     <footer>
         <p>Con amor, Julia & David</p>
@@ -109,18 +122,14 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            const API_URL = '/';
-
             const defaultContent = {
                 historia: `Nuestra historia comenzó el 20 de septiembre de 2025...`,
                 planes: `Nuestros sueños están llenos de planes increíbles...`
             };
 
             function setContent(content) {
-                const historiaText = content.find(c => c.section === 'historia')?.text || defaultContent.historia;
-                const planesText = content.find(c => c.section === 'planes')?.text || defaultContent.planes;
-                document.getElementById('historia-text').textContent = historiaText;
-                document.getElementById('planes-text').textContent = planesText;
+                document.getElementById('historia-text').textContent = content.find(c => c.section === 'historia')?.text || defaultContent.historia;
+                document.getElementById('planes-text').textContent = content.find(c => c.section === 'planes')?.text || defaultContent.planes;
             }
 
             async function loadContent() {
@@ -143,9 +152,7 @@
                     if (response.ok && data.status === 'ok') {
                         statusEl.textContent = 'Estado del Servidor: Conectado ✔️';
                         statusEl.style.color = '#28a745';
-                    } else {
-                        throw new Error('Health check failed');
-                    }
+                    } else { throw new Error('Health check failed'); }
                 } catch (error) {
                     const statusEl = document.getElementById('health-status');
                     statusEl.textContent = 'Estado del Servidor: Desconectado ❌ (Failed to fetch)';
@@ -154,28 +161,19 @@
             }
             
             const faders = document.querySelectorAll('.fade-in');
-            const appearOptions = {
-                threshold: 0.2,
-                rootMargin: "0px 0px -50px 0px"
-            };
-            const appearOnScroll = new IntersectionObserver(function(entries, observer) {
+            const appearOptions = { threshold: 0.2, rootMargin: "0px 0px -50px 0px" };
+            const appearOnScroll = new IntersectionObserver((entries, observer) => {
                 entries.forEach(entry => {
-                    if (!entry.isIntersecting) {
-                        return;
-                    }
+                    if (!entry.isIntersecting) return;
                     entry.target.classList.add('visible');
                     observer.unobserve(entry.target);
                 });
             }, appearOptions);
-            faders.forEach(fader => {
-                appearOnScroll.observe(fader);
-            });
+            faders.forEach(fader => appearOnScroll.observe(fader));
 
             const menuToggle = document.getElementById('menu-toggle');
             const navUl = document.getElementById('nav-ul');
-            menuToggle.addEventListener('click', () => {
-                navUl.classList.toggle('active');
-            });
+            menuToggle.addEventListener('click', () => navUl.classList.toggle('active'));
             
             const loginModal = document.getElementById('login-modal');
             const adminModal = document.getElementById('admin-modal');
@@ -195,15 +193,18 @@
             function checkLoginStatus() {
                 const token = localStorage.getItem('token');
                 const username = localStorage.getItem('username');
+                const messageForm = document.getElementById('message-form-container');
                 if (token && username) {
                     document.getElementById('login-nav-item').style.display = 'none';
                     document.getElementById('user-status').style.display = 'flex';
                     document.getElementById('user-name').textContent = `Conectado: ${username}`;
                     document.querySelectorAll('.delete-btn').forEach(btn => btn.style.display = 'block');
+                    if(messageForm) messageForm.style.display = 'block';
                 } else {
                     document.getElementById('login-nav-item').style.display = 'block';
                     document.getElementById('user-status').style.display = 'none';
                     document.querySelectorAll('.delete-btn').forEach(btn => btn.style.display = 'none');
+                    if(messageForm) messageForm.style.display = 'none';
                 }
             }
 
@@ -226,9 +227,7 @@
                     } else {
                         alert(data.error || 'Error al iniciar sesión.');
                     }
-                } catch (err) {
-                    alert('Error de conexión.');
-                }
+                } catch (err) { alert('Error de conexión.'); }
             });
             
             document.getElementById('logout-btn').addEventListener('click', () => {
@@ -249,19 +248,16 @@
                         const slide = document.createElement('div');
                         slide.classList.add('slider-slide');
                         slide.style.position = 'relative';
-
                         const imageEl = document.createElement('img');
-                        imageEl.src = img.url;
+                        imageEl.src = img.cloudinary_url; 
                         imageEl.alt = img.description;
                         slide.appendChild(imageEl);
-
                         const deleteBtn = document.createElement('button');
                         deleteBtn.textContent = 'Eliminar';
                         deleteBtn.classList.add('delete-btn');
                         deleteBtn.dataset.imageId = img.id;
                         deleteBtn.onclick = () => handleImageDelete(img.id);
                         slide.appendChild(deleteBtn);
-                        
                         sliderContainer.appendChild(slide);
                     });
                     initSlider();
@@ -270,23 +266,14 @@
             }
 
             async function handleImageDelete(imageId) {
-                if (!confirm('¿Estás seguro de que quieres eliminar esta imagen?')) {
-                    return;
-                }
+                if (!confirm('¿Estás seguro de que quieres eliminar esta imagen?')) return;
                 const token = localStorage.getItem('token');
-                if (!token) {
-                    alert('Debes iniciar sesión para eliminar imágenes.');
-                    return;
-                }
-
+                if (!token) { alert('Debes iniciar sesión para eliminar imágenes.'); return; }
                 try {
                     const response = await fetch(`/api/images/${imageId}`, {
                         method: 'DELETE',
-                        headers: {
-                            'Authorization': `Bearer ${token}`
-                        }
+                        headers: { 'Authorization': `Bearer ${token}` }
                     });
-
                     if (response.ok) {
                         alert('Imagen eliminada correctamente. La página se recargará.');
                         location.reload();
@@ -294,9 +281,7 @@
                         const errorData = await response.json();
                         alert(`Error al eliminar la imagen: ${errorData.error || 'Error desconocido'}`);
                     }
-                } catch (err) {
-                    alert(`Error de conexión al eliminar la imagen: ${err.message}`);
-                }
+                } catch (err) { alert(`Error de conexión al eliminar la imagen: ${err.message}`); }
             }
             
             async function loadAdminContent() {
@@ -334,17 +319,14 @@
                 if (!token) { alert('Debes iniciar sesión para subir imágenes.'); loginModal.style.display = 'block'; return; }
                 const file = fileInput.files[0];
                 if (!file) return;
-
                 const formData = new FormData();
                 formData.append('image', file);
-                
                 try {
                     const response = await fetch(`/api/images`, {
                         method: 'POST',
                         headers: { 'Authorization': `Bearer ${token}` },
                         body: formData
                     });
-
                     if (response.ok) {
                         alert('Imagen subida. La página se recargará.');
                         location.reload();
@@ -352,14 +334,79 @@
                         const errorData = await response.json().catch(() => ({ error: 'No se pudo leer el error del servidor' }));
                         alert(`Error al subir la imagen: ${errorData.error || 'Error desconocido'}`);
                     }
-                } catch (err) {
-                    alert(`Error de conexión al subir imagen: ${err.message}`);
+                } catch (err) { alert(`Error de conexión al subir imagen: ${err.message}`); }
+            }
+
+            // --- Lógica de Mensajes ---
+            const messagesContainer = document.getElementById('messages-container');
+            const messageForm = document.getElementById('message-form');
+
+            function renderMessages(messages) {
+                messagesContainer.innerHTML = '';
+                if (!messages || messages.length === 0) {
+                    messagesContainer.innerHTML = '<p style="text-align: center; color: #888;">Aún no hay mensajes. ¡Sé el primero en escribir!</p>';
+                    return;
+                }
+                messages.forEach(msg => {
+                    const msgDiv = document.createElement('div');
+                    msgDiv.className = 'message-item';
+                    const date = new Date(msg.created_at).toLocaleString('es-ES', { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+                    msgDiv.innerHTML = `
+                        <div class="message-header">
+                            ${msg.username}
+                            <span>${date}</span>
+                        </div>
+                        <div class="message-body">
+                            <p>${msg.text.replace(/\n/g, '<br>')}</p>
+                        </div>
+                    `;
+                    messagesContainer.appendChild(msgDiv);
+                });
+            }
+
+            async function loadMessages() {
+                try {
+                    const res = await fetch('/api/messages');
+                    if (!res.ok) throw new Error('Error al cargar mensajes');
+                    const messages = await res.json();
+                    renderMessages(messages);
+                } catch (error) {
+                    console.error(error);
+                    messagesContainer.innerHTML = '<p style="text-align: center; color: red;">No se pudieron cargar los mensajes.</p>';
                 }
             }
 
+            messageForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const token = localStorage.getItem('token');
+                const text = document.getElementById('message-text').value.trim();
+                if (!text || !token) return;
+
+                try {
+                    const res = await fetch('/api/messages', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${token}`
+                        },
+                        body: JSON.stringify({ text })
+                    });
+                    if (!res.ok) {
+                        const errData = await res.json();
+                        throw new Error(errData.error || 'Error al enviar el mensaje');
+                    }
+                    document.getElementById('message-text').value = '';
+                    loadMessages(); // Recargar mensajes para ver el nuevo
+                } catch (error) {
+                    alert(error.message);
+                }
+            });
+
+            // --- Carga inicial ---
             checkServerHealth();
             loadContent();
             loadImages();
+            loadMessages(); // <-- Cargar mensajes al inicio
             checkLoginStatus();
             initSlider();
             updateCountdown();

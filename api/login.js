@@ -4,6 +4,9 @@ const jwt = require('jsonwebtoken');
 
 const pool = new Pool({
     connectionString: process.env.POSTGRES_URL,
+    ssl: {
+        rejectUnauthorized: false
+    }
 });
 
 const JWT_SECRET = process.env.JWT_SECRET;
@@ -29,22 +32,14 @@ module.exports = async (req, res) => {
         const result = await pool.query('SELECT * FROM users WHERE username = $1', [username]);
         const user = result.rows[0];
 
-        if (!user) {
-            return res.status(401).json({ error: 'Credenciales incorrectas' });
+        if (user && bcrypt.compareSync(password, user.password_hash)) {
+            const token = jwt.sign({ userId: user.id, username: user.username }, JWT_SECRET, { expiresIn: '1h' });
+            res.status(200).json({ message: 'Inicio de sesión correcto', token, username: user.username });
+        } else {
+            res.status(401).json({ error: 'Credenciales inválidas' });
         }
-
-        const isPasswordValid = await bcrypt.compare(password, user.password_hash);
-
-        if (!isPasswordValid) {
-            return res.status(401).json({ error: 'Credenciales incorrectas' });
-        }
-
-        const token = jwt.sign({ userId: user.id, username: user.username }, JWT_SECRET, { expiresIn: '7d' });
-
-        res.status(200).json({ token, username: user.username });
-
     } catch (error) {
-        console.error('Error en el login:', error);
+        console.error('Error en el inicio de sesión:', error);
         res.status(500).json({ error: 'Error interno del servidor' });
     }
 };

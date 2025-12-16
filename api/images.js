@@ -5,7 +5,12 @@ const cloudinary = require('cloudinary').v2;
 const { CloudinaryStorage } = require('multer-storage-cloudinary');
 
 // Configuración de Vercel Postgres y Cloudinary
-const pool = new Pool({ connectionString: process.env.POSTGRES_URL });
+const pool = new Pool({
+    connectionString: process.env.POSTGRES_URL,
+    ssl: {
+        rejectUnauthorized: false
+    }
+});
 cloudinary.config({
     cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
     api_key: process.env.CLOUDINARY_API_KEY,
