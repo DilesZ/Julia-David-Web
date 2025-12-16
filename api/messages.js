@@ -8,16 +8,14 @@ const pool = new Pool({
     }
 });
 
-// Función para obtener mensajes
 async function handleGet(req, res) {
     const client = await pool.connect();
     try {
-        // Unimos messages con users para obtener el nombre de usuario
-        const result = await client.query('
+        const result = await client.query(`
             SELECT m.id, m.text, m.created_at, u.username 
             FROM messages m 
             JOIN users u ON m.user_id = u.id 
-            ORDER BY m.created_at DESC');
+            ORDER BY m.created_at DESC`);
         res.status(200).json(result.rows);
     } catch (error) {
         console.error('Error al obtener mensajes:', error);
@@ -27,52 +25,66 @@ async function handleGet(req, res) {
     }
 }
 
-// Función para crear un nuevo mensaje
 async function handlePost(req, res) {
     const token = req.headers.authorization?.split(' ')[1];
     if (!token) {
         return res.status(401).json({ error: 'No autenticado' });
     }
 
+    let client;
     try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
         const { userId } = decoded;
         const { text } = req.body;
 
-        if (!text) {
+        if (!text || !text.trim()) {
             return res.status(400).json({ error: 'El texto del mensaje no puede estar vacío' });
         }
 
-        const client = await pool.connect();
-        try {
-            const result = await client.query('
-                INSERT INTO messages (user_id, text) 
-                VALUES ($1, $2) 
-                RETURNING id, created_at', 
-                [userId, text]);
+        client = await pool.connect();
+        await client.query('BEGIN');
 
-            res.status(201).json({
-                message: 'Mensaje creado con éxito',
-                newMessage: {
-                    id: result.rows[0].id,
-                    text,
-                    created_at: result.rows[0].created_at,
-                    username: decoded.username // Añadimos el username desde el token
-                }
-            });
-        } finally {
-            client.release();
-        }
+        const insertResult = await client.query(`
+            INSERT INTO messages (user_id, text) 
+            VALUES ($1, $2) 
+            RETURNING id`, 
+            [userId, text.trim()]);
+        
+        const newMessageId = insertResult.rows[0].id;
+
+        // Hacemos una segunda consulta para obtener el mensaje completo con el username
+        const newMsgQuery = await client.query(`
+            SELECT m.id, m.text, m.created_at, u.username
+            FROM messages m
+            JOIN users u ON m.user_id = u.id
+            WHERE m.id = $1
+        `, [newMessageId]);
+
+        await client.query('COMMIT');
+
+        // Devolvemos el objeto del mensaje completo, que ahora sí tiene el username
+        res.status(201).json({
+            message: 'Mensaje creado con éxito',
+            newMessage: newMsgQuery.rows[0]
+        });
+
     } catch (error) {
+        if (client) {
+            await client.query('ROLLBACK');
+        }
         if (error.name === 'JsonWebTokenError') {
             return res.status(401).json({ error: 'Token inválido' });
         }
         console.error('Error al crear mensaje:', error);
-        res.status(500).json({ error: 'Error al crear el mensaje' });
+        // Ahora nos aseguramos de enviar siempre un error JSON válido
+        res.status(500).json({ error: 'Error del servidor al crear el mensaje' });
+    } finally {
+        if (client) {
+            client.release();
+        }
     }
 }
 
-// Controlador principal
 module.exports = async (req, res) => {
     if (req.method === 'GET') {
         await handleGet(req, res);
