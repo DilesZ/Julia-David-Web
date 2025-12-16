@@ -2,17 +2,17 @@
   "name": "juliaydavid-web",
   "version": "1.0.0",
   "description": "La web de nuestra historia - Julia y David",
-  "main": "functions/server.js",
+  "main": "api/server.js",
   "engines": {
-    "node": "18.0.0"
+    "node": "24.x"
   },
   "scripts": {
-    "start": "npm run dev -w functions",
+    "start": "npm run dev -w api",
     "deploy": "firebase deploy"
   },
   "author": "David con la ayuda de Gemini",
   "license": "ISC",
   "workspaces": [
-    "functions"
+    "api"
   ]
 }
