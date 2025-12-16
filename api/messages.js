@@ -52,7 +52,6 @@ async function handlePost(req, res) {
         
         const newMessageId = insertResult.rows[0].id;
 
-        // Hacemos una segunda consulta para obtener el mensaje completo con el username
         const newMsgQuery = await client.query(`
             SELECT m.id, m.text, m.created_at, u.username
             FROM messages m
@@ -62,7 +61,6 @@ async function handlePost(req, res) {
 
         await client.query('COMMIT');
 
-        // Devolvemos el objeto del mensaje completo, que ahora sí tiene el username
         res.status(201).json({
             message: 'Mensaje creado con éxito',
             newMessage: newMsgQuery.rows[0]
@@ -76,7 +74,6 @@ async function handlePost(req, res) {
             return res.status(401).json({ error: 'Token inválido' });
         }
         console.error('Error al crear mensaje:', error);
-        // Ahora nos aseguramos de enviar siempre un error JSON válido
         res.status(500).json({ error: 'Error del servidor al crear el mensaje' });
     } finally {
         if (client) {
