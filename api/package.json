@@ -7,7 +7,7 @@
     "node": "20.x"
   },
   "scripts": {
-    "start": "npm run shell",
+    "start": "node server.js",
     "shell": "node server.js",
     "dev": "firebase emulators:start"
   },
