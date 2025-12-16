@@ -1,225 +1,101 @@
-# Julia y David - Página Web Romántica ❤️
+# Julia y David - Página Web Romántica ❤️ (Versión Serverless)
 
-Página web romántica para Julia y David con backend completo en Node.js, Express y SQLite.
+Página web romántica para Julia y David, ahora refactorizada a una arquitectura serverless moderna desplegada en Vercel.
 
 ## 🌟 Características
 
 - ✨ Diseño romántico y elegante
 - 🔐 Sistema de autenticación JWT
 - 📝 Contenido editable (Historia y Planes)
-- 🖼️ Galería de imágenes con slider
-- 📤 Upload de imágenes
-- 💌 Sistema de mensajes románticos
+- 🖼️ Galería de imágenes con slider y upload a Cloudinary
 - 📅 Calendario sincronizado con Google Calendar
 - ⏱️ Contador de tiempo juntos
 - 🌙 Modo oscuro
 - 💕 Animaciones de corazones flotantes
 - 📱 Diseño responsive
+- ⚡️ Backend basado en Funciones Serverless de Vercel (Node.js)
 
 ## 📋 Requisitos
 
-- Node.js (versión 14 o superior)
+- Node.js (versión 20.x o superior)
 - npm (viene con Node.js)
-
-## 🚀 Instalación y Uso Local
-
-### 1. Instalar Dependencias
-
-```bash
-npm install
-```
-
-### 2. Iniciar el Servidor
-
-```bash
-npm start
-```
-
-El servidor se iniciará en `http://localhost:3000`
-
-### 3. Acceder a la Aplicación
-
-- **Página Principal**: http://localhost:3000
-- **Panel de Administración**: http://localhost:3000/admin
-
-### 4. Credenciales de Acceso
-
-Por defecto se crean dos usuarios:
-
-- **Usuario**: Julia | **Contraseña**: julia2025
-- **Usuario**: David | **Contraseña**: david2025
-
-> ⚠️ **Importante**: Cambia las contraseñas después del primer uso editando directamente en la base de datos o creando un endpoint para cambiarlas.
+- Una cuenta de Vercel ([vercel.com](https://vercel.com))
+- Una cuenta de Cloudinary para el almacenamiento de imágenes.
 
 ## 📁 Estructura del Proyecto
 
 ```
-JuliayDavid/
-├── backend/
-│   ├── middleware/
-│   │   └── auth.js              # Middleware de autenticación JWT
-│   ├── routes/
-│   │   ├── authRoutes.js        # Rutas de autenticación
-│   │   ├── contentRoutes.js     # Rutas de contenido
-│   │   ├── imageRoutes.js       # Rutas de imágenes
-│   │   └── messageRoutes.js     # Rutas de mensajes
-│   ├── database.js              # Configuración de SQLite
-│   └── server.js                # Servidor Express
-├── frontend/
-│   ├── IMG/                     # Imágenes existentes
-│   ├── index.html               # Página principal
-│   ├── admin.html               # Panel de administración
-│   └── styles.css               # Estilos CSS
-├── uploads/                     # Imágenes subidas (generado)
-├── .env                         # Variables de entorno
-├── .gitignore                   # Archivos ignorados por Git
-├── package.json                 # Dependencias del proyecto
-├── database.db                  # Base de datos SQLite (generado)
-└── README.md                    # Este archivo
+/
+├── api/
+│   ├── content.js         # Serverless Function: Maneja la lógica del contenido.
+│   ├── health.js          # Serverless Function: Verifica el estado de la API.
+│   ├── images.js          # Serverless Function: Maneja la subida y gestión de imágenes.
+│   └── login.js           # Serverless Function: Maneja la autenticación de usuarios.
+├── public/
+│   ├── index.html         # Frontend de la aplicación.
+│   └── styles.css         # Estilos CSS.
+├── package.json           # Dependencias del proyecto.
+├── vercel.json            # Configuración de despliegue para Vercel.
+└── README.md              # Este archivo.
 ```
 
-## 🔧 Configuración
+## 🔧 Configuración Previa al Despliegue
 
-### Variables de Entorno (.env)
+Antes de desplegar, necesitas configurar las variables de entorno en Vercel para que la aplicación funcione correctamente.
 
-```env
-PORT=3000
-JWT_SECRET=tu_secreto_super_seguro_aqui
-NODE_ENV=development
-```
+1.  **Crea un nuevo proyecto en Vercel:** Ve a tu dashboard de Vercel, crea un nuevo proyecto y conéctalo a tu repositorio de GitHub.
+2.  **Configura las Variables de Entorno:** En la configuración del proyecto en Vercel, añade las siguientes variables de entorno. Estas son necesarias para la conexión a la base de datos y Cloudinary.
 
-## 📡 API Endpoints
+    - `DB_HOST`: El host de tu base de datos.
+    - `DB_USER`: El usuario de tu base de datos.
+    - `DB_PASSWORD`: La contraseña de tu base de datos.
+    - `DB_DATABASE`: El nombre de tu base de datos.
+    - `CLOUDINARY_CLOUD_NAME`: Tu "Cloud Name" de Cloudinary.
+    - `CLOUDINARY_API_KEY`: Tu "API Key" de Cloudinary.
+    - `CLOUDINARY_API_SECRET`: Tu "API Secret" de Cloudinary.
+    - `JWT_SECRET`: Una clave secreta larga y aleatoria para firmar los tokens JWT.
 
-### Autenticación
+## 🌐 Despliegue en Vercel
 
-- `POST /api/login` - Iniciar sesión
-  ```json
-  {
-    "username": "Julia",
-    "password": "julia2025"
-  }
-  ```
+Una vez que el repositorio está conectado y las variables de entorno están configuradas en Vercel, cada `git push` a la rama `main` desplegará automáticamente los cambios.
 
-### Contenido (Historia y Planes)
+Si necesitas hacer un despliegue manual desde tu terminal, sigue estos pasos:
 
-- `GET /api/content` - Obtener todo el contenido (público)
-- `PUT /api/content` - Actualizar contenido (requiere autenticación)
-  ```json
-  {
-    "section": "historia",
-    "text": "Nuestra historia..."
-  }
-  ```
+1.  **Inicia sesión en Vercel (solo la primera vez):**
+    ```bash
+    npx vercel login
+    ```
 
-### Imágenes
+2.  **Despliega en Producción:**
+    Desde la raíz del proyecto, ejecuta:
+    ```bash
+    npx vercel --prod
+    ```
 
-- `GET /api/images` - Listar todas las imágenes (público)
-- `POST /api/images` - Subir imagen (requiere autenticación)
-  - Form data: `image` (archivo), `description` (texto)
-- `DELETE /api/images/:id` - Eliminar imagen (requiere autenticación)
-
-### Mensajes
-
-- `GET /api/messages` - Obtener mensajes (requiere autenticación)
-- `POST /api/messages` - Enviar mensaje (requiere autenticación)
-  ```json
-  {
-    "text": "Te amo"
-  }
-  ```
-
-## 🌐 Deployment
-
-### Opción 1: Render.com (Recomendado - Gratis)
-
-1. Crea una cuenta en [Render.com](https://render.com)
-2. Conecta tu repositorio de GitHub
-3. Crea un nuevo "Web Service"
-4. Configura:
-   - **Build Command**: `npm install`
-   - **Start Command**: `npm start`
-   - **Environment Variables**:
-     - `PORT`: 3000
-     - `JWT_SECRET`: tu_secreto_super_seguro
-     - `NODE_ENV`: production
-
-### Opción 2: Railway.app (Gratis)
-
-1. Crea una cuenta en [Railway.app](https://railway.app)
-2. Crea un nuevo proyecto desde GitHub
-3. Railway detectará automáticamente Node.js
-4. Añade las variables de entorno en el panel
-
-### Opción 3: Vercel (Gratis)
-
-**URL de Producción: [https://julia-david-web.vercel.app/](https://julia-david-web.vercel.app/)**
-
-1. Instala Vercel CLI: `npm i -g vercel`
-2. Ejecuta: `vercel`
-3. Sigue las instrucciones
-
-> ⚠️ **Nota sobre la Base de Datos**: Para producción, considera usar una base de datos persistente como PostgreSQL en lugar de SQLite.
+Vercel se encargará del resto. La URL de producción se mostrará en la terminal al finalizar.
 
 ## 🎨 Personalización
 
 ### Cambiar Colores
-
-Edita `frontend/styles.css` y busca las variables de color:
-- `#d65a7b` - Color principal (rosa)
-- `#ff6f61` - Color secundario (coral)
-- `#f9f5f2` - Fondo claro
-- `#2c2c2c` - Fondo oscuro
+Edita `public/styles.css` y busca las variables de color.
 
 ### Cambiar Fecha de Aniversario
-
-Edita `frontend/index.html` y busca:
-```javascript
+Edita `public/index.html` y busca:
+'''javascript
 const startDate = new Date('2025-09-20');
-```
+'''
 
 ### Cambiar Calendario de Google
-
-Edita `frontend/index.html` y actualiza el `src` del iframe con tu ID de calendario de Google.
-
-## 🔒 Seguridad
-
-- Las contraseñas se almacenan hasheadas con bcrypt
-- Autenticación mediante JWT con expiración de 7 días
-- Validación de tipos de archivo en uploads
-- Límite de tamaño de archivo: 10MB
-- CORS habilitado para desarrollo
+Edita `public/index.html` y actualiza el `src` del `iframe` con tu ID de calendario de Google.
 
 ## 🐛 Solución de Problemas
 
-### El servidor no inicia
+### Errores de `fetch` en el navegador
+Asegúrate de que la configuración en `vercel.json` es correcta y que las funciones serverless (`/api/*.js`) se están desplegando correctamente. Revisa los logs de Vercel para ver si hay errores en las funciones.
 
-```bash
-# Verifica que Node.js está instalado
-node --version
-
-# Reinstala dependencias
-rm -rf node_modules
-npm install
-```
-
-### Las imágenes no se cargan
-
-- Verifica que la carpeta `frontend/IMG` existe
-- Verifica que la carpeta `uploads` tiene permisos de escritura
-
-### Error de autenticación
-
-- Verifica que `JWT_SECRET` está configurado en `.env`
-- Borra el token del localStorage y vuelve a iniciar sesión
-
-## 📝 Licencia
-
-Este proyecto es privado y para uso personal de Julia y David.
+### Problemas de autenticación
+Verifica que la variable de entorno `JWT_SECRET` está configurada correctamente en Vercel.
 
 ## ❤️ Hecho con Amor
 
 Desarrollado con amor para capturar y celebrar nuestra historia juntos.
-
----
-
-**¿Necesitas ayuda?** Contacta al desarrollador.

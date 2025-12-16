@@ -109,7 +109,7 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            const API_URL = '';
+            const API_URL = '/';
 
             const defaultContent = {
                 historia: `Nuestra historia comenzó el 20 de septiembre de 2025...`,
@@ -125,7 +125,7 @@
 
             async function loadContent() {
                 try {
-                    const response = await fetch(`${API_URL}/api/content`);
+                    const response = await fetch(`/api/content`);
                     if (!response.ok) throw new Error('Response not OK');
                     const contents = await response.json();
                     setContent(contents && contents.length > 0 ? contents : []);
@@ -137,7 +137,7 @@
             
             async function checkServerHealth() {
                 try {
-                    const response = await fetch(`${API_URL}/api/health`);
+                    const response = await fetch(`/api/health`);
                     const data = await response.json();
                     const statusEl = document.getElementById('health-status');
                     if (response.ok && data.status === 'ok') {
@@ -211,7 +211,7 @@
                 const username = document.getElementById('username').value.trim();
                 const password = document.getElementById('password').value.trim();
                 try {
-                    const response = await fetch(`${API_URL}/api/login`, {
+                    const response = await fetch(`/api/login`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ username, password })
@@ -240,7 +240,7 @@
 
             async function loadImages() {
                try {
-                    const res = await fetch(`${API_URL}/api/images`);
+                    const res = await fetch(`/api/images`);
                     if (!res.ok) throw new Error('Failed to load images');
                     const images = await res.json();
                     const sliderContainer = document.getElementById('slider-container');
@@ -280,7 +280,7 @@
                 }
 
                 try {
-                    const response = await fetch(`${API_URL}/api/images/${imageId}`, {
+                    const response = await fetch(`/api/images/${imageId}`, {
                         method: 'DELETE',
                         headers: {
                             'Authorization': `Bearer ${token}`
@@ -301,7 +301,7 @@
             
             async function loadAdminContent() {
                 try {
-                    const res = await fetch(`${API_URL}/api/content`);
+                    const res = await fetch(`/api/content`);
                     const contents = await res.json();
                     document.getElementById('historia-text-admin').value = contents.find(c => c.section === 'historia')?.text || defaultContent.historia;
                     document.getElementById('planes-text-admin').value = contents.find(c => c.section === 'planes')?.text || defaultContent.planes;
@@ -314,7 +314,7 @@
             async function saveData(section, text) {
                 const token = localStorage.getItem('token');
                 if (!token) { alert('Sesión expirada.'); return; }
-                await fetch(`${API_URL}/api/content`, {
+                await fetch(`/api/content`, {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
                     body: JSON.stringify({ section, text })
@@ -339,7 +339,7 @@
                 formData.append('image', file);
                 
                 try {
-                    const response = await fetch(`${API_URL}/api/images`, {
+                    const response = await fetch(`/api/images`, {
                         method: 'POST',
                         headers: { 'Authorization': `Bearer ${token}` },
                         body: formData
