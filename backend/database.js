@@ -39,7 +39,8 @@ function initializeDB(db) {
           id INTEGER PRIMARY KEY AUTOINCREMENT,
           path TEXT NOT NULL,
           description TEXT,
-          uploaded_by TEXT
+          uploaded_by TEXT,
+          created_at DATETIME DEFAULT CURRENT_TIMESTAMP
       );
       CREATE TABLE IF NOT EXISTS messages (
           id INTEGER PRIMARY KEY AUTOINCREMENT,
