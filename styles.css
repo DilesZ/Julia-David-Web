@@ -895,13 +895,14 @@ body.dark-mode .message-item {
         display: none;
     }
 
-    /* Slider Mobile Fixes */
+    /* Slider Mobile Fixes - 20% Larger Frame */
     .slider {
-        padding: 14% 8% 8% 8%;
-        /* Increased top padding to shift photos down */
-        aspect-ratio: 1024 / 680;
-        /* Slightly taller for mobile containment */
-        margin: 20px auto;
+        padding: 20% 12% 10% 12%;
+        /* Increased padding to make frame "thicker" */
+        aspect-ratio: 1024 / 820;
+        /* Taller aspect ratio for better containment */
+        width: 95%;
+        margin: 30px auto;
     }
 
     .slider-viewport {
