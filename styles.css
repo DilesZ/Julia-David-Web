@@ -1081,7 +1081,11 @@ body.dark-mode .message-item {
 
     nav {
         padding: 15px 0;
-        /* Increase padding to fit icon */
+        background: none;
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
+        box-shadow: none;
+        border-bottom: none;
     }
 
     /* Adjust menu toggle position */
