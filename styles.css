@@ -1375,22 +1375,26 @@ body.dark-mode #user-status {
     position: relative;
     max-width: 900px;
     margin: 40px auto 20px;
-    /* Transparent background to respect the PNG */
-    background: url('cathedral-frame.png') no-repeat center center;
-    background-size: 100% 100%;
-    /* Precise padding to align with the stone-carved opening */
-    padding: 11% 8% 7% 8%;
     aspect-ratio: 1024 / 640;
     overflow: visible;
-    /* Remove shadow that might look like a solid background border */
     box-shadow: none;
     border-radius: 0;
 }
 
-.slider::before,
+/* The frame image sits on top of everything to act as a mask */
 .slider::after {
-    display: none;
-    /* Motifs are now in the image */
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: url('cathedral-frame.png') no-repeat center center;
+    background-size: 100% 100%;
+    z-index: 20;
+    /* Higher than photos */
+    pointer-events: none;
+    /* Click through to buttons/photos */
 }
 
 .slider-viewport {
@@ -1399,8 +1403,12 @@ body.dark-mode #user-status {
     overflow: hidden;
     background: #000;
     position: relative;
+    /* Precise padding to align photos inside the frame's carved window */
+    padding: 11% 8% 7% 8%;
     box-shadow: inset 0 0 30px rgba(0, 0, 0, 1);
     border: none;
+    z-index: 1;
+    /* Below the frame ::after */
 }
 
 .slider-track {
@@ -1562,15 +1570,14 @@ body.dark-mode #user-status {
     top: 50%;
     transform: translateY(-50%);
     background: transparent;
-    /* No background to show PNG through */
     border: none;
     color: #8a4a5a;
-    /* Deep romantic color */
     width: 65px;
     height: 65px;
     border-radius: 50%;
     cursor: pointer;
-    z-index: 20;
+    z-index: 30;
+    /* Highest: on top of the frame mask */
     transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     display: flex;
     align-items: center;
