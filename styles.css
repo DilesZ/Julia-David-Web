@@ -1554,13 +1554,15 @@ body.dark-mode #user-status {
     position: relative;
     max-width: 900px;
     margin: 40px auto 20px;
+    /* Transparent background to respect the PNG */
     background: url('cathedral-frame.png') no-repeat center center;
     background-size: 100% 100%;
     /* Precise padding to align with the stone-carved opening */
     padding: 11% 8% 7% 8%;
     aspect-ratio: 1024 / 640;
     overflow: visible;
-    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+    /* Remove shadow that might look like a solid background border */
+    box-shadow: none;
     border-radius: 0;
 }
 
@@ -1738,10 +1740,9 @@ body.dark-mode #user-status {
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
-    background: #f8c9d4;
-    /* Soft pink stone color */
-    border: 4px solid #e099ae;
-    /* Darker pink relief */
+    background: transparent;
+    /* No background to show PNG through */
+    border: none;
     color: #8a4a5a;
     /* Deep romantic color */
     width: 65px;
@@ -1754,10 +1755,7 @@ body.dark-mode #user-status {
     align-items: center;
     justify-content: center;
     font-size: 1.6rem;
-    box-shadow:
-        0 8px 15px rgba(0, 0, 0, 0.2),
-        inset 2px 2px 5px rgba(255, 255, 255, 0.8),
-        inset -2px -2px 5px rgba(0, 0, 0, 0.1);
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
 }
 
 .slider-prev {
@@ -1770,12 +1768,9 @@ body.dark-mode #user-status {
 
 .slider-prev:hover,
 .slider-next:hover {
-    background: #ffb8c9;
     transform: translateY(-50%) scale(1.1) rotate(10deg);
-    box-shadow:
-        0 12px 25px rgba(214, 90, 123, 0.3),
-        inset 0 0 10px rgba(255, 255, 255, 0.5);
     color: #d65a7b;
+    text-shadow: 0 0 15px #ffb8c9;
 }
 
 .slider-next:hover {
