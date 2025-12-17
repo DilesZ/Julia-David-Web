@@ -863,27 +863,36 @@ body.dark-mode .message-item {
     }
 
     .calendar-event-tag {
-        font-size: 0.5rem;
-        padding: 0 1px;
-        line-height: 1;
-        max-height: 12px;
-        overflow: hidden;
+        font-size: 0.6rem;
+        padding: 1px 2px;
+        line-height: 1.1;
+        max-height: none;
+        overflow: visible;
+        background: rgba(214, 90, 123, 0.1);
+        border-radius: 3px;
     }
 
-    .calendar-day.event::before,
+    .calendar-day.event::before {
+        content: "🎈";
+        font-size: 0.6rem;
+        top: 2px;
+        right: 2px;
+        width: auto;
+    }
+
     .calendar-day.event::after {
-        font-size: 0.8rem;
-        top: -3px;
-        bottom: -3px;
+        display: none;
     }
 
     .calendar-day.appointment::before {
-        font-size: 0.8rem;
+        content: "❤";
+        font-size: 0.6rem;
+        top: 2px;
+        right: 2px;
     }
 
     .calendar-day.appointment::after {
         display: none;
-        /* Hide secondary heart on mobile to save space */
     }
 }
 
