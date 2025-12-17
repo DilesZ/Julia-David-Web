@@ -97,9 +97,27 @@ function initCommonFeatures() {
     // Note: admin-modal is currently in index.html, but not others. 
     // Ideally it should be injected too or present in all pages. 
     // For now, allow it to fail gracefully if missing.
+    // Admin Modal Logic
     const adminModal = document.getElementById('admin-modal');
+    // Global vars for admin editors
+    window.adminQuills = {};
+
     if (adminModal) {
         const closeBtn = document.getElementById('close-admin-modal');
+
+        // Initialize Admin Quills once
+        if (document.getElementById('historia-editor-container')) {
+            window.adminQuills.historia = new Quill('#historia-editor-container', {
+                theme: 'snow',
+                modules: { toolbar: [['bold', 'italic', 'underline', 'strike'], ['link', 'blockquote'], [{ 'list': 'ordered' }, { 'list': 'bullet' }]] }
+            });
+        }
+        if (document.getElementById('planes-editor-container')) {
+            window.adminQuills.planes = new Quill('#planes-editor-container', {
+                theme: 'snow',
+                modules: { toolbar: [['bold', 'italic', 'underline', 'strike'], ['link', 'blockquote'], [{ 'list': 'ordered' }, { 'list': 'bullet' }]] }
+            });
+        }
 
         // Delegated listener for admin button in nav
         document.addEventListener('click', (e) => {
@@ -114,8 +132,9 @@ function initCommonFeatures() {
 
         const saveHistoria = document.getElementById('save-historia');
         const savePlanes = document.getElementById('save-planes');
-        if (saveHistoria) saveHistoria.onclick = () => saveData('historia', document.getElementById('historia-text-admin').value);
-        if (savePlanes) savePlanes.onclick = () => saveData('planes', document.getElementById('planes-text-admin').value);
+
+        if (saveHistoria) saveHistoria.onclick = () => saveData('historia', window.adminQuills.historia.root.innerHTML);
+        if (savePlanes) savePlanes.onclick = () => saveData('planes', window.adminQuills.planes.root.innerHTML);
 
         const uploadBtn = document.getElementById('upload-image-btn-admin');
         if (uploadBtn) uploadBtn.addEventListener('click', () => handleImageUpload(document.getElementById('admin-upload-image')));
@@ -159,8 +178,9 @@ async function loadTextContent() {
         const hText = document.getElementById('historia-text');
         const pText = document.getElementById('planes-text');
 
-        if (hText) hText.textContent = contents.find(c => c.section === 'historia')?.text || defaultContent.historia;
-        if (pText) pText.textContent = contents.find(c => c.section === 'planes')?.text || defaultContent.planes;
+        // Use innerHTML to render HTML content from Quill
+        if (hText) hText.innerHTML = contents.find(c => c.section === 'historia')?.text || defaultContent.historia;
+        if (pText) pText.innerHTML = contents.find(c => c.section === 'planes')?.text || defaultContent.planes;
     } catch (e) { console.error('Error loading content', e); }
 }
 
@@ -168,10 +188,18 @@ async function loadAdminContent() {
     try {
         const res = await fetch(`/api/content`);
         const contents = await res.json();
-        const hInput = document.getElementById('historia-text-admin');
-        const pInput = document.getElementById('planes-text-admin');
-        if (hInput) hInput.value = contents.find(c => c.section === 'historia')?.text || defaultContent.historia;
-        if (pInput) pInput.value = contents.find(c => c.section === 'planes')?.text || defaultContent.planes;
+
+        if (window.adminQuills.historia) {
+            const text = contents.find(c => c.section === 'historia')?.text || defaultContent.historia;
+            // Handle simple text (old data) vs HTML. Quill handles proper HTML.
+            // If it's plain text, setText might be safer, but root.innerHTML works for both generally if getting from valid source.
+            window.adminQuills.historia.clipboard.dangerouslyPasteHTML(text);
+        }
+        if (window.adminQuills.planes) {
+            const text = contents.find(c => c.section === 'planes')?.text || defaultContent.planes;
+            window.adminQuills.planes.clipboard.dangerouslyPasteHTML(text);
+        }
+
     } catch (e) { console.error(e); }
 }
 
@@ -292,10 +320,29 @@ async function initMessages() {
     loadMessages();
     const form = document.getElementById('message-form');
     if (form) {
+        // Initialize Quill for Messages
+        const quill = new Quill('#message-editor-container', {
+            theme: 'snow',
+            placeholder: 'Escribe algo bonito aquí...',
+            modules: {
+                toolbar: [
+                    ['bold', 'italic', 'underline'],
+                    [{ 'color': [] }, { 'background': [] }],
+                    ['link']
+                ]
+            }
+        });
+
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
             const btn = form.querySelector('button');
-            const text = document.getElementById('message-text').value.trim();
+            const text = quill.root.innerHTML; // Get HTML content
+
+            // Check if empty (Quill leaves <p><br></p> when empty)
+            if (quill.getText().trim().length === 0) {
+                return alert('Por favor escribe un mensaje.');
+            }
+
             const token = localStorage.getItem('token');
 
             if (!token) {
@@ -311,7 +358,7 @@ async function initMessages() {
                     body: JSON.stringify({ text })
                 });
                 if (res.ok) {
-                    document.getElementById('message-text').value = '';
+                    quill.setText(''); // Clear editor
                     loadMessages();
                 } else {
                     alert('Error enviando mensaje');

@@ -1204,3 +1204,37 @@ body.dark-mode .message-item {
         opacity: 1;
     }
 }
+
+/* Quill Editor Customization */
+.ql-toolbar.ql-snow {
+    border: 2px solid #d65a7b !important;
+    border-radius: 10px 10px 0 0;
+    background: #fff;
+}
+
+.ql-container.ql-snow {
+    border: 2px solid #d65a7b !important;
+    border-top: none !important;
+    border-radius: 0 0 10px 10px;
+    background: #fff;
+    font-family: 'Roboto', sans-serif !important;
+    font-size: 1rem;
+}
+
+.ql-editor {
+    min-height: 150px;
+    font-family: 'Roboto', sans-serif;
+}
+
+/* Specific adjustment for message post-it editor */
+#message-editor-container .ql-editor {
+    font-family: 'Gloria Hallelujah', cursive;
+    /* Keep input handwritten feel */
+}
+
+/* Modal adjustments for editor */
+.modal-content {
+    width: 90%;
+    max-width: 600px;
+    /* Widen modal for editor */
+}
