@@ -43,12 +43,10 @@ function setupCalendarControls() {
 
     // Modal logic
     const modal = document.getElementById('calendar-modal');
-    const addBtn = document.getElementById('add-event-btn');
     const closeBtn = document.getElementById('close-calendar-modal');
     const deleteBtn = document.getElementById('delete-event-btn');
     const form = document.getElementById('calendar-form');
 
-    if (addBtn) addBtn.onclick = () => openCalendarModal();
     if (closeBtn) closeBtn.onclick = () => modal.style.display = 'none';
     window.addEventListener('click', (e) => { if (e.target == modal) modal.style.display = 'none'; });
 
