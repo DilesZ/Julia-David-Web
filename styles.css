@@ -839,10 +839,10 @@ body.dark-mode .message-item {
     }
 
     #calendar-grid {
-        padding: 5px;
+        padding: 4px;
         gap: 1px;
-        min-width: 480px;
-        /* Even tighter width for maximum screen usage */
+        min-width: 380px;
+        /* Narrower width to fit more on screen */
     }
 
     .weekday {
@@ -851,8 +851,8 @@ body.dark-mode .message-item {
     }
 
     .calendar-day {
-        min-height: 32px;
-        /* Micro-height for maximum density */
+        min-height: 26px;
+        /* Extremely compact height */
         padding: 1px;
         gap: 0;
     }
@@ -864,8 +864,10 @@ body.dark-mode .message-item {
 
     .calendar-event-tag {
         font-size: 0.5rem;
-        padding: 1px;
+        padding: 0 1px;
         line-height: 1;
+        max-height: 12px;
+        overflow: hidden;
     }
 
     .calendar-day.event::before,
