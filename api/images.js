@@ -84,10 +84,13 @@ const handleDelete = authenticate(async (req, res) => {
     if (!id) return res.status(400).json({ error: 'Se requiere el ID de la imagen' });
 
     try {
-        // Obtener el public_id antes de borrar
-        const imgResult = await pool.query('SELECT cloudinary_public_id FROM images WHERE id = $1 AND user_id = $2', [id, req.user.userId]);
+        const isAdmin = req.user.username === 'Julia' || req.user.username === 'David';
+        const query = isAdmin ? 'SELECT cloudinary_public_id FROM images WHERE id = $1' : 'SELECT cloudinary_public_id FROM images WHERE id = $1 AND user_id = $2';
+        const params = isAdmin ? [id] : [id, req.user.userId];
+
+        const imgResult = await pool.query(query, params);
         if (imgResult.rowCount === 0) {
-            return res.status(404).json({ error: 'Imagen no encontrada o no tienes permiso para eliminarla' });
+            return res.status(404).json({ error: 'Imagen no encontrada o no tienes permiso' });
         }
         const { cloudinary_public_id } = imgResult.rows[0];
 
