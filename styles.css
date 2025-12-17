@@ -652,25 +652,127 @@ body.dark-mode .countdown {
     background: #ff6f61;
 }
 
-/* Visualización de mensajes */
-.message-display {
-    margin-top: 20px;
-    border-top: 1px solid #d65a7b;
-    padding-top: 20px;
+/* Visualización de mensajes - Post-its */
+.messages-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 30px;
+    padding: 20px;
+    margin-top: 30px;
 }
 
-.message-display p {
-    background: #fff;
-    padding: 10px;
-    border-radius: 5px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    margin-bottom: 10px;
-    transition: background 0.5s ease;
+.message-item {
+    background: #fdfd86;
+    /* Default yellow */
+    width: 250px;
+    min-height: 250px;
+    padding: 25px;
+    box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.2);
+    font-family: 'Gloria Hallelujah', cursive;
+    color: #333;
+    position: relative;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
 }
 
-body.dark-mode .message-display p {
-    background: #3a3a3a;
-    color: #f9f5f2;
+.message-item:hover {
+    transform: scale(1.1) rotate(0deg) !important;
+    box-shadow: 10px 10px 25px rgba(0, 0, 0, 0.3);
+    z-index: 10;
+}
+
+/* Header del mensaje (Usuario y fecha) */
+.message-header {
+    font-size: 0.9rem;
+    color: #555;
+    border-bottom: 2px dashed rgba(0, 0, 0, 0.1);
+    padding-bottom: 10px;
+    margin-bottom: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.message-header strong {
+    font-size: 1.1rem;
+    color: #d65a7b;
+}
+
+/* Cuerpo del mensaje */
+.message-body {
+    font-size: 1.2rem;
+    line-height: 1.5;
+    flex-grow: 1;
+    word-wrap: break-word;
+    /* Ensure long words don't overflow */
+}
+
+/* Botón de borrar en el post-it */
+.delete-message-btn {
+    align-self: flex-end;
+    background: transparent;
+    border: none;
+    color: #888;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: color 0.2s;
+    margin-top: 10px;
+}
+
+.delete-message-btn:hover {
+    color: #d65a7b;
+}
+
+/* Variaciones de color y rotación */
+.message-item:nth-child(even) {
+    transform: rotate(3deg);
+    background: #e6f6d7;
+    /* Verde pastel */
+}
+
+.message-item:nth-child(3n) {
+    transform: rotate(-3deg);
+    background: #e1f2fb;
+    /* Azul pastel */
+    position: relative;
+    top: -10px;
+}
+
+.message-item:nth-child(5n) {
+    transform: rotate(5deg);
+    background: #ffebf0;
+    /* Rosa pastel */
+    position: relative;
+    top: 5px;
+}
+
+/* Pin Effect (Opcional - Chincheta) */
+.message-item::after {
+    content: '';
+    position: absolute;
+    top: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    background: rgba(214, 90, 123, 0.8);
+    box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+.message-item:nth-child(even)::after {
+    background: rgba(100, 180, 255, 0.8);
+}
+
+/* Dark mode adjustments for readability while keeping post-it feel (optional)
+   Often post-its stay bright, but let's dim them slightly for dark mode comfort */
+body.dark-mode .message-item {
+    filter: brightness(0.9);
+    color: #222;
+    /* Keep text dark for contrast on pastel */
 }
 
 /* Link de administración */
