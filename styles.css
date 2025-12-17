@@ -1550,48 +1550,48 @@ body.dark-mode #user-status {
     }
 }
 
-/* Slider Cathedral Frame */
+/* Slider Cathedral Frame - Pink & Romantic */
 .slider {
     position: relative;
     max-width: 900px;
     margin: 40px auto 20px;
     border-radius: 50% 50% 20px 20px / 15% 15% 10px 10px;
-    /* Arched top */
     padding: 15px;
-    background: linear-gradient(135deg, #c5a059 0%, #f1d38e 50%, #c5a059 100%);
-    /* Golden frame */
+    /* Golden frame changed to Pink Gradient */
+    background: linear-gradient(135deg, #d65a7b 0%, #ff9a9e 50%, #d65a7b 100%);
     box-shadow:
-        0 20px 50px rgba(0, 0, 0, 0.3),
-        inset 0 0 15px rgba(0, 0, 0, 0.2),
-        0 0 0 5px rgba(197, 160, 89, 0.5);
+        0 20px 50px rgba(214, 90, 123, 0.4),
+        inset 0 0 15px rgba(255, 255, 255, 0.4),
+        0 0 0 5px rgba(214, 90, 123, 0.2);
     aspect-ratio: 16/10;
     overflow: visible;
-    /* To allow pseudo-ornaments */
 }
 
 .slider::before {
-    content: "🕊️";
-    /* Romantic motif at the peak */
+    content: "💖";
+    /* Dove replaced by hearts */
     position: absolute;
     top: -30px;
     left: 50%;
     transform: translateX(-50%);
     font-size: 2.5rem;
     z-index: 5;
-    filter: drop-shadow(0 0 10px gold);
+    filter: drop-shadow(0 0 10px #ff9a9e);
 }
 
+/* Relief heart motifs around the frame */
 .slider::after {
-    content: "";
+    content: "❤   ❤   ❤";
     position: absolute;
-    top: 5px;
-    left: 5px;
-    right: 5px;
-    bottom: 5px;
-    border: 2px solid rgba(255, 255, 255, 0.3);
-    border-radius: inherit;
+    bottom: -15px;
+    left: 0;
+    width: 100%;
+    text-align: center;
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 1.2rem;
+    letter-spacing: 20px;
     pointer-events: none;
-    z-index: 2;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
 }
 
 .slider-viewport {
@@ -1599,10 +1599,10 @@ body.dark-mode #user-status {
     height: 100%;
     border-radius: inherit;
     overflow: hidden;
-    background: #000;
-    border: 5px solid #222;
-    /* Internal "depth" relief */
-    box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.8);
+    background: #0d0d0d;
+    border: none;
+    /* Removed the dark lines surrounding photos */
+    box-shadow: inset 0 0 40px rgba(0, 0, 0, 1);
     position: relative;
 }
 
