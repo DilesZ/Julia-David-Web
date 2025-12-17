@@ -889,8 +889,10 @@ body.dark-mode .message-item {
         backdrop-filter: blur(15px);
         -webkit-backdrop-filter: blur(15px);
         flex-direction: column;
-        align-items: flex-start;
-        justify-content: center;
+        align-items: center;
+        /* Center horizontally */
+        justify-content: flex-start;
+        /* Align top vertically */
         /* Center items vertically */
         padding: 40px;
         box-shadow: 5px 0 25px rgba(0, 0, 0, 0.15);
