@@ -505,11 +505,11 @@ async function loadGalleryImages() {
 }
 
 function renderSlider() {
-    const container = document.getElementById('slider-container');
+    const track = document.getElementById('slider-track');
     const thumbContainer = document.getElementById('thumbnails-container');
-    if (!container || !galleryImages.length) return;
+    if (!track || !galleryImages.length) return;
 
-    container.innerHTML = '';
+    track.innerHTML = '';
     thumbContainer.innerHTML = '';
 
     galleryImages.forEach((img, idx) => {
@@ -520,7 +520,7 @@ function renderSlider() {
                            <button class="delete-btn" style="display:none;" onclick="handleImageDelete(${img.id})"><i class="fa-solid fa-trash"></i></button>`;
 
         slide.querySelector('img').onclick = () => openLightbox(img.cloudinary_url);
-        container.appendChild(slide);
+        track.appendChild(slide);
 
         // Thumbnail
         const thumb = document.createElement('img');
@@ -564,9 +564,9 @@ function moveSlider(step) {
 }
 
 function updateSliderDisplay() {
-    const container = document.getElementById('slider-container');
-    if (!container) return;
-    container.style.transform = `translateX(-${currentImageIndex * 100}%)`;
+    const track = document.getElementById('slider-track');
+    if (!track) return;
+    track.style.transform = `translateX(-${currentImageIndex * 100}%)`;
 
     // Highlight active thumbnail
     document.querySelectorAll('.thumb').forEach((t, i) => {
