@@ -1092,31 +1092,53 @@ body.dark-mode .message-item {
     }
 
     /* Adjust menu toggle position and size */
+    /* Adjust menu toggle position and size */
     .menu-toggle {
         top: 25px;
         transform: translateY(0);
         left: 20px;
-        font-size: 2.5rem;
-        /* Even larger icon */
+        font-size: 3rem;
+        /* Maximize icon */
     }
 
     nav ul li a {
         font-size: 2.2rem;
-        /* Keep large size */
-        margin: 5px 0;
-        /* Reduce spacing to fit content */
+        /* Keep large */
+        margin: 8px 0;
+    }
+
+    nav ul li a i {
+        margin-right: 20px;
+        width: 35px;
+        /* Larger icon container */
+        font-size: 2.2rem;
+        /* Ensure icon matches text */
     }
 
     #user-status {
-        margin-top: 15px;
+        margin-top: 25px;
         background: rgba(255, 255, 255, 0.2);
-        padding: 5px 15px;
-        border-radius: 30px;
+        padding: 10px 25px;
+        /* Larger padding */
+        border-radius: 40px;
         display: flex;
         align-items: center;
         width: fit-content;
         margin-left: auto;
         margin-right: auto;
+        transform: scale(1.1);
+        /* Slightly scale up the whole block */
+    }
+
+    #user-name {
+        font-size: 1.8rem;
+        /* Larger username */
+    }
+
+    #user-status button {
+        font-size: 1.6rem;
+        /* Larger action buttons */
+        padding: 8px;
     }
 
     .slider-prev,
