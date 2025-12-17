@@ -895,20 +895,20 @@ body.dark-mode .message-item {
         display: none;
     }
 
-    /* Slider Mobile Fixes - Middle Ground Scaling */
+    /* Slider Mobile Fixes - Optimized Middle Ground Scaling */
     .slider {
-        padding: 22% 10% 8% 10% !important;
-        /* Balanced padding: enough for frame, but bigger photos */
-        aspect-ratio: 1024 / 780 !important;
-        /* Balanced aspect ratio */
+        padding: 18% 8% 7% 8% !important;
+        /* Balanced padding: enough for frame, making photos LARGER */
+        aspect-ratio: 1024 / 950 !important;
+        /* More vertical aspect ratio to fit portrait photos better */
         width: 100% !important;
-        margin: 25px 0 !important;
+        margin: 20px 0 !important;
         background-size: 100% 100% !important;
     }
 
     .slider-viewport {
         height: 100% !important;
-        box-shadow: inset 0 5px 20px rgba(0, 0, 0, 0.2) !important;
+        box-shadow: inset 0 5px 15px rgba(0, 0, 0, 0.2) !important;
     }
 }
 
