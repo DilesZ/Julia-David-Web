@@ -851,19 +851,20 @@ body.dark-mode .message-item {
     }
 
     .calendar-day {
-        min-height: 45px;
-        padding: 2px;
-        gap: 1px;
+        min-height: 40px;
+        /* Even smaller (from 45px) */
+        padding: 1px;
+        gap: 0;
     }
 
     .day-number {
-        font-size: 0.7rem;
-        margin-bottom: 2px;
+        font-size: 0.65rem;
+        margin-bottom: 1px;
     }
 
     .calendar-event-tag {
-        font-size: 0.55rem;
-        padding: 1px 2px;
+        font-size: 0.5rem;
+        padding: 1px;
         line-height: 1;
     }
 
@@ -896,8 +897,20 @@ body.dark-mode .message-item {
     }
 
     section {
-        padding: 40px 20px;
+        padding: 40px 10px;
+        /* Reduced side padding (from 20px) */
         min-height: 35vh;
+    }
+
+    .content-card {
+        padding: 15px 5px;
+        /* Significantly reduced card padding */
+        border-radius: 10px;
+    }
+
+    #calendario-page .page-title {
+        font-size: 1.8rem;
+        margin-bottom: 15px;
     }
 
     section h2 {
