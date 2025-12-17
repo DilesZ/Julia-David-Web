@@ -825,9 +825,18 @@ body.dark-mode .message-item {
         padding: 10px 5px;
     }
 
+    #calendar-wrapper {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        /* Smooth scroll on iOS */
+        padding-bottom: 5px;
+    }
+
     #calendar-grid {
         padding: 5px;
         gap: 1px;
+        min-width: 600px;
+        /* Ensure columns have enough width to be readable */
     }
 
     .weekday {
@@ -1206,6 +1215,15 @@ body.dark-mode #user-status {
 .btn-calendar:hover {
     background: #d65a7b;
     color: white;
+}
+
+#calendar-wrapper {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    overflow: hidden;
+    /* Desktop view: no scroll */
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(214, 90, 123, 0.2);
 }
 
 #calendar-grid {
