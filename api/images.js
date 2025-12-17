@@ -44,14 +44,9 @@ const authenticate = (handler) => async (req, res) => {
 
 const handleGet = async (req, res) => {
     try {
-        const result = await pool.query('SELECT id, cloudinary_public_id, description, created_at FROM images ORDER BY created_at DESC');
-        const images = result.rows.map(img => ({
-            id: img.id,
-            url: cloudinary.url(img.cloudinary_public_id, { secure: true }),
-            description: img.description,
-            created_at: img.created_at
-        }));
-        res.status(200).json(images);
+        // Corregido: Seleccionar `cloudinary_url` directamente, que es lo que el frontend espera.
+        const result = await pool.query('SELECT id, cloudinary_url, description, created_at FROM images ORDER BY created_at DESC');
+        res.status(200).json(result.rows);
     } catch (error) {
         console.error('Error al obtener imágenes:', error);
         res.status(500).json({ error: 'Error interno al obtener imágenes' });
