@@ -638,25 +638,41 @@ body.dark-mode .countdown {
 }
 
 .message-form button {
-    background: linear-gradient(45deg, #d65a7b, #ff6f61);
-    color: white;
-    border: none;
-    padding: 15px 40px;
+    background: rgba(255, 255, 255, 0.5);
+    color: #d65a7b;
+    border: 1px solid #d65a7b;
+    padding: 10px 30px;
     border-radius: 50px;
     cursor: pointer;
-    font-family: 'Roboto', sans-serif;
-    font-size: 1.2rem;
-    font-weight: 500;
+    font-family: 'Parisienne', cursive;
+    font-size: 1.5rem;
     transition: all 0.3s ease;
     margin-top: 20px;
-    box-shadow: 0 4px 15px rgba(214, 90, 123, 0.4);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
     display: block;
-    width: 100%;
+    width: auto;
+    margin-left: auto;
+    /* Align right like a signature */
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
 }
 
 .message-form button:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 6px 20px rgba(255, 111, 97, 0.6);
+    background: #d65a7b;
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(214, 90, 123, 0.3);
+}
+
+body.dark-mode .message-form button {
+    background: rgba(0, 0, 0, 0.3);
+    border-color: #ff6f61;
+    color: #ff6f61;
+}
+
+body.dark-mode .message-form button:hover {
+    background: #ff6f61;
+    color: white;
 }
 
 /* Visualización de mensajes - Post-its */
