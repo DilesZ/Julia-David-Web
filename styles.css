@@ -1390,32 +1390,31 @@ body.dark-mode #user-status {
     word-break: break-word;
 }
 
-/* Motivos: Guirnaldas (Evento) */
+/* Motivos: Fiestas (Evento) */
 .calendar-day.event::before {
-    content: "🌸🍃🌸";
+    content: "🎈✨🎀";
     position: absolute;
-    top: -5px;
+    top: -8px;
     width: 100%;
     text-align: center;
     left: 0;
     font-size: 1.2rem;
     pointer-events: none;
-    opacity: 0.8;
+    filter: drop-shadow(0 0 5px rgba(214, 90, 123, 0.4));
 }
 
 .calendar-day.event::after {
-    content: "🍃🌸🍃";
+    content: "🎀✨🎈";
     position: absolute;
-    bottom: -5px;
+    bottom: -8px;
     width: 100%;
     text-align: center;
     left: 0;
     font-size: 1.2rem;
     pointer-events: none;
-    opacity: 0.8;
 }
 
-/* Motivos: Corazoncitos (Cita) */
+/* Motivos: Corazoncitos (Cita) - Más abundantes */
 .calendar-day.appointment::before {
     content: "❤";
     position: absolute;
@@ -1426,16 +1425,54 @@ body.dark-mode #user-status {
     animation: heartFloat 2s infinite ease-in-out;
 }
 
+.calendar-day.appointment::after {
+    content: "❤";
+    position: absolute;
+    top: 25px;
+    right: 15px;
+    font-size: 0.8rem;
+    color: #ff6f61;
+    opacity: 0.6;
+    animation: heartFloat 2.5s infinite ease-in-out reverse;
+}
+
 @keyframes heartFloat {
 
     0%,
     100% {
-        transform: translateY(0) scale(1);
+        transform: translateY(0) scale(1) rotate(0deg);
     }
 
     50% {
-        transform: translateY(-5px) scale(1.1);
+        transform: translateY(-8px) scale(1.2) rotate(15deg);
     }
+}
+
+/* Modal Footer & Buttons */
+.modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 20px;
+    padding-top: 15px;
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.btn-delete {
+    background: #ff6f61;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.btn-delete:hover {
+    background: #e65b50;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(255, 111, 97, 0.3);
 }
 
 /* Modal Form Styles */

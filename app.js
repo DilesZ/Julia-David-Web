@@ -18,6 +18,7 @@ document.addEventListener('DOMContentLoaded', () => {
 // --- Calendario Personalizado ---
 let currentCalendarDate = new Date();
 let calendarEvents = [];
+let editingEventId = null;
 
 async function initCalendar() {
     const calendarGrid = document.getElementById('calendar-grid');
@@ -44,29 +45,69 @@ function setupCalendarControls() {
     const modal = document.getElementById('calendar-modal');
     const addBtn = document.getElementById('add-event-btn');
     const closeBtn = document.getElementById('close-calendar-modal');
+    const deleteBtn = document.getElementById('delete-event-btn');
     const form = document.getElementById('calendar-form');
 
-    if (addBtn) addBtn.onclick = () => {
-        // Set default date to today in the form
-        document.getElementById('event-date').valueAsDate = new Date();
-        modal.style.display = 'block';
-    }
+    if (addBtn) addBtn.onclick = () => openCalendarModal();
     if (closeBtn) closeBtn.onclick = () => modal.style.display = 'none';
     window.addEventListener('click', (e) => { if (e.target == modal) modal.style.display = 'none'; });
+
+    if (deleteBtn) {
+        deleteBtn.onclick = async () => {
+            if (editingEventId && confirm('¿Eliminar este momento del calendario?')) {
+                await deleteCalendarEvent(editingEventId);
+                modal.style.display = 'none';
+            }
+        };
+    }
 
     if (form) {
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
+            const btn = form.querySelector('button[type="submit"]');
+            btn.disabled = true;
+
             const title = document.getElementById('event-title').value;
             const event_date = document.getElementById('event-date').value;
             const event_time = document.getElementById('event-time').value;
             const type = form.querySelector('input[name="event-type"]:checked').value;
 
+            if (editingEventId) {
+                await deleteCalendarEvent(editingEventId, true);
+            }
+
             await saveCalendarEvent({ title, event_date, event_time, type });
+            btn.disabled = false;
             modal.style.display = 'none';
             form.reset();
         });
     }
+}
+
+function openCalendarModal(date = null, event = null) {
+    const modal = document.getElementById('calendar-modal');
+    const form = document.getElementById('calendar-form');
+    const deleteBtn = document.getElementById('delete-event-btn');
+
+    editingEventId = event ? event.id : null;
+    form.reset();
+
+    if (event) {
+        document.getElementById('event-title').value = event.title;
+        document.getElementById('event-date').value = event.event_date.split('T')[0];
+        document.getElementById('event-time').value = event.event_time ? event.event_time.substring(0, 5) : '';
+        form.querySelector(`input[name="event-type"][value="${event.type}"]`).checked = true;
+        deleteBtn.style.display = 'block';
+    } else {
+        if (date) {
+            document.getElementById('event-date').value = date;
+        } else {
+            document.getElementById('event-date').valueAsDate = new Date();
+        }
+        deleteBtn.style.display = 'none';
+    }
+
+    modal.style.display = 'block';
 }
 
 async function fetchCalendarEvents() {
@@ -83,6 +124,7 @@ async function fetchCalendarEvents() {
 function renderCalendar() {
     const grid = document.getElementById('calendar-grid');
     const monthYearLabel = document.getElementById('current-month-year');
+    const isAdmin = (localStorage.getItem('username') === 'Julia' || localStorage.getItem('username') === 'David');
 
     // Clear previous days (keep weekdays)
     const weekdays = Array.from(grid.querySelectorAll('.weekday'));
@@ -96,9 +138,7 @@ function renderCalendar() {
     monthYearLabel.innerText = `${monthNames[month]} ${year}`;
 
     const firstDay = new Date(year, month, 1).getDay(); // 0 (Sun) to 6 (Sat)
-    // Adjust to Monday start: 0->6, 1->0, 2->1, ...
     const adjustedFirstDay = firstDay === 0 ? 6 : firstDay - 1;
-
     const daysInMonth = new Date(year, month + 1, 0).getDate();
 
     // Padding days
@@ -120,10 +160,10 @@ function renderCalendar() {
 
         const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
 
-        // Find events for this day
+        // Find events for this day - using UTC to avoid timezone shifts
         const dayEvents = calendarEvents.filter(e => {
             const eDate = new Date(e.event_date);
-            return eDate.getFullYear() === year && eDate.getMonth() === month && eDate.getDate() === day;
+            return eDate.getUTCFullYear() === year && eDate.getUTCMonth() === month && eDate.getUTCDate() === day;
         });
 
         dayDiv.innerHTML = `<span class="day-number">${day}</span>`;
@@ -133,10 +173,17 @@ function renderCalendar() {
                 dayDiv.classList.add(e.type === 'cita' ? 'appointment' : 'event');
                 const eventEl = document.createElement('div');
                 eventEl.classList.add('calendar-event-tag');
-                eventEl.title = `${e.title} ${e.event_time ? '(' + e.event_time + ')' : ''}`;
                 eventEl.innerHTML = `<strong>${e.title}</strong> ${e.event_time ? '<br>' + e.event_time.substring(0, 5) : ''}`;
                 dayDiv.appendChild(eventEl);
+
+                if (isAdmin) {
+                    dayDiv.style.cursor = 'pointer';
+                    dayDiv.onclick = () => openCalendarModal(dateStr, e);
+                }
             });
+        } else if (isAdmin) {
+            dayDiv.style.cursor = 'pointer';
+            dayDiv.onclick = () => openCalendarModal(dateStr);
         }
 
         grid.appendChild(dayDiv);
@@ -145,34 +192,44 @@ function renderCalendar() {
 
 async function saveCalendarEvent(eventData) {
     const token = localStorage.getItem('token');
-    if (!token) return alert('No autenticado');
-
+    if (!token) return;
     try {
         const res = await fetch('/api/calendar', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
             body: JSON.stringify(eventData)
         });
-
         if (res.ok) {
-            alert('¡Evento guardado con amor!');
             await fetchCalendarEvents();
             renderCalendar();
         } else {
             const error = await res.json();
             alert(error.error || 'Error al guardar');
         }
-    } catch (e) {
-        alert('Error de conexión');
-    }
+    } catch (e) { alert('Error de conexión'); }
+}
+
+async function deleteCalendarEvent(id, silent = false) {
+    const token = localStorage.getItem('token');
+    if (!token) return;
+    try {
+        const res = await fetch(`/api/calendar?id=${id}`, {
+            method: 'DELETE',
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (res.ok) {
+            if (!silent) {
+                await fetchCalendarEvents();
+                renderCalendar();
+            }
+        }
+    } catch (e) { console.error(e); }
 }
 
 function checkAdminAccessForCalendar() {
     const username = localStorage.getItem('username');
     const addBtn = document.getElementById('add-event-btn');
-    if (addBtn && (username === 'Julia' || username === 'David')) {
-        addBtn.style.display = 'block';
-    }
+    if (addBtn && (username === 'Julia' || username === 'David')) addBtn.style.display = 'block';
 }
 
 // --- Dynamic Navigation ---
