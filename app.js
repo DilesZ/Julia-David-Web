@@ -1,6 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
     initNavigation();
     initCommonFeatures();
+    initFadeInAnimations(); // New helper for animations
 
     // Page Specific Initializations
     if (document.getElementById('historia-page')) loadTextContent();
@@ -403,4 +404,31 @@ function updateCountdown() {
     if (months < 0) { years--; months += 12; }
 
     el.textContent = `Llevamos ${years > 0 ? years + ' años, ' : ''}${months} meses y ${days} días juntos.`;
+}
+
+// --- Animations ---
+function initFadeInAnimations() {
+    const faders = document.querySelectorAll('.fade-in');
+    if (!faders.length) return;
+
+    const appearOptions = { threshold: 0.1, rootMargin: "0px 0px -50px 0px" };
+
+    // Fallback: If intersection observer fails or takes wise, show content
+    setTimeout(() => {
+        faders.forEach(fader => {
+            if (!fader.classList.contains('visible')) fader.classList.add('visible');
+        });
+    }, 1000);
+
+    const appearOnScroll = new IntersectionObserver((entries, observer) => {
+        entries.forEach(entry => {
+            if (!entry.isIntersecting) return;
+            entry.target.classList.add('visible');
+            observer.unobserve(entry.target);
+        });
+    }, appearOptions);
+
+    faders.forEach(fader => {
+        appearOnScroll.observe(fader);
+    });
 }

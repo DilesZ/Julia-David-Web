@@ -527,14 +527,21 @@ body.dark-mode footer {
 /* Animaciones */
 .fade-in {
     opacity: 0;
+    /* Keep hidden initially for animation */
     transform: translateY(30px);
     transition: opacity 1s ease, transform 1s ease;
 }
+
+/* Fallback: If JS is disabled or fails, these might remain hidden. 
+   Ideally, we should use a .no-js class or keyframes that end in visible. 
+   For now, trust app.js, but let's make sure the threshold isn't too high. */
 
 .fade-in.visible {
     opacity: 1;
     transform: translateY(0);
 }
+
+
 
 /* Botón modo oscuro */
 .dark-mode-toggle {
