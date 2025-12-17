@@ -1630,11 +1630,73 @@ body.dark-mode #user-status {
     transform: translateY(-5px) scale(1.02);
 }
 
-.grid-item .delete-btn {
-    top: 10px;
-    right: 10px;
-    background: rgba(255, 255, 255, 0.8);
-    color: #ff6f61;
+/* Upload Section Styling */
+.upload-section {
+    margin-top: 50px;
+    padding: 30px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 20px;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    text-align: center;
+}
+
+.upload-section p {
+    font-family: 'Parisienne', cursive;
+    font-size: 1.8rem;
+    color: #d65a7b;
+    margin-bottom: 20px;
+}
+
+.custom-file-upload {
+    display: inline-block;
+    padding: 12px 30px;
+    background: linear-gradient(135deg, #d65a7b 0%, #ff9a9e 100%);
+    color: white;
+    border-radius: 50px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 1.1rem;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    box-shadow: 0 4px 15px rgba(214, 90, 123, 0.4);
+    border: none;
+}
+
+.custom-file-upload:hover {
+    transform: translateY(-5px) scale(1.05);
+    box-shadow: 0 8px 25px rgba(214, 90, 123, 0.6);
+}
+
+.custom-file-upload i {
+    margin-right: 10px;
+    font-size: 1.2rem;
+}
+
+/* Delete Button Overlays - Integrated with both views */
+.gallery-view .delete-btn {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.9);
+    border: none;
+    color: #ff4d4d;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    z-index: 10;
+}
+
+.gallery-view .delete-btn:hover {
+    background: #ff4d4d;
+    color: white;
+    transform: rotate(90deg) scale(1.1);
 }
 
 /* Responsive Moments */
@@ -1652,5 +1714,9 @@ body.dark-mode #user-status {
     .thumb {
         width: 60px;
         height: 40px;
+    }
+
+    .upload-section p {
+        font-size: 1.4rem;
     }
 }
