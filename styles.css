@@ -347,168 +347,7 @@ body.dark-mode section p {
     color: #f9f5f2;
 }
 
-/* Galería */
-.gallery {
-    padding: 20px;
-    background: linear-gradient(135deg, #f9e8eb 0%, #fff5f5 100%);
-    border-radius: 20px;
-    box-shadow: 0 0 20px rgba(214, 90, 123, 0.2);
-    transition: background 0.5s ease;
-}
 
-body.dark-mode .gallery {
-    background: linear-gradient(135deg, #4a2a3a 0%, #3a1a2a 100%);
-}
-
-/* Slider */
-.slider {
-    position: relative;
-    max-width: 100%;
-    margin: 0 auto;
-    overflow: hidden;
-}
-
-.slider-container {
-    display: flex;
-    transition: transform 0.5s ease;
-}
-
-.slider-slide {
-    flex: 0 0 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 10px;
-}
-
-.slider-slide img {
-    max-width: 600px;
-    width: auto;
-    height: auto;
-    display: block;
-    border-radius: 15px;
-    border: 3px solid #d65a7b;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
-}
-
-.slider-slide img:hover {
-    transform: scale(1.05);
-    border-color: #ff6f61;
-    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
-}
-
-.slider-prev,
-.slider-next {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    background: #d65a7b;
-    color: white;
-    border: none;
-    padding: 10px;
-    cursor: pointer;
-    font-size: 1.5rem;
-    border-radius: 50%;
-    transition: background 0.3s ease;
-    z-index: 10;
-}
-
-.slider-prev:hover,
-.slider-next:hover {
-    background: #ff6f61;
-}
-
-.slider-prev {
-    left: 10px;
-}
-
-.slider-next {
-    right: 10px;
-}
-
-.slider-dots {
-    display: flex;
-    justify-content: center;
-    margin-top: 10px;
-}
-
-.slider-dot {
-    width: 10px;
-    height: 10px;
-    background: #d65a7b;
-    border-radius: 50%;
-    margin: 0 5px;
-    cursor: pointer;
-    transition: background 0.3s ease;
-}
-
-.slider-dot.active {
-    background: #ff6f61;
-}
-
-/* Upload Section */
-.upload-section {
-    margin-top: 20px;
-}
-
-.upload-section input[type="file"] {
-    padding: 10px;
-    font-family: 'Roboto', sans-serif;
-    font-size: 1rem;
-    border: 2px solid #d65a7b;
-    border-radius: 5px;
-    background-color: #fff;
-    cursor: pointer;
-    transition: border-color 0.3s ease, background-color 0.5s ease;
-}
-
-.upload-section input[type="file"]:hover {
-    border-color: #ff6f61;
-}
-
-.upload-section p {
-    font-size: 0.9rem;
-    color: #666;
-    margin-top: 10px;
-    transition: color 0.5s ease;
-}
-
-body.dark-mode .upload-section p {
-    color: #ccc;
-}
-
-body.dark-mode .upload-section input[type="file"] {
-    background-color: #3a3a3a;
-    color: #f9f5f2;
-}
-
-/* Calendario */
-#calendar {
-    max-width: 900px;
-    margin: 0 auto;
-    padding: 20px;
-    border-radius: 20px;
-    box-shadow: 0 0 20px rgba(214, 90, 123, 0.2);
-    transition: box-shadow 0.5s ease;
-}
-
-body.dark-mode #calendar {
-    box-shadow: 0 0 20px rgba(255, 111, 97, 0.2);
-}
-
-#calendar iframe {
-    width: 100%;
-    height: 600px;
-    border: 0;
-    border-radius: 10px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    transition: box-shadow 0.5s ease;
-}
-
-body.dark-mode #calendar iframe {
-    box-shadow: 0 4px 10px rgba(255, 255, 255, 0.1);
-}
 
 /* Footer */
 footer {
@@ -1009,9 +848,7 @@ body.dark-mode .message-item {
         line-height: 1.6;
     }
 
-    #calendar iframe {
-        height: 300px;
-    }
+
 
     nav {
         padding: 15px 0;
@@ -1067,19 +904,7 @@ body.dark-mode .message-item {
         padding: 8px;
     }
 
-    .slider-prev,
-    .slider-next {
-        padding: 6px;
-        font-size: 1rem;
-    }
 
-    .slider-prev {
-        left: 5px;
-    }
-
-    .slider-next {
-        right: 5px;
-    }
 
     .dark-mode-toggle,
     .admin-link {
@@ -1110,9 +935,7 @@ body.dark-mode .message-item {
         font-size: 0.9rem;
     }
 
-    .upload-section p {
-        font-size: 0.8rem;
-    }
+
 
     .heart-particle {
         font-size: 15px;
@@ -1149,9 +972,7 @@ body.dark-mode .message-item {
         padding: 5px 10px;
     }
 
-    #calendar iframe {
-        height: 250px;
-    }
+
 }
 
 /* RESTORED MODAL STYLES */
