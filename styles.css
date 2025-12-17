@@ -1088,16 +1088,18 @@ body.dark-mode .message-item {
         border-bottom: none;
     }
 
-    /* Adjust menu toggle position */
+    /* Adjust menu toggle position and size */
     .menu-toggle {
         top: 25px;
-        /* Fixed position instead of % to be safe */
         transform: translateY(0);
         left: 15px;
+        font-size: 2.2rem;
+        /* Larger hamburger icon */
     }
 
     nav ul li a {
-        font-size: 1rem;
+        font-size: 1.5rem;
+        /* Larger menu items */
     }
 
     .slider-prev,
