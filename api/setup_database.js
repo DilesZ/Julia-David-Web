@@ -34,25 +34,36 @@ module.exports = async (req, res) => {
         `);
 
         // --- Usuarios ---
-        const users = [
-            { username: 'dilez', password: 'd' },
-            { username: 'julia', password: 'j' }
+        const usersToSetup = [
+            { oldUsername: 'dilez', newUsername: 'David', password: 'd' },
+            { oldUsername: 'julia', newUsername: 'Julia', password: 'j' }
         ];
 
-        for (const userData of users) {
-            const userCheck = await client.query('SELECT * FROM users WHERE username = $1', [userData.username]);
-            if (userCheck.rowCount === 0) {
-                const salt = bcrypt.genSaltSync(10);
-                const hash = bcrypt.hashSync(userData.password, salt);
-                await client.query('INSERT INTO users (username, password_hash) VALUES ($1, $2)', [userData.username, hash]);
-                console.log(`Usuario '${userData.username}' creado.`);
+        for (const user of usersToSetup) {
+            // Check if new username already exists
+            const newCheck = await client.query('SELECT * FROM users WHERE username = $1', [user.newUsername]);
+
+            if (newCheck.rowCount > 0) {
+                console.log(`Usuario '${user.newUsername}' ya existe.`);
             } else {
-                console.log(`Usuario '${userData.username}' ya existe.`);
+                // Check if old username exists to rename
+                const oldCheck = await client.query('SELECT * FROM users WHERE username = $1', [user.oldUsername]);
+
+                if (oldCheck.rowCount > 0) {
+                    await client.query('UPDATE users SET username = $1 WHERE username = $2', [user.newUsername, user.oldUsername]);
+                    console.log(`Usuario renombrado de '${user.oldUsername}' a '${user.newUsername}'.`);
+                } else {
+                    // Create new user if neither exists
+                    const salt = bcrypt.genSaltSync(10);
+                    const hash = bcrypt.hashSync(user.password, salt);
+                    await client.query('INSERT INTO users (username, password_hash) VALUES ($1, $2)', [user.newUsername, hash]);
+                    console.log(`Usuario '${user.newUsername}' creado.`);
+                }
             }
         }
-        
+
         await client.query('COMMIT');
-        
+
         res.status(200).json({ message: 'Base de datos configurada. Tablas y usuarios listos. ¡Tabla de mensajes incluida!' });
 
     } catch (error) {
