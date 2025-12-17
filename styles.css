@@ -894,6 +894,20 @@ body.dark-mode .message-item {
     .calendar-day.appointment::after {
         display: none;
     }
+
+    /* Slider Mobile Fixes */
+    .slider {
+        padding: 14% 8% 8% 8%;
+        /* Increased top padding to shift photos down */
+        aspect-ratio: 1024 / 680;
+        /* Slightly taller for mobile containment */
+        margin: 20px auto;
+    }
+
+    .slider-viewport {
+        box-shadow: inset 0 5px 15px rgba(0, 0, 0, 0.2);
+        /* Help hide protrusion edges if any */
+    }
 }
 
 /* Móviles pequeños (hasta 576px) */
