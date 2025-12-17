@@ -895,19 +895,20 @@ body.dark-mode .message-item {
         display: none;
     }
 
-    /* Slider Mobile Fixes - Aggressive Frame Expansion */
+    /* Slider Mobile Fixes - AGGRESSIVE FORCE */
     .slider {
-        padding: 24% 12% 10% 12%;
-        /* Even more padding to shift photos down and thicker boarders */
-        aspect-ratio: 1024 / 850;
-        /* More vertical aspect ratio */
-        width: 98%;
-        margin: 30px auto;
+        padding: 35% 15% 12% 15% !important;
+        /* Extreme padding to force photos down */
+        aspect-ratio: 1024 / 1000 !important;
+        /* Vertical aspect ratio */
+        width: 100% !important;
+        margin: 20px 0 !important;
+        background-size: 100% 100% !important;
     }
 
     .slider-viewport {
-        box-shadow: inset 0 5px 15px rgba(0, 0, 0, 0.2);
-        /* Help hide protrusion edges if any */
+        height: 100% !important;
+        box-shadow: inset 0 5px 25px rgba(0, 0, 0, 0.3) !important;
     }
 }
 
