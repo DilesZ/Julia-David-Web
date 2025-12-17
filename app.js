@@ -48,10 +48,72 @@ document.addEventListener('DOMContentLoaded', () => {
             }, appearOptions);
             faders.forEach(fader => appearOnScroll.observe(fader));
 
+            // --- Navigation & Mobile Menu Logic ---
             const menuToggle = document.getElementById('menu-toggle');
             const navUl = document.getElementById('nav-ul');
-            menuToggle.addEventListener('click', () => navUl.classList.toggle('active'));
+            const nav = document.querySelector('nav');
             
+            // Create and append overlay
+            const overlay = document.createElement('div');
+            overlay.className = 'menu-overlay';
+            document.body.appendChild(overlay);
+
+            function toggleMenu() {
+                navUl.classList.toggle('active');
+                menuToggle.classList.toggle('active');
+                overlay.classList.toggle('active');
+                
+                // Prevent scrolling when menu is open
+                document.body.style.overflow = navUl.classList.contains('active') ? 'hidden' : '';
+            }
+
+            menuToggle.addEventListener('click', toggleMenu);
+            overlay.addEventListener('click', toggleMenu);
+
+            // Close menu when clicking a link
+            navUl.querySelectorAll('a').forEach(link => {
+                link.addEventListener('click', () => {
+                    if (navUl.classList.contains('active')) toggleMenu();
+                });
+            });
+
+            // Sticky Header Effect
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 50) {
+                    nav.classList.add('scrolled');
+                } else {
+                    nav.classList.remove('scrolled');
+                }
+            });
+
+            // ScrollSpy
+            const sections = document.querySelectorAll('section, header');
+            const navLinks = document.querySelectorAll('nav ul li a');
+
+            function scrollSpy() {
+                let current = '';
+                sections.forEach(section => {
+                    const sectionTop = section.offsetTop;
+                    const sectionHeight = section.clientHeight;
+                    // Offset for fixed header
+                    if (scrollY >= (sectionTop - 200)) {
+                        current = section.getAttribute('id');
+                    }
+                });
+
+                navLinks.forEach(link => {
+                    link.classList.remove('active');
+                    if (link.getAttribute('href').includes(current)) {
+                        link.classList.add('active');
+                    }
+                });
+            }
+
+            window.addEventListener('scroll', scrollSpy);
+            // Call once on load
+            scrollSpy();
+            
+            // --- Modals ---
             const loginModal = document.getElementById('login-modal');
             const adminModal = document.getElementById('admin-modal');
             const loginNavBtn = document.getElementById('login-nav-btn');
@@ -354,10 +416,10 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!slider || !slider.children.length) return;
             const slides = slider.children;
             const prevBtn = document.querySelector('.slider-prev');
-            const nextBtn = document.querySelector('slider-next');
+            const nextBtn = document.querySelector('.slider-next'); // Fixed class selector typo
             function updateSlider() { slider.style.transform = `translateX(-${currentIndex * 100}%)`; }
-            prevBtn.addEventListener('click', () => { currentIndex = (currentIndex - 1 + slides.length) % slides.length; updateSlider(); });
-            nextBtn.addEventListener('click', () => { currentIndex = (currentIndex + 1) % slides.length; updateSlider(); });
+            if(prevBtn) prevBtn.addEventListener('click', () => { currentIndex = (currentIndex - 1 + slides.length) % slides.length; updateSlider(); });
+            if(nextBtn) nextBtn.addEventListener('click', () => { currentIndex = (currentIndex + 1) % slides.length; updateSlider(); });
         }
         const darkModeToggle = document.getElementById('dark-mode-toggle');
         darkModeToggle.addEventListener('click', () => { document.body.classList.toggle('dark-mode'); darkModeToggle.textContent = document.body.classList.contains('dark-mode') ? 'Modo Claro' : 'Modo Oscuro'; });
