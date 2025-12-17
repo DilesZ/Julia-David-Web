@@ -1101,10 +1101,22 @@ body.dark-mode .message-item {
     }
 
     nav ul li a {
-        font-size: 2rem;
-        /* Much larger menu items */
-        margin: 10px 0;
-        /* Add vertical spacing */
+        font-size: 2.2rem;
+        /* Keep large size */
+        margin: 5px 0;
+        /* Reduce spacing to fit content */
+    }
+
+    #user-status {
+        margin-top: 15px;
+        background: rgba(255, 255, 255, 0.2);
+        padding: 5px 15px;
+        border-radius: 30px;
+        display: flex;
+        align-items: center;
+        width: fit-content;
+        margin-left: auto;
+        margin-right: auto;
     }
 
     .slider-prev,
