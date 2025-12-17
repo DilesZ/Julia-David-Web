@@ -441,6 +441,8 @@ async function initGallery() {
 }
 
 function setupGalleryControls() {
+    setupLightbox(); // Initialize lightbox listeners
+
     const sliderBtn = document.getElementById('view-slider-btn');
     const gridBtn = document.getElementById('view-grid-btn');
     const sliderView = document.getElementById('slider-view');
@@ -473,6 +475,24 @@ function setupGalleryControls() {
     document.querySelector('.slider-next').onclick = () => moveSlider(1);
 }
 
+function setupLightbox() {
+    const modal = document.getElementById('lightbox-modal');
+    const closeBtn = document.getElementById('close-lightbox');
+    if (!modal) return;
+
+    closeBtn.onclick = () => modal.style.display = 'none';
+    window.addEventListener('click', (e) => { if (e.target === modal) modal.style.display = 'none'; });
+}
+
+function openLightbox(url) {
+    const modal = document.getElementById('lightbox-modal');
+    const img = document.getElementById('lightbox-img');
+    if (modal && img) {
+        img.src = url;
+        modal.style.display = 'flex';
+    }
+}
+
 async function loadGalleryImages() {
     try {
         const res = await fetch(`/api/images`);
@@ -498,6 +518,8 @@ function renderSlider() {
         slide.classList.add('slider-slide');
         slide.innerHTML = `<img src="${img.cloudinary_url}" alt="Recuerdo">
                            <button class="delete-btn" style="display:none;" onclick="handleImageDelete(${img.id})"><i class="fa-solid fa-trash"></i></button>`;
+
+        slide.querySelector('img').onclick = () => openLightbox(img.cloudinary_url);
         container.appendChild(slide);
 
         // Thumbnail
@@ -526,10 +548,10 @@ function renderGrid() {
         item.classList.add('grid-item');
         item.innerHTML = `<img src="${img.cloudinary_url}" alt="Recuerdo" loading="lazy">
                           <button class="delete-btn" style="display:none;" onclick="handleImageDelete(${img.id})"><i class="fa-solid fa-trash"></i></button>`;
+
         item.onclick = (e) => {
             if (e.target.closest('.delete-btn')) return;
-            currentImageIndex = idx;
-            document.getElementById('view-slider-btn').click();
+            openLightbox(img.cloudinary_url);
         };
         grid.appendChild(item);
     });

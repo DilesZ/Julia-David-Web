@@ -1138,8 +1138,9 @@ body.dark-mode .message-item {
         font-size: 0.9rem;
     }
 
+    /* Already handled by 768px block */
     nav ul li a {
-        /* Already handled by 768px block */
+        font-size: 1.5rem;
     }
 
     .dark-mode-toggle,
@@ -1718,5 +1719,58 @@ body.dark-mode #user-status {
 
     .upload-section p {
         font-size: 1.4rem;
+    }
+}
+
+/* --- Lightbox Styles --- */
+#lightbox-modal {
+    background: rgba(0, 0, 0, 0.9);
+    backdrop-filter: blur(8px);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 3000;
+}
+
+#lightbox-modal .close-btn {
+    position: absolute;
+    top: 20px;
+    right: 30px;
+    font-size: 40px;
+    color: white;
+    transition: transform 0.3s ease;
+}
+
+#lightbox-modal .close-btn:hover {
+    transform: scale(1.2) rotate(90deg);
+}
+
+.lightbox-content {
+    max-width: 90%;
+    max-height: 90%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    animation: zoomIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+#lightbox-img {
+    max-width: 100%;
+    max-height: 90vh;
+    border-radius: 10px;
+    box-shadow: 0 0 30px rgba(214, 90, 123, 0.3);
+    object-fit: contain;
+}
+
+@keyframes zoomIn {
+    from {
+        transform: scale(0.5);
+        opacity: 0;
+    }
+
+    to {
+        transform: scale(1);
+        opacity: 1;
     }
 }
