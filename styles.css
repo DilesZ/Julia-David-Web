@@ -1401,11 +1401,11 @@ body.dark-mode #user-status {
     width: 100%;
     height: 100%;
     overflow: hidden;
-    background: #000;
+    background: transparent;
     position: relative;
     /* Precise padding to align photos inside the frame's carved window */
     padding: 11% 8% 7% 8%;
-    box-shadow: inset 0 0 30px rgba(0, 0, 0, 1);
+    box-shadow: none;
     border: none;
     z-index: 1;
     /* Below the frame ::after */
@@ -1433,7 +1433,8 @@ body.dark-mode #user-status {
     width: 100%;
     height: 100%;
     object-fit: contain;
-    background: #111;
+    background: transparent;
+    /* Changed from #111 */
 }
 
 /* Thumbnails */
