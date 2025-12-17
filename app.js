@@ -227,9 +227,7 @@ async function deleteCalendarEvent(id, silent = false) {
 }
 
 function checkAdminAccessForCalendar() {
-    const username = localStorage.getItem('username');
-    const addBtn = document.getElementById('add-event-btn');
-    if (addBtn && (username === 'Julia' || username === 'David')) addBtn.style.display = 'block';
+    // Ya no necesitamos mostrar el botón de añadir porque se hace clic en los días
 }
 
 // --- Dynamic Navigation ---
