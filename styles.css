@@ -1555,7 +1555,7 @@ body.dark-mode #user-status {
     position: relative;
     max-width: 900px;
     margin: 40px auto 20px;
-    background: url('cathedral-frame.jpg') no-repeat center center;
+    background: url('cathedral-frame.png') no-repeat center center;
     background-size: 100% 100%;
     /* Precise padding to align with the stone-carved opening */
     padding: 11% 8% 7% 8%;
