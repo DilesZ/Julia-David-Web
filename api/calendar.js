@@ -35,7 +35,6 @@ async function handlePost(req, res) {
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
         const { userId, username } = decoded;
 
-        // Validar que solo Julia o David puedan crear eventos
         if (username !== 'Julia' && username !== 'David') {
             return res.status(403).json({ error: 'No tienes permisos para crear eventos' });
         }
@@ -46,12 +45,15 @@ async function handlePost(req, res) {
             return res.status(400).json({ error: 'Faltan campos obligatorios (título, fecha, tipo)' });
         }
 
+        // Convert empty string to null for Postgres TIME column
+        const timeVal = (event_time && event_time.trim() !== '') ? event_time : null;
+
         client = await pool.connect();
         const result = await client.query(`
             INSERT INTO calendar_events (title, event_date, event_time, type, user_id) 
             VALUES ($1, $2, $3, $4, $5) 
             RETURNING *`,
-            [title, event_date, event_time || null, type, userId]);
+            [title, event_date, timeVal, type, userId]);
 
         res.status(201).json({
             message: 'Evento creado con éxito',
@@ -63,7 +65,8 @@ async function handlePost(req, res) {
             return res.status(401).json({ error: 'Token inválido' });
         }
         console.error('Error al crear evento:', error);
-        res.status(500).json({ error: 'Error del servidor al crear el evento' });
+        // Devolvemos el mensaje de error real para ayudar al usuario a ver qué pasa (ej: tabla inexistente)
+        res.status(500).json({ error: `Error del servidor: ${error.message}` });
     } finally {
         if (client) client.release();
     }
