@@ -651,8 +651,8 @@ body.dark-mode .countdown {
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
     display: block;
     width: auto;
-    margin-left: auto;
-    /* Align right like a signature */
+    margin: 20px auto;
+    /* Center button */
     backdrop-filter: blur(5px);
     -webkit-backdrop-filter: blur(5px);
 }
@@ -1279,6 +1279,27 @@ body.dark-mode #user-status {
     border: 2px solid #d65a7b !important;
     border-radius: 10px 10px 0 0;
     background: #fff;
+    font-family: 'Roboto', sans-serif !important;
+    /* Force font for toolbar */
+}
+
+/* Fix for toolbar icons appearing bad/invisible */
+.ql-toolbar button {
+    height: 24px !important;
+    width: 24px !important;
+    padding: 3px !important;
+}
+
+.ql-toolbar .ql-stroke {
+    stroke: #333 !important;
+}
+
+.ql-toolbar .ql-fill {
+    fill: #333 !important;
+}
+
+.ql-toolbar .ql-picker {
+    color: #333 !important;
 }
 
 .ql-container.ql-snow {
