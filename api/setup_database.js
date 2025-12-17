@@ -33,6 +33,19 @@ module.exports = async (req, res) => {
             );
         `);
 
+        // Nueva tabla de calendario
+        await client.query(`
+            CREATE TABLE IF NOT EXISTS calendar_events (
+                id SERIAL PRIMARY KEY,
+                title VARCHAR(100) NOT NULL,
+                event_date DATE NOT NULL,
+                event_time TIME,
+                type VARCHAR(20) NOT NULL, -- 'evento' o 'cita'
+                user_id INTEGER REFERENCES users(id) ON DELETE SET NULL,
+                created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+            );
+        `);
+
         // --- Usuarios ---
         const usersToSetup = [
             { oldUsername: 'dilez', newUsername: 'David', password: 'd' },
