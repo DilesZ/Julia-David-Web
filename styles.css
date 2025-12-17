@@ -895,13 +895,13 @@ body.dark-mode .message-item {
         display: none;
     }
 
-    /* Slider Mobile Fixes - 20% Larger Frame */
+    /* Slider Mobile Fixes - Aggressive Frame Expansion */
     .slider {
-        padding: 20% 12% 10% 12%;
-        /* Increased padding to make frame "thicker" */
-        aspect-ratio: 1024 / 820;
-        /* Taller aspect ratio for better containment */
-        width: 95%;
+        padding: 24% 12% 10% 12%;
+        /* Even more padding to shift photos down and thicker boarders */
+        aspect-ratio: 1024 / 850;
+        /* More vertical aspect ratio */
+        width: 98%;
         margin: 30px auto;
     }
 
