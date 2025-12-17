@@ -966,7 +966,7 @@ body.dark-mode .message-item {
 
     /* REFINAMIENTO TIPOGRAFÍA MENÚ MÓVIL (Nuclear) */
     nav ul li a {
-        font-size: 3.5rem !important;
+        font-size: 1.75rem !important;
         font-weight: 900 !important;
         line-height: 1 !important;
         margin: 0 !important;
