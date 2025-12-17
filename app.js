@@ -431,56 +431,126 @@ async function saveData(section, text) {
     document.getElementById('admin-modal').style.display = 'none';
 }
 
-// --- Gallery Logic ---
+// --- Gallery Logic (Mejorada) ---
+let galleryImages = [];
+let currentImageIndex = 0;
+
 async function initGallery() {
-    await loadImages();
+    setupGalleryControls();
+    await loadGalleryImages();
+}
+
+function setupGalleryControls() {
+    const sliderBtn = document.getElementById('view-slider-btn');
+    const gridBtn = document.getElementById('view-grid-btn');
+    const sliderView = document.getElementById('slider-view');
+    const gridView = document.getElementById('grid-view');
+
+    if (!sliderBtn) return;
+
+    sliderBtn.onclick = () => {
+        sliderBtn.classList.add('active');
+        gridBtn.classList.remove('active');
+        sliderView.style.display = 'block';
+        gridView.style.display = 'none';
+        renderSlider();
+    };
+
+    gridBtn.onclick = () => {
+        gridBtn.classList.add('active');
+        sliderBtn.classList.remove('active');
+        sliderView.style.display = 'none';
+        gridView.style.display = 'block';
+        renderGrid();
+    };
+
     const uploadInput = document.getElementById('upload-image');
     if (uploadInput) {
         uploadInput.addEventListener('change', (e) => handleImageUpload(e.target));
     }
+
+    document.querySelector('.slider-prev').onclick = () => moveSlider(-1);
+    document.querySelector('.slider-next').onclick = () => moveSlider(1);
 }
 
-async function loadImages() {
+async function loadGalleryImages() {
     try {
         const res = await fetch(`/api/images`);
         if (!res.ok) return;
-        const images = await res.json();
-        const sliderContainer = document.getElementById('slider-container');
-        if (!sliderContainer) return;
-
-        sliderContainer.innerHTML = '';
-        images.forEach(img => {
-            const slide = document.createElement('div');
-            slide.classList.add('slider-slide');
-            const imgEl = document.createElement('img');
-            imgEl.src = img.cloudinary_url;
-            slide.appendChild(imgEl);
-
-            const delBtn = document.createElement('button');
-            delBtn.className = 'delete-btn';
-            delBtn.innerHTML = '<i class="fa-solid fa-trash"></i>';
-            delBtn.onclick = () => handleImageDelete(img.id);
-            slide.appendChild(delBtn);
-
-            sliderContainer.appendChild(slide);
-        });
-
-        initSliderControls();
-    } catch (e) { console.error(e); }
+        galleryImages = await res.json();
+        renderSlider();
+    } catch (e) {
+        console.error('Error loading gallery images:', e);
+    }
 }
 
-let currentIndex = 0;
-function initSliderControls() {
-    const slider = document.querySelector('.slider-container');
-    if (!slider || !slider.children.length) return;
-    const slides = slider.children;
-    const prevBtn = document.querySelector('.slider-prev');
-    const nextBtn = document.querySelector('.slider-next');
+function renderSlider() {
+    const container = document.getElementById('slider-container');
+    const thumbContainer = document.getElementById('thumbnails-container');
+    if (!container || !galleryImages.length) return;
 
-    function updateSlider() { slider.style.transform = `translateX(-${currentIndex * 100}%)`; }
+    container.innerHTML = '';
+    thumbContainer.innerHTML = '';
 
-    if (prevBtn) prevBtn.onclick = () => { currentIndex = (currentIndex - 1 + slides.length) % slides.length; updateSlider(); };
-    if (nextBtn) nextBtn.onclick = () => { currentIndex = (currentIndex + 1) % slides.length; updateSlider(); };
+    galleryImages.forEach((img, idx) => {
+        // Main slide
+        const slide = document.createElement('div');
+        slide.classList.add('slider-slide');
+        slide.innerHTML = `<img src="${img.cloudinary_url}" alt="Recuerdo">
+                           <button class="delete-btn" style="display:none;" onclick="handleImageDelete(${img.id})"><i class="fa-solid fa-trash"></i></button>`;
+        container.appendChild(slide);
+
+        // Thumbnail
+        const thumb = document.createElement('img');
+        thumb.src = img.cloudinary_url;
+        thumb.classList.add('thumb');
+        if (idx === currentImageIndex) thumb.classList.add('active');
+        thumb.onclick = () => {
+            currentImageIndex = idx;
+            updateSliderDisplay();
+        };
+        thumbContainer.appendChild(thumb);
+    });
+
+    updateSliderDisplay();
+    checkLoginStatus(); // To show delete buttons if logged in
+}
+
+function renderGrid() {
+    const grid = document.getElementById('photo-grid');
+    if (!grid) return;
+
+    grid.innerHTML = '';
+    galleryImages.forEach((img, idx) => {
+        const item = document.createElement('div');
+        item.classList.add('grid-item');
+        item.innerHTML = `<img src="${img.cloudinary_url}" alt="Recuerdo" loading="lazy">
+                          <button class="delete-btn" style="display:none;" onclick="handleImageDelete(${img.id})"><i class="fa-solid fa-trash"></i></button>`;
+        item.onclick = (e) => {
+            if (e.target.closest('.delete-btn')) return;
+            currentImageIndex = idx;
+            document.getElementById('view-slider-btn').click();
+        };
+        grid.appendChild(item);
+    });
+    checkLoginStatus();
+}
+
+function moveSlider(step) {
+    currentImageIndex = (currentImageIndex + step + galleryImages.length) % galleryImages.length;
+    updateSliderDisplay();
+}
+
+function updateSliderDisplay() {
+    const container = document.getElementById('slider-container');
+    if (!container) return;
+    container.style.transform = `translateX(-${currentImageIndex * 100}%)`;
+
+    // Highlight active thumbnail
+    document.querySelectorAll('.thumb').forEach((t, i) => {
+        t.classList.toggle('active', i === currentImageIndex);
+        if (i === currentImageIndex) t.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+    });
 }
 
 async function handleImageUpload(fileInput) {

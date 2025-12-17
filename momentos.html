@@ -17,16 +17,30 @@
 
     <main class="page-content fade-in">
         <section id="momentos-page" class="gallery">
-            <h2 class="page-title"><i class="fa-solid fa-camera-retro"></i> Nuestros Momentos</h2>
+            <h2 class="page-title"><i class="fa-solid fa-heart"></i> Nuestros Momentos</h2>
 
-            <div class="slider">
-                <div class="slider-container" id="slider-container"></div>
-                <button class="slider-prev"><i class="fa-solid fa-chevron-left"></i></button>
-                <button class="slider-next"><i class="fa-solid fa-chevron-right"></i></button>
+            <div class="gallery-controls">
+                <button id="view-slider-btn" class="view-btn active"><i class="fa-solid fa-film"></i> Slider</button>
+                <button id="view-grid-btn" class="view-btn"><i class="fa-solid fa-table-cells"></i> Galería</button>
+            </div>
+
+            <!-- Slider View -->
+            <div id="slider-view" class="gallery-view">
+                <div class="slider">
+                    <div class="slider-container" id="slider-container"></div>
+                    <button class="slider-prev"><i class="fa-solid fa-chevron-left"></i></button>
+                    <button class="slider-next"><i class="fa-solid fa-chevron-right"></i></button>
+                </div>
+                <div class="thumbnails-container" id="thumbnails-container"></div>
+            </div>
+
+            <!-- Grid View -->
+            <div id="grid-view" class="gallery-view" style="display:none;">
+                <div class="photo-grid" id="photo-grid"></div>
             </div>
 
             <div class="upload-section">
-                <p>Sube nuevas fotos aquí</p>
+                <p>Añade nuevos recuerdos</p>
                 <label for="upload-image" class="custom-file-upload">
                     <i class="fa-solid fa-cloud-arrow-up"></i> Seleccionar Foto
                 </label>
