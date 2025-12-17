@@ -1048,31 +1048,32 @@ body.dark-mode .message-item {
 /* Móviles pequeños (hasta 576px) */
 @media (max-width: 576px) {
     header h1 {
-        font-size: 2.2rem;
+        font-size: 3.5rem;
+        /* Significantly bigger */
     }
 
     header p {
-        font-size: 1rem;
+        font-size: 1.4rem;
     }
 
     section {
-        padding: 30px 10px;
+        padding: 40px 20px;
         min-height: 35vh;
     }
 
     section h2 {
-        font-size: 1.8rem;
+        font-size: 2.5rem;
     }
 
     section h2::before {
         left: -20px;
-        font-size: 1rem;
-        top: 3px;
+        font-size: 1.2rem;
+        top: 5px;
     }
 
     section p {
-        font-size: 1rem;
-        line-height: 1.5;
+        font-size: 1.3rem;
+        line-height: 1.6;
     }
 
     #calendar iframe {
@@ -1092,14 +1093,16 @@ body.dark-mode .message-item {
     .menu-toggle {
         top: 25px;
         transform: translateY(0);
-        left: 15px;
-        font-size: 2.2rem;
-        /* Larger hamburger icon */
+        left: 20px;
+        font-size: 2.5rem;
+        /* Even larger icon */
     }
 
     nav ul li a {
-        font-size: 1.5rem;
-        /* Larger menu items */
+        font-size: 2rem;
+        /* Much larger menu items */
+        margin: 10px 0;
+        /* Add vertical spacing */
     }
 
     .slider-prev,
