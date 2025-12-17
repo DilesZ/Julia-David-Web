@@ -1173,6 +1173,52 @@ body.dark-mode .message-item {
     animation: fadeIn 0.5s;
 }
 
+/* User Status Styling */
+#user-status {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-left: 20px;
+    padding: 5px 15px;
+    background: rgba(255, 255, 255, 0.4);
+    border-radius: 50px;
+    border: 1px solid rgba(214, 90, 123, 0.3);
+}
+
+body.dark-mode #user-status {
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 111, 97, 0.2);
+}
+
+#user-name {
+    font-family: 'Parisienne', cursive;
+    font-size: 1.5rem;
+    color: #d65a7b;
+    font-weight: bold;
+}
+
+#user-status button {
+    background: transparent;
+    border: none;
+    color: #888;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    padding: 5px;
+    border-radius: 50%;
+}
+
+#user-status button:hover {
+    color: #d65a7b;
+    background: rgba(214, 90, 123, 0.1);
+    transform: scale(1.1);
+}
+
+/* Specific styling for Logout to be red/distinct */
+#logout-btn:hover {
+    color: #ff6f61;
+}
+
 .modal-content {
     background-color: #fefefe;
     margin: 10% auto;
