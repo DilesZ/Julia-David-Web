@@ -1105,8 +1105,10 @@ body.dark-mode .message-item {
     nav ul li a {
         font-size: 2.8rem;
         /* Larger text */
-        margin: 5px 0;
-        /* Reduced spacing */
+        font-weight: bold;
+        /* Make text stand out */
+        margin: 2px 0;
+        /* Minimal spacing */
         width: 100%;
         justify-content: center;
     }
