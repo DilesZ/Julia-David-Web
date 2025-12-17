@@ -1103,8 +1103,8 @@ body.dark-mode .message-item {
     }
 
     nav ul li a {
-        font-size: 2.5rem;
-        /* Massive size */
+        font-size: 2.8rem;
+        /* Larger text */
         margin: 10px 0;
         width: 100%;
         justify-content: center;
@@ -1112,10 +1112,10 @@ body.dark-mode .message-item {
 
     nav ul li a i {
         margin-right: 20px;
-        width: 35px;
-        /* Larger icon container */
-        font-size: 2.2rem;
-        /* Ensure icon matches text */
+        width: 30px;
+        /* Smaller icon container */
+        font-size: 1.8rem;
+        /* Smaller icons for better proportion */
     }
 
     #user-status {
