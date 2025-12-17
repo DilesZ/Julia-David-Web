@@ -1,125 +1,56 @@
-
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-    <meta http-equiv="Pragma" content="no-cache">
-    <meta http-equiv="Expires" content="0">
     <title>Julia y David - Nuestra Historia de Amor</title>
-    <link href="https://fonts.googleapis.com/css2?family=Parisienne&family=Roboto:wght@300;400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Parisienne&family=Roboto:wght@300;400;500&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="styles.css">
-    <style>
-        .modal{display:none;position:fixed;z-index:2000;left:0;top:0;width:100%;height:100%;overflow:auto;background-color:rgba(0,0,0,.6);animation:fadeIn .5s}.modal-content{background-color:#fefefe;margin:10% auto;padding:30px;border:1px solid #888;width:80%;max-width:500px;border-radius:15px;box-shadow:0 5px 15px rgba(0,0,0,.3);position:relative}.close-btn{color:#aaa;position:absolute;top:10px;right:20px;font-size:28px;font-weight:700;cursor:pointer}.close-btn:focus,.close-btn:hover{color:#d65a7b;text-decoration:none}.modal h2{font-family:'Parisienne',cursive;color:#d65a7b;text-align:center}.modal button,.modal input,.modal textarea{width:100%;padding:12px;margin:8px 0;border-radius:5px;border:1px solid #ccc}.modal button{background-color:#d65a7b;color:#fff;border:none;cursor:pointer;transition:background-color .3s}.modal button:hover{background-color:#ff6f61}#user-status{display:none;align-items:center;gap:15px}#user-status span{font-family:'Roboto',sans-serif;color:#d65a7b;font-size:1.1rem}#logout-btn{background:#ff6f61;color:#fff;border:none;padding:8px 15px;border-radius:5px;cursor:pointer;font-size:.9rem}
-        .delete-btn{position:absolute;top:10px;right:10px;background:rgba(255,0,0,0.7);color:white;border:none;padding:5px 10px;cursor:pointer;border-radius:5px;font-size:0.8rem;display:none}
-        #mensajes{text-align:center}#messages-container{max-width:800px;margin:0 auto 20px;display:flex;flex-direction:column;gap:15px;text-align:left}.message-item{position:relative;background-color:#f9f9f9;border:1px solid #ddd;border-radius:10px;padding:15px;box-shadow:0 2px 4px rgba(0,0,0,.05);opacity:0;animation:slideIn .5s forwards;transition:opacity .5s ease,transform .5s ease,max-height .5s ease;max-height:200px}.message-item.deleting{opacity:0;transform:scale(.9);max-height:0;margin-top:0;margin-bottom:0;padding-top:0;padding-bottom:0;border:none}.message-header{font-weight:700;color:#d65a7b;margin-bottom:5px;font-size:1.1em}.message-header span{font-size:.8em;color:#888;font-weight:400;float:right}.message-body{color:#333}#message-form-container{max-width:800px;margin:auto}#message-form textarea{width:100%;padding:10px;border-radius:5px;border:1px solid #ccc;font-family:'Roboto',sans-serif;margin-bottom:10px}#message-form button{background-color:#ff6f61;color:#fff;padding:10px 20px;border:none;border-radius:5px;cursor:pointer;width:auto;float:right}.dark-mode .message-item{background-color:#383838;border-color:#555}.dark-mode .message-body{color:#f1f1f1}.dark-mode #message-form textarea{background-color:#444;color:#f1f1f1;border-color:#666}@keyframes slideIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
-    </style>
 </head>
+
 <body>
     <div class="heart-particles"></div>
+    <div id="nav-placeholder"></div>
 
-    <div id="login-modal" class="modal">
-        <div class="modal-content">
-            <span class="close-btn" id="close-login-modal">&times;</span>
-            <h2>Iniciar Sesión</h2>
-            <input type="text" id="username" placeholder="Usuario (Julia o David)">
-            <input type="password" id="password" placeholder="Contraseña">
-            <button id="login-modal-btn">Entrar</button>
+    <header id="inicio" class="hero-header">
+        <div class="hero-content">
+            <h1>Julia & David</h1>
+            <p>Juntos, escribiendo nuestra historia de amor</p>
+            <div class="hero-buttons">
+                <a href="historia.html" class="btn-hero">Nuestra Historia</a>
+                <a href="momentos.html" class="btn-hero-outline">Ver Fotos</a>
+            </div>
         </div>
-    </div>
+    </header>
 
     <div id="admin-modal" class="modal">
         <div class="modal-content">
             <span class="close-btn" id="close-admin-modal">&times;</span>
             <h2>Panel de Administración</h2>
             <h3>Editar Contenido</h3>
+            <label>Historia:</label>
             <textarea id="historia-text-admin" rows="5"></textarea>
             <button id="save-historia">Guardar Historia</button>
+            <label>Planes:</label>
             <textarea id="planes-text-admin" rows="5"></textarea>
             <button id="save-planes">Guardar Planes</button>
             <h3>Subir Imagen al Slider</h3>
             <input type="file" id="admin-upload-image" accept="image/*">
             <button id="upload-image-btn-admin">Subir Imagen</button>
-            <h3>Calendario</h3>
-            <a href="https://calendar.google.com/calendar/u/0?cid=juliaydavid20092025@gmail.com" target="_blank">Administrar en Google Calendar</a>
         </div>
     </div>
 
-    <nav>
-        <button class="menu-toggle" id="menu-toggle" aria-label="Abrir menú">☰</button>
-        <ul id="nav-ul">
-            <li><a href="#inicio">Inicio</a></li>
-            <li><a href="#historia">Nuestra Historia</a></li>
-            <li><a href="#momentos">Momentos</a></li>
-            <li><a href="#calendario">Nuestro Calendario</a></li>
-            <li><a href="#planes">Nuestros Planes</a></li>
-            <li><a href="#mensajes">Mensajes</a></li>
-            <li id="login-nav-item"><a href="#" id="login-nav-btn">Iniciar Sesión</a></li>
-            <li id="user-status">
-                <span id="user-name"></span>
-                <button id="admin-panel-btn">Admin</button>
-                <button id="logout-btn">Cerrar Sesión</button>
-            </li>
-        </ul>
-    </nav>
-    
-    <header id="inicio">
-        <div>
-            <h1>Julia & David</h1>
-            <p>Juntos, escribiendo nuestra historia de amor</p>
-        </div>
-    </header>
-
-    <section id="historia" class="fade-in">
-        <h2>Nuestra Historia</h2>
-        <p id="historia-text"></p>
-    </section>
-
-    <section id="momentos" class="gallery fade-in">
-        <h2>Nuestros Momentos</h2>
-        <div class="slider">
-            <div class="slider-container" id="slider-container"></div>
-            <button class="slider-prev">◄</button>
-            <button class="slider-next">►</button>
-        </div>
-        <div class="upload-section">
-            <p>Sube nuevas fotos aquí. Si no has iniciado sesión, se te pedirá que lo hagas.</p>
-            <input type="file" id="upload-image" accept="image/*">
-        </div>
-    </section>
-
-    <section id="calendario" class="fade-in">
-        <h2>Nuestro Calendario</h2>
-        <div id="calendar">
-            <iframe src="https://calendar.google.com/calendar/embed?src=juliaydavid20092025%40gmail.com&ctz=Europe%2FMadrid" style="border: 0" width="800" height="600" frameborder="0" scrolling="no"></iframe>
-        </div>
-        <div class="countdown">Llevamos <span id="anniversary-countdown"></span> juntos.</div>
-    </section>
-
-    <section id="planes" class="fade-in">
-        <h2>Nuestros Planes</h2>
-        <p id="planes-text"></p>
-    </section>
-    
-    <section id="mensajes" class="fade-in">
-        <h2>Mensajes para Nosotros</h2>
-        <div id="messages-container"></div>
-        <div id="message-form-container" style="display: none;">
-            <form id="message-form">
-                <textarea id="message-text" placeholder="Escribe tu mensaje aquí..." required rows="4"></textarea>
-                <button type="submit">Enviar Mensaje</button>
-            </form>
-        </div>
-    </section>
-
     <footer>
         <p>Con amor, Julia & David</p>
-        <p id="health-status" style="font-size: 0.8rem; margin-top: 10px; color: #888;">Comprobando estado del servidor...</p>
+        <p id="health-status" style="display:none;"></p>
     </footer>
 
-    <button class="dark-mode-toggle" id="dark-mode-toggle">Modo Oscuro</button>
+    <button class="dark-mode-toggle" id="dark-mode-toggle"><i class="fa-solid fa-moon"></i></button>
 
     <script src="app.js"></script>
 </body>
+
 </html>

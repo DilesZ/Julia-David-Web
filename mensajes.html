@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mensajes - Julia y David</title>
+    <link href="https://fonts.googleapis.com/css2?family=Parisienne&family=Roboto:wght@300;400;500&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <div class="heart-particles"></div>
+    <div id="nav-placeholder"></div>
+
+    <main class="page-content fade-in">
+        <section id="mensajes-page">
+            <h2 class="page-title"><i class="fa-solid fa-envelope-open-text"></i> Libro de Visitas</h2>
+
+            <div id="message-form-container" class="message-form-card" style="display: none;">
+                <h3>Déjanos un mensaje</h3>
+                <form id="message-form">
+                    <textarea id="message-text" placeholder="Escribe algo bonito aquí..." required rows="4"></textarea>
+                    <button type="submit" class="btn-primary"><i class="fa-solid fa-paper-plane"></i> Enviar</button>
+                </form>
+            </div>
+
+            <div id="messages-container" class="messages-grid"></div>
+        </section>
+    </main>
+
+    <footer>
+        <p>Con amor, Julia & David</p>
+    </footer>
+
+    <button class="dark-mode-toggle" id="dark-mode-toggle"><i class="fa-solid fa-moon"></i></button>
+    <script src="app.js"></script>
+</body>
+
+</html>

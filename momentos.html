@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Momentos - Julia y David</title>
+    <link href="https://fonts.googleapis.com/css2?family=Parisienne&family=Roboto:wght@300;400;500&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <div class="heart-particles"></div>
+    <div id="nav-placeholder"></div>
+
+    <main class="page-content fade-in">
+        <section id="momentos-page" class="gallery">
+            <h2 class="page-title"><i class="fa-solid fa-camera-retro"></i> Nuestros Momentos</h2>
+
+            <div class="slider">
+                <div class="slider-container" id="slider-container"></div>
+                <button class="slider-prev"><i class="fa-solid fa-chevron-left"></i></button>
+                <button class="slider-next"><i class="fa-solid fa-chevron-right"></i></button>
+            </div>
+
+            <div class="upload-section">
+                <p>Sube nuevas fotos aquí</p>
+                <label for="upload-image" class="custom-file-upload">
+                    <i class="fa-solid fa-cloud-arrow-up"></i> Seleccionar Foto
+                </label>
+                <input type="file" id="upload-image" accept="image/*" style="display:none;">
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>Con amor, Julia & David</p>
+    </footer>
+
+    <button class="dark-mode-toggle" id="dark-mode-toggle"><i class="fa-solid fa-moon"></i></button>
+    <script src="app.js"></script>
+</body>
+
+</html>
