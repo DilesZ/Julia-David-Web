@@ -847,9 +847,6 @@ body.dark-mode .message-item {
         margin: 0 15px;
     }
 
-    nav ul li a {
-        /* Consolidated to mobile section below */
-    }
 }
 
 /* Móviles grandes (hasta 768px) */
@@ -966,7 +963,7 @@ body.dark-mode .message-item {
 
     /* REFINAMIENTO TIPOGRAFÍA MENÚ MÓVIL (Nuclear) */
     nav ul li a {
-        font-size: 1.75rem !important;
+        font-size: 1.6rem !important;
         font-weight: 900 !important;
         line-height: 1 !important;
         margin: 0 !important;
