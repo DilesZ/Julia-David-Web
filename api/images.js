@@ -107,8 +107,9 @@ const handleDelete = authenticate(async (req, res) => {
 // --- Router Principal ---
 
 module.exports = (req, res) => {
-    if (!JWT_SECRET || !process.env.POSTGRES_URL || !process.env.CLOUDINARY_URL) {
-        console.error('Una o más variables de entorno críticas no están configuradas.');
+    // Relaxed check: POSTGRES_URL is essential, CLOUDINARY_URL might be split into individual vars
+    if (!JWT_SECRET || !process.env.POSTGRES_URL) {
+        console.error('JWT_SECRET o POSTGRES_URL no configurados.');
         return res.status(500).json({ error: 'Error de configuración del servidor.' });
     }
 

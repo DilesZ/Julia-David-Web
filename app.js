@@ -587,7 +587,7 @@ async function handleImageDelete(id) {
     if (!token) return alert('No tienes permisos');
 
     try {
-        const res = await fetch(`/api/images/${id}`, {
+        const res = await fetch(`/api/images?id=${id}`, {
             method: 'DELETE',
             headers: { 'Authorization': `Bearer ${token}` }
         });
