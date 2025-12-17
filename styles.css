@@ -1532,14 +1532,14 @@ body.dark-mode #user-status {
 /* Delete Button Overlays - Integrated with both views */
 .gallery-view .delete-btn {
     position: absolute;
-    top: 15px;
-    right: 15px;
+    top: 20px;
+    right: 25px;
     width: 40px;
     height: 40px;
     border-radius: 50%;
-    background: rgba(255, 255, 255, 0.9);
-    border: none;
-    color: #ff4d4d;
+    background: white;
+    border: 2px solid #d65a7b;
+    color: #d65a7b;
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -1547,11 +1547,11 @@ body.dark-mode #user-status {
     font-size: 1.1rem;
     transition: all 0.3s ease;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-    z-index: 10;
+    z-index: 100;
 }
 
 .gallery-view .delete-btn:hover {
-    background: #ff4d4d;
+    background: #d65a7b;
     color: white;
     transform: rotate(90deg) scale(1.1);
 }
