@@ -730,7 +730,7 @@ body.dark-mode .message-item {
         /* Center horizontally */
         justify-content: flex-start;
         /* Align top for drawer style */
-        padding: 100px 20px 40px 20px;
+        padding: 50px 20px;
         box-shadow: 5px 0 25px rgba(0, 0, 0, 0.15);
         transition: cubic-bezier(0.4, 0, 0.2, 1) 0.4s;
         z-index: 999;
