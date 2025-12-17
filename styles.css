@@ -815,6 +815,58 @@ body.dark-mode .message-item {
         font-size: 2rem !important;
         margin-right: 15px !important;
     }
+
+    /* Custom Calendar Mobile Refinements */
+    #current-month-year {
+        font-size: 1.5rem;
+    }
+
+    .calendar-header {
+        padding: 10px 5px;
+    }
+
+    #calendar-grid {
+        padding: 5px;
+        gap: 1px;
+    }
+
+    .weekday {
+        padding: 5px 2px;
+        font-size: 0.75rem;
+    }
+
+    .calendar-day {
+        min-height: 60px;
+        padding: 3px;
+        gap: 1px;
+    }
+
+    .day-number {
+        font-size: 0.75rem;
+        margin-bottom: 2px;
+    }
+
+    .calendar-event-tag {
+        font-size: 0.6rem;
+        padding: 1px 3px;
+        line-height: 1.1;
+    }
+
+    .calendar-day.event::before,
+    .calendar-day.event::after {
+        font-size: 0.8rem;
+        top: -3px;
+        bottom: -3px;
+    }
+
+    .calendar-day.appointment::before {
+        font-size: 0.8rem;
+    }
+
+    .calendar-day.appointment::after {
+        display: none;
+        /* Hide secondary heart on mobile to save space */
+    }
 }
 
 /* Móviles pequeños (hasta 576px) */
