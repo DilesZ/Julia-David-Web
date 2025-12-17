@@ -848,7 +848,7 @@ body.dark-mode .message-item {
     }
 
     nav ul li a {
-        font-size: 1.3rem;
+        /* Consolidated to mobile section below */
     }
 }
 
@@ -959,92 +959,25 @@ body.dark-mode .message-item {
     }
 
     /* Mobile Menu Refinements */
-    nav ul {
-        /* ... existing styles ... */
-        padding-top: 80px;
-    }
-
-    nav ul li a {
-        font-size: 1.3rem;
-        display: flex;
-        align-items: center;
-    }
-
-    nav ul li a i {
-        margin-right: 15px;
-        width: 25px;
-        text-align: center;
-    }
-
-    nav ul li a:hover,
-    nav ul li a.active {
-        background: rgba(214, 90, 123, 0.1);
-        color: #ff6f61;
-        transform: translateX(5px);
-    }
-
-    nav ul li a::after {
-        display: none;
-        /* No underline on mobile */
-    }
-
-    header h1 {
-        font-size: 2.8rem;
-    }
-
-    header p {
-        font-size: 1.2rem;
-    }
-
-    section {
-        padding: 40px 15px;
-        min-height: 40vh;
-    }
-
-    section h2 {
-        font-size: 2.2rem;
-    }
-
-    section h2::before {
-        left: -25px;
-        font-size: 1.2rem;
-    }
-
-    section p {
-        font-size: 1.1rem;
-        line-height: 1.6;
-    }
-
-    #calendar iframe {
-        height: 400px;
-    }
-
-    .slider-slide img {
-        max-width: 100%;
-        height: auto;
-    }
-
-    .slider-prev,
-    .slider-next {
-        padding: 8px;
-        font-size: 1.2rem;
-    }
-
-    .dark-mode-toggle,
-    .admin-link {
-        bottom: 10px;
-        right: 10px;
-        padding: 8px 15px;
-        font-size: 0.9rem;
-    }
-
-    .admin-link {
-        bottom: 60px;
-    }
-
     .romantic-quote {
         font-size: 1rem;
         margin-top: 30px;
+    }
+
+    /* REFINAMIENTO TIPOGRAFÍA MENÚ MÓVIL (Nuclear) */
+    nav ul li a {
+        font-size: 3.5rem !important;
+        font-weight: 900 !important;
+        line-height: 1 !important;
+        margin: 0 !important;
+        width: 100%;
+        justify-content: center;
+        text-align: center;
+    }
+
+    nav ul li a i {
+        font-size: 2rem !important;
+        margin-right: 15px !important;
     }
 }
 
@@ -1093,7 +1026,6 @@ body.dark-mode .message-item {
     }
 
     /* Adjust menu toggle position and size */
-    /* Adjust menu toggle position and size */
     .menu-toggle {
         top: 25px;
         transform: translateY(0);
@@ -1102,18 +1034,7 @@ body.dark-mode .message-item {
         /* Maximize icon */
     }
 
-    nav ul li a {
-        font-size: 3.5rem;
-        /* Much larger text */
-        font-weight: bold;
-        /* Make text stand out */
-        line-height: 0.9;
-        /* Tight line height to avoid extra space */
-        margin: 0;
-        /* Remove margin to keep it compact */
-        width: 100%;
-        justify-content: center;
-    }
+    /* Font size consolidated in 768px block with !important */
 
     nav ul li a i {
         margin-right: 20px;
@@ -1221,7 +1142,7 @@ body.dark-mode .message-item {
     }
 
     nav ul li a {
-        font-size: 0.9rem;
+        /* Already handled by 768px block */
     }
 
     .dark-mode-toggle,
