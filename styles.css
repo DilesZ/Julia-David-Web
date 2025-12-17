@@ -841,25 +841,25 @@ body.dark-mode .message-item {
     #calendar-grid {
         padding: 5px;
         gap: 1px;
-        min-width: 550px;
-        /* Balanced width for readability vs screen space */
+        min-width: 480px;
+        /* Even tighter width for maximum screen usage */
     }
 
     .weekday {
-        padding: 3px 2px;
-        font-size: 0.7rem;
+        padding: 2px;
+        font-size: 0.65rem;
     }
 
     .calendar-day {
-        min-height: 40px;
-        /* Even smaller (from 45px) */
+        min-height: 32px;
+        /* Micro-height for maximum density */
         padding: 1px;
         gap: 0;
     }
 
     .day-number {
-        font-size: 0.65rem;
-        margin-bottom: 1px;
+        font-size: 0.6rem;
+        margin-bottom: 0;
     }
 
     .calendar-event-tag {
