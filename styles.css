@@ -1375,26 +1375,20 @@ body.dark-mode #user-status {
     position: relative;
     max-width: 900px;
     margin: 40px auto 20px;
+    /* Frame as background so photos can sit on top */
+    background: url('cathedral-frame.png') no-repeat center center;
+    background-size: 100% 100%;
+    /* Precise padding to define the "hole" where photos sit */
+    padding: 11% 8% 7% 8%;
     aspect-ratio: 1024 / 640;
     overflow: visible;
     box-shadow: none;
     border-radius: 0;
 }
 
-/* The frame image sits on top of everything to act as a mask */
 .slider::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: url('cathedral-frame.png') no-repeat center center;
-    background-size: 100% 100%;
-    z-index: 20;
-    /* Higher than photos */
-    pointer-events: none;
-    /* Click through to buttons/photos */
+    display: none;
+    /* Removed the overlay that was covering photos */
 }
 
 .slider-viewport {
@@ -1403,12 +1397,10 @@ body.dark-mode #user-status {
     overflow: hidden;
     background: transparent;
     position: relative;
-    /* Precise padding to align photos inside the frame's carved window */
-    padding: 11% 8% 7% 8%;
     box-shadow: none;
     border: none;
-    z-index: 1;
-    /* Below the frame ::after */
+    z-index: 5;
+    /* Sit on top of slider background */
 }
 
 .slider-track {
