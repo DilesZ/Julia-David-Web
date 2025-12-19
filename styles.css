@@ -2087,3 +2087,9 @@ body.dark-mode #upload-description {
         opacity: 1;
     }
 }
+
+/* --- Ajuste temporal: ocultar los botones laterales del slider --- */
+.slider-prev,
+.slider-next {
+    display: none !important;
+}
