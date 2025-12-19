@@ -443,7 +443,7 @@ async function initGallery() {
 }
 
 function setupGalleryControls() {
-    setupLightbox(); // Initialize lightbox listeners
+    setupLightbox();
 
     const sliderBtn = document.getElementById('view-slider-btn');
     const gridBtn = document.getElementById('view-grid-btn');
@@ -479,6 +479,20 @@ function setupGalleryControls() {
 
     document.querySelector('.slider-prev').onclick = () => moveSlider(-1);
     document.querySelector('.slider-next').onclick = () => moveSlider(1);
+    const addLeft = document.querySelector('.add-memory-left');
+    const addRight = document.querySelector('.add-memory-right');
+    [addLeft, addRight].forEach((btn) => {
+        if (btn) btn.onclick = () => {
+            if (!galleryImages.length) return;
+            const img = galleryImages[currentImageIndex];
+            const base = getMemoryForId(img.id) || img.description || '';
+            const val = prompt('Añade un recuerdo para esta foto:', base);
+            if (val !== null) {
+                saveMemory(img.id, val);
+                updateSliderDisplay();
+            }
+        };
+    });
 }
 
 function setupLightbox() {
@@ -581,15 +595,14 @@ function updateSliderDisplay() {
     track.style.transform = `translateX(-${currentImageIndex * 100}%)`;
 
     // Memory Display
-    const currentMemory = galleryImages[currentImageIndex].description || '';
+    const img = galleryImages[currentImageIndex];
+    const override = getMemoryForId(img.id);
+    const currentMemory = override || img.description || '';
 
     if (currentMemory) {
-        // Toggle which overlay is used based on length or just use both elegantly
-        // For now, let's put it in both or choose one. 
-        // Let's use Top for short ones and Bottom for long ones? Or just Top as primary.
         memoryTop.innerText = currentMemory;
         memoryTop.classList.add('visible');
-        memoryBottom.innerText = currentMemory; // Parallel for now to see which looks better
+        memoryBottom.innerText = currentMemory;
         memoryBottom.classList.add('visible');
     } else {
         memoryTop.classList.remove('visible');
@@ -603,6 +616,20 @@ function updateSliderDisplay() {
     });
 }
 
+function getMemoriesMap() {
+    try { return JSON.parse(localStorage.getItem('memories') || '{}'); } catch (e) { return {}; }
+}
+
+function saveMemory(id, text) {
+    const m = getMemoriesMap();
+    m[id] = text;
+    localStorage.setItem('memories', JSON.stringify(m));
+}
+
+function getMemoryForId(id) {
+    const m = getMemoriesMap();
+    return m[id] || '';
+}
 async function handleImageUpload(fileInput, description = '') {
     const token = localStorage.getItem('token');
     if (!token) {
