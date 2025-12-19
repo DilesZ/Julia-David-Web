@@ -614,11 +614,11 @@ function updateSliderDisplay() {
         const side = (override && override.side) || 'top';
         if (side === 'right' || side === 'bottom') {
             memoryTop.classList.remove('visible');
-            memoryBottom.innerText = currentMemory;
+            renderOverlay(memoryBottom, currentMemory);
             memoryBottom.classList.add('visible');
         } else {
             memoryBottom.classList.remove('visible');
-            memoryTop.innerText = currentMemory;
+            renderOverlay(memoryTop, currentMemory);
             memoryTop.classList.add('visible');
         }
     } else {
@@ -631,6 +631,20 @@ function updateSliderDisplay() {
         t.classList.toggle('active', i === currentImageIndex);
         if (i === currentImageIndex) t.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
     });
+}
+
+function renderOverlay(container, text) {
+    container.innerHTML = '';
+    const wrap = document.createElement('div');
+    wrap.className = 'memory-content';
+    const heart = document.createElement('i');
+    heart.className = 'fa-solid fa-heart overlay-heart';
+    const span = document.createElement('span');
+    span.className = 'memory-text';
+    span.textContent = text;
+    wrap.appendChild(heart);
+    wrap.appendChild(span);
+    container.appendChild(wrap);
 }
 
 function getMemoriesMap() {
