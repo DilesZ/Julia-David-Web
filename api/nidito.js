@@ -3,6 +3,7 @@ const jwt = require('jsonwebtoken');
 const cloudinary = require('cloudinary').v2;
 const multer = require('multer');
 const { CloudinaryStorage } = require('multer-storage-cloudinary');
+const { Readable } = require('stream');
 
 const pool = new Pool({
     connectionString: process.env.POSTGRES_URL,
@@ -36,6 +37,7 @@ const storage = new CloudinaryStorage({
     }
 });
 const upload = multer({ storage });
+const uploadMemory = multer({ storage: multer.memoryStorage() });
 
 // Middleware para verificar JWT
 const authenticate = (handler) => async (req, res) => {
@@ -101,44 +103,76 @@ async function handlePost(req, res) {
 
     // Caso 1: Subir archivo (Multipart)
     if (boxId) {
-        return new Promise((resolve, reject) => {
-            upload.single('file')(req, res, async (err) => {
+        // Usamos memory storage y subimos vía upload_stream para controlar resource_type
+        return new Promise((resolve) => {
+            uploadMemory.single('file')(req, res, async (err) => {
                 if (err) {
-                    console.error("Error subiendo a Cloudinary:", err);
+                    console.error("Error recibiendo archivo:", err);
                     client.release();
-                    // Si Cloudinary o la red devuelve 403, propagamos 403 para ver el texto en el cliente
-                    if (err.http_code === 403) {
-                        res.status(403).send(err.message || 'Forbidden');
-                    } else {
-                        res.status(500).json({ error: 'Error al subir el archivo: ' + err.message });
-                    }
-                    return resolve();
+                    return res.status(400).json({ error: 'Error recibiendo archivo: ' + err.message }), resolve();
                 }
-
                 if (!req.file) {
                     client.release();
-                    res.status(400).json({ error: 'No se ha subido ningún archivo' });
-                    return resolve();
+                    return res.status(400).json({ error: 'No se ha subido ningún archivo' }), resolve();
                 }
 
+                const fileBuffer = req.file.buffer;
+                const fileName = req.file.originalname;
+                const mimeType = req.file.mimetype || '';
+                const isAudio = mimeType.startsWith('audio/') || /\.(mp3|wav|ogg|m4a|aac)$/i.test(fileName);
+                const isVideo = mimeType.startsWith('video/');
+                const isImage = mimeType.startsWith('image/');
+                const resourceType = isAudio || isVideo ? 'video' : (isImage ? 'image' : 'auto');
+
                 try {
-                    const { path: file_url, filename: cloudinary_id, mimetype } = req.file;
-                    const file_name = req.file.originalname;
+                    const uploadOpts = {
+                        folder: 'nidito',
+                        resource_type: resourceType,
+                        use_filename: true,
+                        unique_filename: true
+                    };
 
-                    const newFile = await client.query(`
-                        INSERT INTO nest_files (box_id, file_name, file_url, file_type, cloudinary_id, user_id)
-                        VALUES ($1, $2, $3, $4, $5, $6) RETURNING *
-                    `, [boxId, file_name, file_url, mimetype, cloudinary_id, req.user.userId]);
-                    
-                    res.status(201).json(newFile.rows[0]);
-                    resolve();
+                    const uploadStream = cloudinary.uploader.upload_stream(uploadOpts, async (cloudErr, result) => {
+                        if (cloudErr) {
+                            console.error("Error subiendo a Cloudinary (stream):", cloudErr);
+                            client.release();
+                            if (cloudErr.http_code === 403) {
+                                res.status(403).send(cloudErr.message || 'Forbidden');
+                            } else {
+                                res.status(500).json({ error: 'Error al subir a Cloudinary: ' + cloudErr.message });
+                            }
+                            return resolve();
+                        }
 
-                } catch (uploadError) {
-                    console.error("Error guardando en DB:", uploadError);
-                    res.status(500).json({ error: 'Error al guardar referencia del archivo' });
-                    resolve();
-                } finally {
+                        try {
+                            const file_url = result.secure_url || result.url;
+                            const cloudinary_id = result.public_id;
+
+                            const newFile = await client.query(`
+                                INSERT INTO nest_files (box_id, file_name, file_url, file_type, cloudinary_id, user_id)
+                                VALUES ($1, $2, $3, $4, $5, $6) RETURNING *
+                            `, [boxId, fileName, file_url, mimeType, cloudinary_id, req.user.userId]);
+
+                            res.status(201).json(newFile.rows[0]);
+                            resolve();
+                        } catch (dbErr) {
+                            console.error("Error guardando en DB:", dbErr);
+                            res.status(500).json({ error: 'Error al guardar referencia del archivo' });
+                            resolve();
+                        } finally {
+                            client.release();
+                        }
+                    });
+
+                    const readable = new Readable();
+                    readable.push(fileBuffer);
+                    readable.push(null);
+                    readable.pipe(uploadStream);
+                } catch (e) {
+                    console.error("Error general en subida:", e);
                     client.release();
+                    res.status(500).json({ error: 'Error interno en subida' });
+                    resolve();
                 }
             });
         });
