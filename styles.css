@@ -1761,6 +1761,10 @@ body.dark-mode .slider {
     z-index: 15;
     animation: aspaPulse 2s infinite ease-in-out;
 }
+/* Subir aspa 40px en overlay izquierdo (top) */
+.memory-overlay.top .memory-delete-btn {
+    bottom: 46px;
+}
 
 body.dark-mode .memory-delete-btn {
     background: #ff6f61;
@@ -1802,11 +1806,18 @@ body.dark-mode .memory-overlay {
 @media (max-width: 1000px) {
     .memory-overlay.top {
         left: 100px;
-        top: 25%;
+        top: 6%;
     }
     .memory-overlay.bottom {
         right: 100px;
-        top: 50%;
+        top: 86%;
+    }
+    .add-memory-btn .add-text {
+        display: none;
+    }
+    .add-memory-btn {
+        padding: 8px 10px;
+        gap: 6px;
     }
 }
 
