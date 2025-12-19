@@ -1745,10 +1745,10 @@ body.dark-mode .slider {
 
 .memory-delete-btn {
     position: absolute;
-    top: 8px;
-    right: 8px;
-    width: 24px;
-    height: 24px;
+    bottom: 6px;
+    right: 6px;
+    width: 12px;
+    height: 12px;
     border-radius: 50%;
     border: none;
     background: #d65a7b;
@@ -1759,10 +1759,21 @@ body.dark-mode .slider {
     cursor: pointer;
     box-shadow: 0 4px 10px rgba(214, 90, 123, 0.35);
     z-index: 15;
+    animation: aspaPulse 2s infinite ease-in-out;
 }
 
 body.dark-mode .memory-delete-btn {
     background: #ff6f61;
+}
+.memory-delete-btn i {
+    font-size: 10px;
+    line-height: 1;
+}
+
+@keyframes aspaPulse {
+    0% { transform: scale(1) rotate(0deg); opacity: 0.9; }
+    50% { transform: scale(1.1) rotate(10deg); opacity: 1; }
+    100% { transform: scale(1) rotate(0deg); opacity: 0.9; }
 }
 
 .memory-overlay.visible {

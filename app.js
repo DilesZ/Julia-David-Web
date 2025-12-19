@@ -648,7 +648,7 @@ function renderOverlay(container, text) {
     wrap.className = 'memory-content';
     const delBtn = document.createElement('button');
     delBtn.className = 'memory-delete-btn';
-    delBtn.innerHTML = '<i class="fa-solid fa-trash"></i>';
+    delBtn.innerHTML = '<i class="fa-solid fa-xmark"></i>';
     delBtn.onclick = () => deleteMemory();
     const heartsRow = document.createElement('div');
     heartsRow.className = 'memory-hearts-row';
