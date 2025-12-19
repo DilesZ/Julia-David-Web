@@ -640,7 +640,7 @@ function renderOverlay(container, text) {
     wrap.className = 'memory-content';
     const heartGif = document.createElement('img');
     heartGif.className = 'overlay-heart-gif';
-    heartGif.src = './Gemini_Generated_Image_vp3ffxvp3ffxvp3f.png';
+    heartGif.src = 'IMG/Gemini_Generated_Image_vp3ffxvp3ffxvp3f.png';
     heartGif.alt = 'heart';
     heartGif.onerror = () => {
         // Fallback a icono si el recurso no carga
