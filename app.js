@@ -637,12 +637,14 @@ function renderOverlay(container, text) {
     container.innerHTML = '';
     const wrap = document.createElement('div');
     wrap.className = 'memory-content';
-    const heart = document.createElement('i');
-    heart.className = 'fa-solid fa-heart overlay-heart';
+    const heartGif = document.createElement('img');
+    heartGif.className = 'overlay-heart-gif';
+    heartGif.src = 'https://media.giphy.com/media/MDJ9IbxxvDUQM/giphy.gif';
+    heartGif.alt = 'heart';
     const span = document.createElement('span');
     span.className = 'memory-text';
     span.textContent = text;
-    wrap.appendChild(heart);
+    wrap.appendChild(heartGif);
     wrap.appendChild(span);
     container.appendChild(wrap);
 }

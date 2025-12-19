@@ -1727,15 +1727,15 @@ body.dark-mode .slider {
     width: 100%;
     max-width: 600px;
     padding: 20px;
-    background: rgba(255, 255, 255, 0.25);
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.88), rgba(255, 232, 238, 0.88));
     backdrop-filter: blur(15px);
-    border-radius: 15px;
-    border: 1px solid rgba(214, 90, 123, 0.15);
-    font-family: 'Roboto', sans-serif;
-    font-size: 1.1rem;
-    color: #8a4a5a;
+    border-radius: 28px 28px 44px 44px;
+    border: 1px solid rgba(214, 90, 123, 0.25);
+    font-family: 'Parisienne', cursive;
+    font-size: 1.4rem;
+    color: #d65a7b;
     text-align: center;
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 12px 24px rgba(214, 90, 123, 0.12);
     opacity: 0;
     transform: translateY(10px);
     transition: all 0.5s ease;
@@ -1749,9 +1749,9 @@ body.dark-mode .slider {
 }
 
 body.dark-mode .memory-overlay {
-    background: rgba(44, 44, 44, 0.35);
-    color: #e8d7dc;
-    border-color: rgba(255, 111, 97, 0.08);
+    background: linear-gradient(135deg, rgba(44, 44, 44, 0.85), rgba(65, 45, 55, 0.85));
+    color: #ffdee6;
+    border-color: rgba(255, 111, 97, 0.18);
 }
 
 /* Posicionar overlays en laterales del slider */
@@ -1804,6 +1804,19 @@ body.dark-mode .overlay-heart {
     0% { transform: scale(1); opacity: 0.9; }
     50% { transform: scale(1.15); opacity: 1; }
     100% { transform: scale(1); opacity: 0.9; }
+}
+
+/* GIF corazón bonito */
+.overlay-heart-gif {
+    width: 28px;
+    height: 28px;
+    object-fit: contain;
+    border-radius: 6px;
+    filter: drop-shadow(0 2px 6px rgba(214, 90, 123, 0.35));
+}
+
+body.dark-mode .overlay-heart-gif {
+    filter: drop-shadow(0 2px 6px rgba(255, 111, 97, 0.35));
 }
 /* Slider Controls */
 .slider-prev,
