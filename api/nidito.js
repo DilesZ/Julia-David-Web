@@ -28,7 +28,9 @@ const storage = new CloudinaryStorage({
         return {
             folder: 'nidito',
             resource_type: resourceType,
-            format: isAudio ? 'mp3' : undefined,
+            type: 'upload',
+            use_filename: true,
+            unique_filename: true,
             allowed_formats: ['jpg','jpeg','png','gif','webp','mp4','mov','avi','mkv','mp3','wav','ogg','m4a','aac']
         };
     }
