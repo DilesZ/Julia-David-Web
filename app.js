@@ -839,8 +839,15 @@ async function uploadNestFile() {
             fileInput.value = '';
             openNestBoxModal({ id: currentBoxId, name: document.getElementById('nest-box-modal-title').innerText });
         } else {
-            const data = await res.json();
-            alert('Error al subir: ' + (data.error || 'Desconocido'));
+            let msg = 'Desconocido';
+            try {
+                const data = await res.json();
+                msg = data.error || JSON.stringify(data);
+            } catch (_) {
+                const text = await res.text();
+                msg = `${res.status} ${res.statusText}: ${text.slice(0,200)}`;
+            }
+            alert('Error al subir: ' + msg);
         }
     } catch (e) { alert(e.message); }
     
