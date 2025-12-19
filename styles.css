@@ -637,6 +637,66 @@ body.dark-mode .message-item {
     /* Keep text dark for contrast on pastel */
 }
 
+/* Nidito Styles */
+.nest-box {
+    background: rgba(255, 255, 255, 0.8);
+    border: 2px dashed #d65a7b;
+    border-radius: 15px;
+    padding: 20px;
+    margin-bottom: 20px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: left;
+    position: relative;
+}
+
+.nest-box:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(214, 90, 123, 0.2);
+    background: rgba(255, 255, 255, 0.95);
+}
+
+.nest-box h3 {
+    color: #d65a7b;
+    font-family: 'Parisienne', cursive;
+    font-size: 1.8rem;
+    margin-bottom: 10px;
+}
+
+.nest-box p {
+    font-size: 1rem;
+    color: #666;
+}
+
+.nest-files-list {
+    list-style: none;
+    padding: 0;
+}
+
+.nest-files-list li {
+    padding: 10px;
+    border-bottom: 1px solid rgba(0,0,0,0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.nest-files-list li a {
+    color: #d65a7b;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.nest-files-list li a:hover {
+    text-decoration: underline;
+}
+
+.upload-form-container {
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 2px dashed #eee;
+}
+
 /* Link de administración */
 .admin-link {
     position: fixed;

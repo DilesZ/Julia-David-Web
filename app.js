@@ -8,6 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (document.getElementById('planes-page')) loadTextContent();
     if (document.querySelector('.gallery')) initGallery();
     if (document.getElementById('mensajes-page')) initMessages();
+    if (document.getElementById('nidito-page')) initNidito();
     if (document.getElementById('anniversary-countdown')) updateCountdown();
     if (document.getElementById('calendario-page')) initCalendar();
 
@@ -241,7 +242,7 @@ function initNavigation() {
             <li><a href="historia.html"><i class="fa-solid fa-book-open"></i> Historia</a></li>
             <li><a href="momentos.html"><i class="fa-solid fa-images"></i> Momentos</a></li>
             <li><a href="calendario.html"><i class="fa-regular fa-calendar-check"></i> Calendario</a></li>
-            <li><a href="planes.html"><i class="fa-solid fa-plane"></i> Planes</a></li>
+            <li><a href="nidito.html"><i class="fa-solid fa-feather-alt"></i> Nidito</a></li>
             <li><a href="mensajes.html"><i class="fa-solid fa-envelope"></i> Mensajes</a></li>
             <li id="login-nav-item"><a href="login.html" id="login-nav-btn"><i class="fa-solid fa-user"></i> Iniciar Sesión</a></li>
             <li id="user-status" style="display:none;">
@@ -619,6 +620,194 @@ async function handleImageDelete(id) {
             alert('Error al eliminar');
         }
     } catch (e) { alert(e.message); }
+}
+
+// --- Nidito Logic ---
+let currentBoxId = null;
+
+async function initNidito() {
+    await loadNestBoxes();
+    setupNiditoControls();
+}
+
+function setupNiditoControls() {
+    const addBtn = document.getElementById('add-nest-box-btn');
+    const modal = document.getElementById('nest-box-modal');
+    const closeBtn = document.getElementById('close-nest-box-modal');
+    const uploadBtn = document.getElementById('upload-nest-file-btn');
+
+    if (addBtn) {
+        addBtn.addEventListener('click', async () => {
+            const name = prompt("Nombre de la nueva cajita:");
+            if (name) await createNestBox(name);
+        });
+    }
+
+    if (closeBtn && modal) {
+        closeBtn.onclick = () => modal.style.display = 'none';
+        window.onclick = (e) => { if (e.target == modal) modal.style.display = 'none'; };
+    }
+
+    if (uploadBtn) {
+        uploadBtn.onclick = () => uploadNestFile();
+    }
+}
+
+async function loadNestBoxes() {
+    const container = document.getElementById('nest-container');
+    if (!container) return;
+    container.innerHTML = '<p>Cargando cajitas...</p>';
+    
+    try {
+        const res = await fetch('/api/nidito');
+        const boxes = await res.json();
+        container.innerHTML = '';
+        
+        if (boxes.length === 0) {
+            container.innerHTML = '<p>No hay cajitas aún. ¡Crea una!</p>';
+            return;
+        }
+
+        boxes.forEach(box => {
+            const div = document.createElement('div');
+            div.className = 'nest-box';
+            div.innerHTML = `
+                <h3><i class="fa-solid fa-box-open"></i> ${box.name}</h3>
+                <p>${box.description || ''}</p>
+                <button class="delete-btn" style="display:none;" onclick="deleteNestBox(${box.id}, event)"><i class="fa-solid fa-trash"></i></button>
+            `;
+            div.onclick = (e) => {
+                 if (e.target.closest('.delete-btn')) return;
+                 openNestBoxModal(box);
+            };
+            container.appendChild(div);
+        });
+        checkLoginStatus();
+    } catch (e) {
+        console.error(e);
+        container.innerHTML = '<p>Error al cargar.</p>';
+    }
+}
+
+async function createNestBox(name) {
+    const token = localStorage.getItem('token');
+    if (!token) return alert('Debes iniciar sesión.');
+
+    try {
+        const res = await fetch('/api/nidito', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+            body: JSON.stringify({ name })
+        });
+        if (res.ok) {
+            loadNestBoxes();
+        } else {
+            alert('Error al crear cajita');
+        }
+    } catch (e) { console.error(e); }
+}
+
+window.deleteNestBox = async function(id, event) {
+    if (event) event.stopPropagation();
+    if (!confirm('¿Eliminar esta cajita y todo su contenido?')) return;
+    
+    const token = localStorage.getItem('token');
+    if (!token) return;
+
+    try {
+        const res = await fetch(`/api/nidito?boxId=${id}`, {
+            method: 'DELETE',
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (res.ok) loadNestBoxes();
+    } catch (e) { console.error(e); }
+}
+
+async function openNestBoxModal(box) {
+    currentBoxId = box.id;
+    const modal = document.getElementById('nest-box-modal');
+    const title = document.getElementById('nest-box-modal-title');
+    const content = document.getElementById('nest-box-content');
+    
+    if (!modal) return;
+    
+    title.innerText = box.name;
+    content.innerHTML = 'Cargando contenido...';
+    modal.style.display = 'block';
+    
+    try {
+        const res = await fetch(`/api/nidito?boxId=${box.id}`);
+        const files = await res.json();
+        
+        content.innerHTML = '';
+        if (files.length === 0) {
+            content.innerHTML = '<p>Esta cajita está vacía.</p>';
+        } else {
+            const list = document.createElement('ul');
+            list.className = 'nest-files-list';
+            files.forEach(f => {
+                const li = document.createElement('li');
+                li.innerHTML = `
+                    <a href="${f.file_url}" target="_blank">${f.file_name}</a>
+                    <button class="delete-btn" style="display:none;" onclick="deleteNestFile(${f.id})"><i class="fa-solid fa-trash"></i></button>
+                `;
+                list.appendChild(li);
+            });
+            content.appendChild(list);
+        }
+        checkLoginStatus();
+    } catch (e) {
+        content.innerHTML = '<p>Error al cargar contenido.</p>';
+    }
+}
+
+async function uploadNestFile() {
+    const fileInput = document.getElementById('nest-file-upload');
+    const file = fileInput.files[0];
+    if (!file || !currentBoxId) return;
+
+    const token = localStorage.getItem('token');
+    if (!token) return alert('Debes iniciar sesión');
+
+    const formData = new FormData();
+    formData.append('file', file);
+
+    const btn = document.getElementById('upload-nest-file-btn');
+    btn.disabled = true;
+    btn.innerText = 'Subiendo...';
+
+    try {
+        const res = await fetch(`/api/nidito?boxId=${currentBoxId}`, {
+            method: 'POST',
+            headers: { 'Authorization': `Bearer ${token}` },
+            body: formData
+        });
+        if (res.ok) {
+            alert('Archivo subido');
+            fileInput.value = '';
+            openNestBoxModal({ id: currentBoxId, name: document.getElementById('nest-box-modal-title').innerText });
+        } else {
+            alert('Error al subir');
+        }
+    } catch (e) { alert(e.message); }
+    
+    btn.disabled = false;
+    btn.innerText = 'Subir Archivo';
+}
+
+window.deleteNestFile = async function(id) {
+    if (!confirm('¿Eliminar archivo?')) return;
+    const token = localStorage.getItem('token');
+    
+    try {
+        const res = await fetch(`/api/nidito?fileId=${id}`, {
+            method: 'DELETE',
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (res.ok) {
+             openNestBoxModal({ id: currentBoxId, name: document.getElementById('nest-box-modal-title').innerText });
+        }
+    } catch (e) { console.error(e); }
 }
 
 // --- Messages Logic ---
