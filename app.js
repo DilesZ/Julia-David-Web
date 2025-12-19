@@ -622,9 +622,17 @@ function updateSliderDisplay() {
             renderOverlay(memoryTop, currentMemory);
             memoryTop.classList.add('visible');
         }
+        const addLeftBtn = document.querySelector('.add-memory-left');
+        const addRightBtn = document.querySelector('.add-memory-right');
+        if (addLeftBtn) addLeftBtn.style.display = (side === 'left' || side === 'top') ? 'none' : '';
+        if (addRightBtn) addRightBtn.style.display = (side === 'right' || side === 'bottom') ? 'none' : '';
     } else {
         memoryTop.classList.remove('visible');
         memoryBottom.classList.remove('visible');
+        const addLeftBtn = document.querySelector('.add-memory-left');
+        const addRightBtn = document.querySelector('.add-memory-right');
+        if (addLeftBtn) addLeftBtn.style.display = '';
+        if (addRightBtn) addRightBtn.style.display = '';
     }
 
     // Highlight active thumbnail
