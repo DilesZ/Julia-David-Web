@@ -839,13 +839,13 @@ async function uploadNestFile() {
             fileInput.value = '';
             openNestBoxModal({ id: currentBoxId, name: document.getElementById('nest-box-modal-title').innerText });
         } else {
+            const bodyText = await res.text();
             let msg = 'Desconocido';
             try {
-                const data = await res.json();
-                msg = data.error || JSON.stringify(data);
+                const data = JSON.parse(bodyText);
+                msg = data.error || bodyText;
             } catch (_) {
-                const text = await res.text();
-                msg = `${res.status} ${res.statusText}: ${text.slice(0,200)}`;
+                msg = `${res.status} ${res.statusText}: ${bodyText.slice(0,200)}`;
             }
             alert('Error al subir: ' + msg);
         }
