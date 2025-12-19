@@ -107,6 +107,26 @@ const handleDelete = authenticate(async (req, res) => {
     }
 });
 
+const handlePut = authenticate(async (req, res) => {
+    try {
+        const { id, description } = typeof req.body === 'object' ? req.body : {};
+        if (!id || typeof description !== 'string') {
+            return res.status(400).json({ error: 'Parámetros inválidos: id y description son requeridos' });
+        }
+        const isAdmin = req.user.username === 'Julia' || req.user.username === 'David';
+        const query = isAdmin ? 'UPDATE images SET description = $1 WHERE id = $2' : 'UPDATE images SET description = $1 WHERE id = $2 AND user_id = $3';
+        const params = isAdmin ? [description, id] : [description, id, req.user.userId];
+        const result = await pool.query(query, params);
+        if (result.rowCount === 0) {
+            return res.status(404).json({ error: 'Imagen no encontrada o no tienes permiso' });
+        }
+        return res.status(200).json({ message: 'Descripción actualizada' });
+    } catch (error) {
+        console.error('Error en PUT /api/images:', error);
+        return res.status(500).json({ error: 'Error interno al actualizar la imagen' });
+    }
+});
+
 // --- Router Principal ---
 
 module.exports = (req, res) => {
@@ -120,8 +140,9 @@ module.exports = (req, res) => {
         case 'GET': return handleGet(req, res);
         case 'POST': return handlePost(req, res);
         case 'DELETE': return handleDelete(req, res);
+        case 'PUT': return handlePut(req, res);
         default:
-            res.setHeader('Allow', ['GET', 'POST', 'DELETE']);
+            res.setHeader('Allow', ['GET', 'POST', 'DELETE', 'PUT']);
             res.status(405).end(`Method ${req.method} Not Allowed`);
     }
 };

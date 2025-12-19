@@ -607,11 +607,12 @@ function updateSliderDisplay() {
     // Memory Display
     const img = galleryImages[currentImageIndex];
     const override = getMemoryForId(img.id);
-    const currentMemory = (override && override.text) || img.description || '';
+    const serverDesc = parseServerMemory(img.description);
+    const currentMemory = (override && override.text) || (serverDesc && serverDesc.text) || img.description || '';
 
     if (currentMemory) {
         // Mostrar solo una vez según el lado elegido
-        const side = (override && override.side) || 'top';
+        const side = (override && override.side) || (serverDesc && serverDesc.side) || 'top';
         if (side === 'right' || side === 'bottom') {
             memoryTop.classList.remove('visible');
             renderOverlay(memoryBottom, currentMemory);
@@ -653,10 +654,30 @@ function getMemoriesMap() {
     try { return JSON.parse(localStorage.getItem('memories') || '{}'); } catch (e) { return {}; }
 }
 
+function parseServerMemory(desc) {
+    if (!desc) return null;
+    try {
+        const obj = JSON.parse(desc);
+        if (obj && typeof obj === 'object' && 'text' in obj) return { text: obj.text || '', side: obj.side || 'top' };
+    } catch (e) { /* plain text */ }
+    return null;
+}
 function saveMemory(id, text, side = 'top') {
     const m = getMemoriesMap();
     m[id] = { text, side };
     localStorage.setItem('memories', JSON.stringify(m));
+    const token = localStorage.getItem('token');
+    if (token) {
+        const payload = { id, description: JSON.stringify({ text, side }) };
+        fetch('/api/images', {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify(payload)
+        }).catch(() => {});
+    }
 }
 
 function getMemoryForId(id) {
