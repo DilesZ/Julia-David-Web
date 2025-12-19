@@ -485,8 +485,8 @@ function setupGalleryControls() {
             if (!galleryImages.length) return;
             const img = galleryImages[currentImageIndex];
             const existing = getMemoryForId(img.id);
-            const server = parseServerMemory(img.description);
-            const base = (existing && existing.text) || (server && server.text) || '';
+            const server = parseServerMemories(img.description);
+            const base = (existing && existing.left) || (server && server.left) || '';
             const val = prompt('Añade un recuerdo para esta foto:', base);
             if (val !== null) {
                 saveMemory(img.id, val, 'left');
@@ -497,8 +497,8 @@ function setupGalleryControls() {
         if (!galleryImages.length) return;
         const img = galleryImages[currentImageIndex];
         const existing = getMemoryForId(img.id);
-        const server = parseServerMemory(img.description);
-        const base = (existing && existing.text) || (server && server.text) || '';
+        const server = parseServerMemories(img.description);
+        const base = (existing && existing.right) || (server && server.right) || '';
         const val = prompt('Añade un recuerdo para esta foto:', base);
         if (val !== null) {
             saveMemory(img.id, val, 'right');
@@ -608,35 +608,31 @@ function updateSliderDisplay() {
 
     // Memory Display
     const img = galleryImages[currentImageIndex];
-    const override = getMemoryForId(img.id);
-    const serverDesc = parseServerMemory(img.description);
-    const source = override || serverDesc || (img.description ? { text: img.description, side: 'top' } : null);
-    const currentMemory = source ? source.text : '';
+    const override = getMemoryForId(img.id); // {left?, right?} or legacy
+    const serverMem = parseServerMemories(img.description); // {left?, right?}
+    const combined = {
+        left: (override && override.left) || (serverMem && serverMem.left) || null,
+        right: (override && override.right) || (serverMem && serverMem.right) || null
+    };
 
-    if (currentMemory) {
-        // Mostrar solo una vez según el lado elegido
-        const side = source && source.side ? source.side : 'top';
-        if (side === 'right' || side === 'bottom') {
-            memoryTop.classList.remove('visible');
-            renderOverlay(memoryBottom, currentMemory);
-            memoryBottom.classList.add('visible');
-        } else {
-            memoryBottom.classList.remove('visible');
-            renderOverlay(memoryTop, currentMemory);
-            memoryTop.classList.add('visible');
-        }
-        const addLeftBtn = document.querySelector('.add-memory-left');
-        const addRightBtn = document.querySelector('.add-memory-right');
-        if (addLeftBtn) addLeftBtn.style.display = (side === 'left' || side === 'top') ? 'none' : '';
-        if (addRightBtn) addRightBtn.style.display = (side === 'right' || side === 'bottom') ? 'none' : '';
+    // Render left/top
+    if (combined.left) {
+        renderOverlay(memoryTop, combined.left, 'left');
+        memoryTop.classList.add('visible');
     } else {
         memoryTop.classList.remove('visible');
-        memoryBottom.classList.remove('visible');
-        const addLeftBtn = document.querySelector('.add-memory-left');
-        const addRightBtn = document.querySelector('.add-memory-right');
-        if (addLeftBtn) addLeftBtn.style.display = '';
-        if (addRightBtn) addRightBtn.style.display = '';
     }
+    // Render right/bottom
+    if (combined.right) {
+        renderOverlay(memoryBottom, combined.right, 'right');
+        memoryBottom.classList.add('visible');
+    } else {
+        memoryBottom.classList.remove('visible');
+    }
+    const addLeftBtn = document.querySelector('.add-memory-left');
+    const addRightBtn = document.querySelector('.add-memory-right');
+    if (addLeftBtn) addLeftBtn.style.display = combined.left ? 'none' : '';
+    if (addRightBtn) addRightBtn.style.display = combined.right ? 'none' : '';
 
     // Highlight active thumbnail
     document.querySelectorAll('.thumb').forEach((t, i) => {
@@ -645,14 +641,14 @@ function updateSliderDisplay() {
     });
 }
 
-function renderOverlay(container, text) {
+function renderOverlay(container, text, side) {
     container.innerHTML = '';
     const wrap = document.createElement('div');
     wrap.className = 'memory-content';
     const delBtn = document.createElement('button');
     delBtn.className = 'memory-delete-btn';
     delBtn.innerHTML = '<i class="fa-solid fa-xmark"></i>';
-    delBtn.onclick = () => deleteMemory();
+    delBtn.onclick = () => deleteMemory(side);
     const heartsRow = document.createElement('div');
     heartsRow.className = 'memory-hearts-row';
     const left = document.createElement('i');
@@ -674,52 +670,86 @@ function getMemoriesMap() {
     try { return JSON.parse(localStorage.getItem('memories') || '{}'); } catch (e) { return {}; }
 }
 
-function parseServerMemory(desc) {
+function parseServerMemories(desc) {
     if (!desc) return null;
     try {
         const obj = JSON.parse(desc);
-        if (obj && typeof obj === 'object' && 'text' in obj) return { text: obj.text || '', side: obj.side || 'top' };
-    } catch (e) { /* plain text */ }
+        if (obj && obj.memories && typeof obj.memories === 'object') {
+            return { left: obj.memories.left || null, right: obj.memories.right || null };
+        }
+        if (obj && typeof obj === 'object' && 'text' in obj) {
+            const side = obj.side || 'left';
+            return side === 'right' || side === 'bottom'
+                ? { left: null, right: obj.text || '' }
+                : { left: obj.text || '', right: null };
+        }
+    } catch (e) {
+        // plain text legacy: treat as left
+        return { left: desc, right: null };
+    }
     return null;
 }
 
-function deleteMemory() {
+function deleteMemory(side) {
     if (!galleryImages.length) return;
     const idx = currentImageIndex;
     const img = galleryImages[idx];
     const mm = getMemoriesMap();
-    if (mm[img.id]) {
-        delete mm[img.id];
-        localStorage.setItem('memories', JSON.stringify(mm));
+    const cur = mm[img.id] || {};
+    if (side === 'right' || side === 'bottom') {
+        delete cur.right;
+    } else {
+        delete cur.left;
     }
+    if (cur.left || cur.right) mm[img.id] = cur; else delete mm[img.id];
+    localStorage.setItem('memories', JSON.stringify(mm));
     const token = localStorage.getItem('token');
     if (token) {
+        const existingServer = parseServerMemories(img.description) || {};
+        const newServer = {
+            memories: {
+                left: (side === 'left' || side === 'top') ? null : (existingServer.left || null),
+                right: (side === 'right' || side === 'bottom') ? null : (existingServer.right || null)
+            }
+        };
         fetch('/api/images', {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${token}`
             },
-            body: JSON.stringify({ id: img.id, description: '' })
+            body: JSON.stringify({ id: img.id, description: JSON.stringify(newServer) })
         }).then(() => {
-            galleryImages[idx].description = '';
+            galleryImages[idx].description = JSON.stringify(newServer);
             updateSliderDisplay();
         }).catch(() => {
-            galleryImages[idx].description = '';
             updateSliderDisplay();
         });
     } else {
-        galleryImages[idx].description = '';
         updateSliderDisplay();
     }
 }
-function saveMemory(id, text, side = 'top') {
+function saveMemory(id, text, side = 'left') {
     const m = getMemoriesMap();
-    m[id] = { text, side };
+    const cur = m[id] || {};
+    const key = (side === 'right' || side === 'bottom') ? 'right' : 'left';
+    cur[key] = text;
+    m[id] = cur;
     localStorage.setItem('memories', JSON.stringify(m));
     const token = localStorage.getItem('token');
     if (token) {
-        const payload = { id, description: JSON.stringify({ text, side }) };
+        // Merge with server existing to persist both sides
+        const img = galleryImages[currentImageIndex] || {};
+        const server = parseServerMemories(img.description) || {};
+        const payload = {
+            id,
+            description: JSON.stringify({
+                memories: {
+                    left: key === 'left' ? text : (server.left || null),
+                    right: key === 'right' ? text : (server.right || null)
+                }
+            })
+        };
         fetch('/api/images', {
             method: 'PUT',
             headers: {
@@ -734,7 +764,7 @@ function saveMemory(id, text, side = 'top') {
                 if (galleryImages[idx]) {
                     galleryImages[idx].description = payload.description;
                 }
-                // Limpiar override local (ya está en servidor)
+                // Limpiar override local: ya en servidor
                 const mm = getMemoriesMap();
                 delete mm[id];
                 localStorage.setItem('memories', JSON.stringify(mm));
@@ -749,7 +779,12 @@ function getMemoryForId(id) {
     const v = m[id];
     if (!v) return null;
     // Compatibilidad con formato antiguo (string)
-    if (typeof v === 'string') return { text: v, side: 'top' };
+    if (typeof v === 'string') return { left: v, right: null };
+    // Compatibilidad objeto antiguo {text, side}
+    if (v && typeof v === 'object' && 'text' in v) {
+        const side = v.side || 'left';
+        return side === 'right' || side === 'bottom' ? { left: null, right: v.text } : { left: v.text, right: null };
+    }
     return v;
 }
 async function handleImageUpload(fileInput, description = '') {
