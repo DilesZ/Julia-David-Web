@@ -1804,7 +1804,7 @@ body.dark-mode .memory-overlay {
 }
 
 @media (max-width: 1000px) {
-    .slider-container { display: flex; flex-direction: column; gap: 8px; }
+    .slider-container { display: flex; flex-direction: column; gap: 0; }
     .slider { order: 1; }
     .memory-overlay {
         position: static;
@@ -1815,9 +1815,9 @@ body.dark-mode .memory-overlay {
         box-sizing: border-box;
     }
     .memory-overlay:not(.visible) { display: none; }
-    .memory-content { flex-direction: row; align-items: center; justify-content: center; gap: 6px; width: 100%; }
+    .memory-content { flex-direction: row; align-items: center; justify-content: center; gap: 6px; width: 100%; flex-wrap: wrap; }
     .memory-hearts-row { width: auto; display: flex; gap: 6px; }
-    .memory-text { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
+    .memory-text { white-space: normal; overflow: visible; text-overflow: clip; max-width: 100%; word-break: break-word; }
     .add-memory-btn .add-text {
         display: none;
     }
