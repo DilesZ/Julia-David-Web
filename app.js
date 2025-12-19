@@ -484,6 +484,13 @@ function setupGalleryControls() {
     if (addLeft) addLeft.onclick = () => {
             if (!galleryImages.length) return;
             const img = galleryImages[currentImageIndex];
+            const token = localStorage.getItem('token');
+            if (!token) {
+                if (confirm('Para sincronizar este recuerdo en todos tus dispositivos, inicia sesión. ¿Ir al login?')) {
+                    window.location.href = 'login.html';
+                }
+                return;
+            }
             const existing = getMemoryForId(img.id);
             const server = parseServerMemories(img.description);
             const base = (existing && existing.left) || (server && server.left) || '';
@@ -496,6 +503,13 @@ function setupGalleryControls() {
     if (addRight) addRight.onclick = () => {
         if (!galleryImages.length) return;
         const img = galleryImages[currentImageIndex];
+        const token = localStorage.getItem('token');
+        if (!token) {
+            if (confirm('Para sincronizar este recuerdo en todos tus dispositivos, inicia sesión. ¿Ir al login?')) {
+                window.location.href = 'login.html';
+            }
+            return;
+        }
         const existing = getMemoryForId(img.id);
         const server = parseServerMemories(img.description);
         const base = (existing && existing.right) || (server && server.right) || '';
