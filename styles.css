@@ -1758,12 +1758,12 @@ body.dark-mode .memory-overlay {
 .memory-overlay.top {
     left: -70px;
     top: 20%;
-    max-width: 360px;
+    max-width: 180px;
 }
 .memory-overlay.bottom {
     right: -70px;
     top: 55%;
-    max-width: 360px;
+    max-width: 180px;
 }
 
 @media (max-width: 1000px) {
