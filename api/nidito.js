@@ -21,7 +21,11 @@ const storage = new CloudinaryStorage({
     params: async (req, file) => {
         let resourceType = 'auto';
         // Cloudinary trata los archivos de audio como 'video'
-        if (file.mimetype.startsWith('audio/')) {
+        // Verificamos por mimetype o por extensión de archivo
+        const isAudio = file.mimetype.startsWith('audio/') || 
+                        file.originalname.match(/\.(mp3|wav|ogg|m4a|aac)$/i);
+        
+        if (isAudio) {
             resourceType = 'video';
         }
         return {
