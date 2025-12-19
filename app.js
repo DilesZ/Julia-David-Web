@@ -1,4 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
+    initAuthGuard(); // First priority: protect content
     initNavigation();
     initCommonFeatures();
     initFadeInAnimations(); // New helper for animations
@@ -993,6 +994,20 @@ window.deleteMessage = async function (id) {
 }
 
 // --- Auth Utilities ---
+function initAuthGuard() {
+    const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+    const isLoginPage = currentPage === 'login.html';
+
+    const token = localStorage.getItem('token');
+    const username = localStorage.getItem('username');
+    const isAuthorized = token && (username === 'Julia' || username === 'David');
+
+    if (!isLoginPage && !isAuthorized) {
+        console.warn('Acceso no autorizado. Redirigiendo a login...');
+        window.location.href = 'login.html';
+    }
+}
+
 function checkLoginStatus() {
     const token = localStorage.getItem('token');
     const username = localStorage.getItem('username');
