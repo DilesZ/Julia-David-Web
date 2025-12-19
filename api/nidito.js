@@ -134,14 +134,48 @@ async function handlePost(req, res) {
 
                     const uploadStream = cloudinary.uploader.upload_stream(uploadOpts, async (cloudErr, result) => {
                         if (cloudErr) {
-                            console.error("Error subiendo a Cloudinary (stream):", cloudErr);
-                            client.release();
-                            if (cloudErr.http_code === 403) {
-                                res.status(403).send(cloudErr.message || 'Forbidden');
+                            if (cloudErr.http_code === 403 && resourceType === 'video') {
+                                const rawOpts = { ...uploadOpts, resource_type: 'raw' };
+                                const rawStream = cloudinary.uploader.upload_stream(rawOpts, async (rawErr, rawRes) => {
+                                    if (rawErr) {
+                                        client.release();
+                                        if (rawErr.http_code === 403) {
+                                            res.status(403).send(rawErr.message || 'Forbidden');
+                                        } else {
+                                            res.status(500).json({ error: 'Error al subir a Cloudinary: ' + (rawErr.message || 'Error') });
+                                        }
+                                        return resolve();
+                                    }
+                                    try {
+                                        const file_url = rawRes.secure_url || rawRes.url;
+                                        const cloudinary_id = rawRes.public_id;
+                                        const newFile = await client.query(`
+                                            INSERT INTO nest_files (box_id, file_name, file_url, file_type, cloudinary_id, user_id)
+                                            VALUES ($1, $2, $3, $4, $5, $6) RETURNING *
+                                        `, [boxId, fileName, file_url, mimeType, cloudinary_id, req.user.userId]);
+                                        res.status(201).json(newFile.rows[0]);
+                                        resolve();
+                                    } catch (dbErr) {
+                                        res.status(500).json({ error: 'Error al guardar referencia del archivo' });
+                                        resolve();
+                                    } finally {
+                                        client.release();
+                                    }
+                                });
+                                const readable2 = new Readable();
+                                readable2.push(fileBuffer);
+                                readable2.push(null);
+                                readable2.pipe(rawStream);
+                                return;
                             } else {
-                                res.status(500).json({ error: 'Error al subir a Cloudinary: ' + cloudErr.message });
+                                client.release();
+                                if (cloudErr.http_code === 403) {
+                                    res.status(403).send(cloudErr.message || 'Forbidden');
+                                } else {
+                                    res.status(500).json({ error: 'Error al subir a Cloudinary: ' + (cloudErr.message || 'Error') });
+                                }
+                                return resolve();
                             }
-                            return resolve();
                         }
 
                         try {
