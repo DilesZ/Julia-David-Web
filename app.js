@@ -638,20 +638,18 @@ function renderOverlay(container, text) {
     container.innerHTML = '';
     const wrap = document.createElement('div');
     wrap.className = 'memory-content';
-    const heartGif = document.createElement('img');
-    heartGif.className = 'overlay-heart-gif';
-    heartGif.src = 'IMG/Gemini_Generated_Image_vp3ffxvp3ffxvp3f.png';
-    heartGif.alt = 'heart';
-    heartGif.onerror = () => {
-        // Fallback a icono si el recurso no carga
-        const fallback = document.createElement('i');
-        fallback.className = 'fa-solid fa-heart overlay-heart';
-        wrap.appendChild(fallback);
-    };
+    const heartsRow = document.createElement('div');
+    heartsRow.className = 'memory-hearts-row';
+    const left = document.createElement('i');
+    left.className = 'fa-solid fa-heart overlay-heart';
+    const right = document.createElement('i');
+    right.className = 'fa-solid fa-heart overlay-heart';
+    heartsRow.appendChild(left);
+    heartsRow.appendChild(right);
     const span = document.createElement('span');
     span.className = 'memory-text';
     span.textContent = text;
-    wrap.appendChild(heartGif);
+    wrap.appendChild(heartsRow);
     wrap.appendChild(span);
     container.appendChild(wrap);
 }

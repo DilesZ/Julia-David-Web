@@ -1779,13 +1779,14 @@ body.dark-mode .memory-overlay {
 
 .memory-content {
     display: flex;
+    flex-direction: column;
     align-items: center;
-    gap: 10px;
+    gap: 8px;
     justify-content: center;
 }
 
 .overlay-heart {
-    font-size: 1.6rem;
+    font-size: 1.4rem;
     color: #d65a7b;
     animation: pulseHeart 1.4s infinite ease-in-out;
     filter: drop-shadow(0 2px 6px rgba(214, 90, 123, 0.35));
@@ -1794,6 +1795,13 @@ body.dark-mode .memory-overlay {
 body.dark-mode .overlay-heart {
     color: #ff6f61;
     filter: drop-shadow(0 2px 6px rgba(255, 111, 97, 0.35));
+}
+
+.memory-hearts-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
 }
 
 .memory-text {
@@ -1806,18 +1814,6 @@ body.dark-mode .overlay-heart {
     100% { transform: scale(1); opacity: 0.9; }
 }
 
-/* GIF corazón bonito */
-.overlay-heart-gif {
-    width: 28px;
-    height: 28px;
-    object-fit: contain;
-    border-radius: 6px;
-    filter: drop-shadow(0 2px 6px rgba(214, 90, 123, 0.35));
-}
-
-body.dark-mode .overlay-heart-gif {
-    filter: drop-shadow(0 2px 6px rgba(255, 111, 97, 0.35));
-}
 /* Slider Controls */
 .slider-prev,
 .slider-next {
