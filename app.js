@@ -702,9 +702,10 @@ async function createNestBox(name) {
         if (res.ok) {
             loadNestBoxes();
         } else {
-            alert('Error al crear cajita');
+            const data = await res.json();
+            alert('Error al crear cajita: ' + (data.error || 'Desconocido'));
         }
-    } catch (e) { console.error(e); }
+    } catch (e) { console.error(e); alert('Error de conexión: ' + e.message); }
 }
 
 window.deleteNestBox = async function(id, event) {

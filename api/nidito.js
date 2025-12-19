@@ -1,7 +1,8 @@
 const { Pool } = require('pg');
 const jwt = require('jsonwebtoken');
 const cloudinary = require('cloudinary').v2;
-const formidable = require('formidable-serverless');
+const multer = require('multer');
+const { CloudinaryStorage } = require('multer-storage-cloudinary');
 
 const pool = new Pool({
     connectionString: process.env.POSTGRES_URL,
@@ -13,6 +14,16 @@ cloudinary.config({
     api_key: process.env.CLOUDINARY_API_KEY,
     api_secret: process.env.CLOUDINARY_API_SECRET
 });
+
+// Configuración de Multer para Nidito
+const storage = new CloudinaryStorage({
+    cloudinary,
+    params: {
+        folder: 'nidito',
+        resource_type: 'auto' // Permitir imágenes, videos, pdfs, etc.
+    }
+});
+const upload = multer({ storage });
 
 // Middleware para verificar JWT
 const authenticate = (handler) => async (req, res) => {
@@ -66,45 +77,56 @@ async function handlePost(req, res) {
     const { boxId } = req.query;
     const client = await pool.connect();
 
-    try {
-        if (boxId) {
-            // Subir archivo a una cajita existente
-            const form = new formidable.IncomingForm();
-            form.parse(req, async (err, fields, files) => {
-                if (err) return res.status(500).json({ error: 'Error al procesar el formulario' });
+    // Caso 1: Subir archivo (Multipart)
+    if (boxId) {
+        return new Promise((resolve, reject) => {
+            upload.single('file')(req, res, async (err) => {
+                if (err) {
+                    console.error("Error subiendo a Cloudinary:", err);
+                    client.release();
+                    res.status(500).json({ error: 'Error al subir el archivo: ' + err.message });
+                    return resolve();
+                }
 
-                const file = files.file; // El nombre del campo debe ser 'file'
-                if (!file) return res.status(400).json({ error: 'No se ha subido ningún archivo' });
+                if (!req.file) {
+                    client.release();
+                    res.status(400).json({ error: 'No se ha subido ningún archivo' });
+                    return resolve();
+                }
 
                 try {
-                    const result = await cloudinary.uploader.upload(file.path, {
-                        folder: `nidito/${boxId}`,
-                        resource_type: 'auto' // Detecta si es imagen, video, etc.
-                    });
+                    const { path: file_url, filename: cloudinary_id, mimetype } = req.file;
+                    const file_name = req.file.originalname;
 
                     const newFile = await client.query(`
                         INSERT INTO nest_files (box_id, file_name, file_url, file_type, cloudinary_id, user_id)
                         VALUES ($1, $2, $3, $4, $5, $6) RETURNING *
-                    `, [boxId, file.name, result.secure_url, result.resource_type, result.public_id, req.user.userId]);
+                    `, [boxId, file_name, file_url, mimetype, cloudinary_id, req.user.userId]);
                     
                     res.status(201).json(newFile.rows[0]);
+                    resolve();
 
                 } catch (uploadError) {
-                    console.error("Error subiendo a Cloudinary:", uploadError);
-                    res.status(500).json({ error: 'Error al subir el archivo' });
+                    console.error("Error guardando en DB:", uploadError);
+                    res.status(500).json({ error: 'Error al guardar referencia del archivo' });
+                    resolve();
+                } finally {
+                    client.release();
                 }
             });
-        } else {
-            // Crear una nueva cajita
-            const { name, description } = req.body;
-            if (!name) return res.status(400).json({ error: 'El nombre de la cajita es obligatorio' });
+        });
+    } 
+    
+    // Caso 2: Crear Cajita (JSON)
+    try {
+        const { name, description } = req.body || {};
+        if (!name) return res.status(400).json({ error: 'El nombre de la cajita es obligatorio' });
 
-            const newBox = await client.query(`
-                INSERT INTO nest_boxes (name, description, user_id) VALUES ($1, $2, $3) RETURNING *
-            `, [name, description || null, req.user.userId]);
+        const newBox = await client.query(`
+            INSERT INTO nest_boxes (name, description, user_id) VALUES ($1, $2, $3) RETURNING *
+        `, [name, description || null, req.user.userId]);
 
-            res.status(201).json(newBox.rows[0]);
-        }
+        res.status(201).json(newBox.rows[0]);
     } catch (error) {
         console.error('Error en POST /api/nidito:', error);
         res.status(500).json({ error: `Error del servidor: ${error.message}` });
