@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nuestro Nidito - Julia y David</title>
+    <link href="https://fonts.googleapis.com/css2?family=Parisienne&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="heart-particles"></div>
+    <div id="nav-placeholder"></div>
+
+    <main class="page-content fade-in">
+        <section id="nidito-page">
+            <h2 class="page-title"><i class="fa-solid fa-feather-alt"></i> Nuestro Nidito de Amor</h2>
+            <div id="nest-container" class="content-card">
+                <!-- Las cajitas (nidos) se cargarán aquí -->
+            </div>
+            <div class="main-controls">
+                 <button id="add-nest-box-btn" class="btn-main"><i class="fa-solid fa-plus"></i> Crear Nueva Cajita</button>
+            </div>
+        </section>
+    </main>
+
+    <!-- Modal para ver/subir archivos en una cajita -->
+    <div id="nest-box-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" id="close-nest-box-modal">&times;</span>
+            <h3 id="nest-box-modal-title"></h3>
+            <div id="nest-box-content">
+                <!-- El contenido de la cajita (archivos) se mostrará aquí -->
+            </div>
+            <div class="upload-form-container">
+                <h4>Subir nuevo recuerdo:</h4>
+                <input type="file" id="nest-file-upload">
+                <button id="upload-nest-file-btn" class="btn-main">Subir Archivo</button>
+            </div>
+        </div>
+    </div>
+    
+    <footer>
+        <p>Con amor, Julia & David</p>
+    </footer>
+
+    <button class="dark-mode-toggle" id="dark-mode-toggle"><i class="fa-solid fa-moon"></i></button>
+    <script src="app.js"></script>
+</body>
+</html>
