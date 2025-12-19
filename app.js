@@ -657,6 +657,7 @@ async function loadNestBoxes() {
     const container = document.getElementById('nest-container');
     if (!container) return;
     container.innerHTML = '<p>Cargando cajitas...</p>';
+    container.className = 'nest-grid'; // Ensure grid layout
     
     try {
         const res = await fetch('/api/nidito');
@@ -664,17 +665,47 @@ async function loadNestBoxes() {
         container.innerHTML = '';
         
         if (boxes.length === 0) {
-            container.innerHTML = '<p>No hay cajitas aún. ¡Crea una!</p>';
+            container.innerHTML = '<p style="grid-column: 1/-1; text-align: center;">No hay cajitas aún. ¡Crea una!</p>';
             return;
         }
 
         boxes.forEach(box => {
             const div = document.createElement('div');
             div.className = 'nest-box';
+            
+            // Generate Preview Grid
+            let previewHTML = '<div class="nest-preview-grid">';
+            const files = box.preview_files || [];
+            
+            for (let i = 0; i < 4; i++) {
+                if (i < files.length) {
+                    const f = files[i];
+                    let content = '';
+                    if (f.file_type && f.file_type.startsWith('image/')) {
+                        content = `<img src="${f.file_url}" alt="Preview">`;
+                    } else {
+                        content = `<i class="${getFileIconClass(f.file_type)}"></i>`;
+                    }
+                    previewHTML += `<div class="nest-preview-item">${content}</div>`;
+                } else {
+                    previewHTML += `<div class="nest-preview-item"></div>`; // Empty slot
+                }
+            }
+            previewHTML += '</div>';
+
             div.innerHTML = `
-                <h3><i class="fa-solid fa-box-open"></i> ${box.name}</h3>
-                <p>${box.description || ''}</p>
-                <button class="delete-btn" style="display:none;" onclick="deleteNestBox(${box.id}, event)"><i class="fa-solid fa-trash"></i></button>
+                <div class="nest-box-header">
+                    <h3>${box.name}</h3>
+                    <i class="fa-solid fa-box-archive nest-box-icon"></i>
+                </div>
+                <div class="nest-box-body">
+                    <p class="nest-box-desc">${box.description || 'Una cajita llena de recuerdos...'}</p>
+                    ${previewHTML}
+                </div>
+                <div class="nest-box-footer">
+                    <span class="nest-date">${new Date(box.created_at).toLocaleDateString()}</span>
+                    <button class="delete-btn" style="display:none;" onclick="deleteNestBox(${box.id}, event)"><i class="fa-solid fa-trash"></i></button>
+                </div>
             `;
             div.onclick = (e) => {
                  if (e.target.closest('.delete-btn')) return;
@@ -687,6 +718,15 @@ async function loadNestBoxes() {
         console.error(e);
         container.innerHTML = '<p>Error al cargar.</p>';
     }
+}
+
+function getFileIconClass(mimeType) {
+    if (!mimeType) return 'fa-solid fa-file';
+    if (mimeType.startsWith('image/')) return 'fa-solid fa-image';
+    if (mimeType.startsWith('video/')) return 'fa-solid fa-video';
+    if (mimeType.startsWith('audio/')) return 'fa-solid fa-music';
+    if (mimeType.includes('pdf')) return 'fa-solid fa-file-pdf';
+    return 'fa-solid fa-file';
 }
 
 async function createNestBox(name) {
@@ -748,9 +788,20 @@ async function openNestBoxModal(box) {
             list.className = 'nest-files-list';
             files.forEach(f => {
                 const li = document.createElement('li');
+                
+                let thumb = '';
+                if (f.file_type && f.file_type.startsWith('image/')) {
+                    thumb = `<img src="${f.file_url}" class="file-thumbnail" alt="${f.file_name}">`;
+                } else {
+                    thumb = `<div class="file-thumbnail"><i class="${getFileIconClass(f.file_type)} fa-2x" style="color:#d65a7b;"></i></div>`;
+                }
+
                 li.innerHTML = `
-                    <a href="${f.file_url}" target="_blank">${f.file_name}</a>
-                    <button class="delete-btn" style="display:none;" onclick="deleteNestFile(${f.id})"><i class="fa-solid fa-trash"></i></button>
+                    <a href="${f.file_url}" target="_blank" style="text-decoration:none; color:inherit; display:flex; flex-direction:column; align-items:center;">
+                        ${thumb}
+                        <div class="file-name">${f.file_name}</div>
+                    </a>
+                    <button class="delete-btn" style="display:none; margin-top:5px;" onclick="deleteNestFile(${f.id})"><i class="fa-solid fa-trash"></i></button>
                 `;
                 list.appendChild(li);
             });

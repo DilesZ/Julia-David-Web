@@ -59,8 +59,18 @@ async function handleGet(req, res) {
             );
             res.status(200).json(filesResult.rows);
         } else {
-            // Obtener todas las cajitas
-            const boxesResult = await client.query('SELECT * FROM nest_boxes ORDER BY created_at DESC');
+            // Obtener todas las cajitas con vista previa de archivos
+            const boxesResult = await client.query(`
+                SELECT b.*, 
+                       COALESCE(
+                           (SELECT json_agg(f) 
+                            FROM (SELECT file_url, file_type, file_name FROM nest_files WHERE box_id = b.id ORDER BY created_at DESC LIMIT 4) f
+                           ), 
+                           '[]'
+                       ) as preview_files
+                FROM nest_boxes b 
+                ORDER BY b.created_at DESC
+            `);
             res.status(200).json(boxesResult.rows);
         }
     } catch (error) {
