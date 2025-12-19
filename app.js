@@ -481,18 +481,28 @@ function setupGalleryControls() {
     document.querySelector('.slider-next').onclick = () => moveSlider(1);
     const addLeft = document.querySelector('.add-memory-left');
     const addRight = document.querySelector('.add-memory-right');
-    [addLeft, addRight].forEach((btn) => {
-        if (btn) btn.onclick = () => {
+    if (addLeft) addLeft.onclick = () => {
             if (!galleryImages.length) return;
             const img = galleryImages[currentImageIndex];
-            const base = getMemoryForId(img.id) || img.description || '';
+            const existing = getMemoryForId(img.id);
+            const base = (existing && existing.text) || img.description || '';
             const val = prompt('Añade un recuerdo para esta foto:', base);
             if (val !== null) {
-                saveMemory(img.id, val);
+                saveMemory(img.id, val, 'left');
                 updateSliderDisplay();
             }
-        };
-    });
+    };
+    if (addRight) addRight.onclick = () => {
+        if (!galleryImages.length) return;
+        const img = galleryImages[currentImageIndex];
+        const existing = getMemoryForId(img.id);
+        const base = (existing && existing.text) || img.description || '';
+        const val = prompt('Añade un recuerdo para esta foto:', base);
+        if (val !== null) {
+            saveMemory(img.id, val, 'right');
+            updateSliderDisplay();
+        }
+    };
 }
 
 function setupLightbox() {
@@ -597,13 +607,20 @@ function updateSliderDisplay() {
     // Memory Display
     const img = galleryImages[currentImageIndex];
     const override = getMemoryForId(img.id);
-    const currentMemory = override || img.description || '';
+    const currentMemory = (override && override.text) || img.description || '';
 
     if (currentMemory) {
-        memoryTop.innerText = currentMemory;
-        memoryTop.classList.add('visible');
-        memoryBottom.innerText = currentMemory;
-        memoryBottom.classList.add('visible');
+        // Mostrar solo una vez según el lado elegido
+        const side = (override && override.side) || 'top';
+        if (side === 'right' || side === 'bottom') {
+            memoryTop.classList.remove('visible');
+            memoryBottom.innerText = currentMemory;
+            memoryBottom.classList.add('visible');
+        } else {
+            memoryBottom.classList.remove('visible');
+            memoryTop.innerText = currentMemory;
+            memoryTop.classList.add('visible');
+        }
     } else {
         memoryTop.classList.remove('visible');
         memoryBottom.classList.remove('visible');
@@ -620,15 +637,19 @@ function getMemoriesMap() {
     try { return JSON.parse(localStorage.getItem('memories') || '{}'); } catch (e) { return {}; }
 }
 
-function saveMemory(id, text) {
+function saveMemory(id, text, side = 'top') {
     const m = getMemoriesMap();
-    m[id] = text;
+    m[id] = { text, side };
     localStorage.setItem('memories', JSON.stringify(m));
 }
 
 function getMemoryForId(id) {
     const m = getMemoriesMap();
-    return m[id] || '';
+    const v = m[id];
+    if (!v) return null;
+    // Compatibilidad con formato antiguo (string)
+    if (typeof v === 'string') return { text: v, side: 'top' };
+    return v;
 }
 async function handleImageUpload(fileInput, description = '') {
     const token = localStorage.getItem('token');

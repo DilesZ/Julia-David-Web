@@ -1740,6 +1740,7 @@ body.dark-mode .slider {
     transform: translateY(10px);
     transition: all 0.5s ease;
     z-index: 10;
+    position: absolute;
 }
 
 .memory-overlay.visible {
@@ -1753,6 +1754,28 @@ body.dark-mode .memory-overlay {
     border-color: rgba(255, 111, 97, 0.1);
 }
 
+/* Posicionar overlays en laterales del slider */
+.memory-overlay.top {
+    left: -70px;
+    top: 20%;
+    max-width: 360px;
+}
+.memory-overlay.bottom {
+    right: -70px;
+    top: 55%;
+    max-width: 360px;
+}
+
+@media (max-width: 1000px) {
+    .memory-overlay.top {
+        left: 10px;
+        top: 15%;
+    }
+    .memory-overlay.bottom {
+        right: 10px;
+        top: 55%;
+    }
+}
 /* Slider Controls */
 .slider-prev,
 .slider-next {
