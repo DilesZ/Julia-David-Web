@@ -2256,10 +2256,10 @@ body.dark-mode #upload-description {
 @media (max-width: 1000px) {
     .add-memory-left {
         left: 10px;
-        top: 25%;
+        top: calc(25% + 20px);
     }
     .add-memory-right {
         right: 10px;
-        top: 50%;
+        top: calc(50% + 20px);
     }
 }
