@@ -18,9 +18,16 @@ cloudinary.config({
 // Configuración de Multer para Nidito
 const storage = new CloudinaryStorage({
     cloudinary,
-    params: {
-        folder: 'nidito',
-        resource_type: 'auto' // Permitir imágenes, videos, pdfs, etc.
+    params: async (req, file) => {
+        let resourceType = 'auto';
+        // Cloudinary trata los archivos de audio como 'video'
+        if (file.mimetype.startsWith('audio/')) {
+            resourceType = 'video';
+        }
+        return {
+            folder: 'nidito',
+            resource_type: resourceType
+        };
     }
 });
 const upload = multer({ storage });
