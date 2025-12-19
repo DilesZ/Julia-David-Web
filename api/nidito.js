@@ -28,6 +28,7 @@ const storage = new CloudinaryStorage({
         return {
             folder: 'nidito',
             resource_type: resourceType,
+            format: isAudio ? 'mp3' : undefined,
             allowed_formats: ['jpg','jpeg','png','gif','webp','mp4','mov','avi','mkv','mp3','wav','ogg','m4a','aac']
         };
     }
@@ -103,7 +104,12 @@ async function handlePost(req, res) {
                 if (err) {
                     console.error("Error subiendo a Cloudinary:", err);
                     client.release();
-                    res.status(500).json({ error: 'Error al subir el archivo: ' + err.message });
+                    // Si Cloudinary o la red devuelve 403, propagamos 403 para ver el texto en el cliente
+                    if (err.http_code === 403) {
+                        res.status(403).send(err.message || 'Forbidden');
+                    } else {
+                        res.status(500).json({ error: 'Error al subir el archivo: ' + err.message });
+                    }
                     return resolve();
                 }
 
