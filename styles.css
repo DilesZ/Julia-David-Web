@@ -1806,6 +1806,8 @@ body.dark-mode .overlay-heart {
 
 .memory-text {
     line-height: 1.5;
+    font-weight: 700;
+    font-size: 0.66em;
 }
 
 @keyframes pulseHeart {
