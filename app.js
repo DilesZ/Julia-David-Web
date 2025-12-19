@@ -639,7 +639,7 @@ function renderOverlay(container, text) {
     wrap.className = 'memory-content';
     const heartGif = document.createElement('img');
     heartGif.className = 'overlay-heart-gif';
-    heartGif.src = 'https://media.giphy.com/media/MDJ9IbxxvDUQM/giphy.gif';
+    heartGif.src = 'Gemini_Generated_Image_vp3ffxvp3ffxvp3f.png';
     heartGif.alt = 'heart';
     const span = document.createElement('span');
     span.className = 'memory-text';
