@@ -1804,13 +1804,42 @@ body.dark-mode .memory-overlay {
 }
 
 @media (max-width: 1000px) {
+    .slider-container {
+        display: flex;
+        flex-direction: column;
+    }
+    .slider {
+        order: 1;
+    }
+    .memory-overlay {
+        position: static;
+        order: 0;
+        margin: 8px 0;
+        max-width: calc(100% - 20px);
+    }
     .memory-overlay.top {
-        left: 100px;
-        top: 6%;
+        left: auto;
+        top: auto;
     }
     .memory-overlay.bottom {
-        right: 100px;
-        top: 86%;
+        right: auto;
+        top: auto;
+    }
+    .memory-content {
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+    }
+    .memory-hearts-row {
+        width: auto;
+        display: flex;
+        gap: 6px;
+    }
+    .memory-text {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
     .add-memory-btn .add-text {
         display: none;
