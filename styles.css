@@ -1756,12 +1756,12 @@ body.dark-mode .memory-overlay {
 
 /* Posicionar overlays en laterales del slider */
 .memory-overlay.top {
-    left: -40px;
+    left: 0;
     top: 25%;
     max-width: 180px;
 }
 .memory-overlay.bottom {
-    right: -40px;
+    right: 0;
     top: 50%;
     max-width: 180px;
 }
