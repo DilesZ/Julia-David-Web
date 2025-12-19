@@ -485,7 +485,8 @@ function setupGalleryControls() {
             if (!galleryImages.length) return;
             const img = galleryImages[currentImageIndex];
             const existing = getMemoryForId(img.id);
-            const base = (existing && existing.text) || img.description || '';
+            const server = parseServerMemory(img.description);
+            const base = (existing && existing.text) || (server && server.text) || '';
             const val = prompt('Añade un recuerdo para esta foto:', base);
             if (val !== null) {
                 saveMemory(img.id, val, 'left');
@@ -496,7 +497,8 @@ function setupGalleryControls() {
         if (!galleryImages.length) return;
         const img = galleryImages[currentImageIndex];
         const existing = getMemoryForId(img.id);
-        const base = (existing && existing.text) || img.description || '';
+        const server = parseServerMemory(img.description);
+        const base = (existing && existing.text) || (server && server.text) || '';
         const val = prompt('Añade un recuerdo para esta foto:', base);
         if (val !== null) {
             saveMemory(img.id, val, 'right');
@@ -606,13 +608,14 @@ function updateSliderDisplay() {
 
     // Memory Display
     const img = galleryImages[currentImageIndex];
-    const serverDesc = parseServerMemory(img.description);
     const override = getMemoryForId(img.id);
-    const currentMemory = (serverDesc && serverDesc.text) || (override && override.text) || img.description || '';
+    const serverDesc = parseServerMemory(img.description);
+    const source = override || serverDesc || (img.description ? { text: img.description, side: 'top' } : null);
+    const currentMemory = source ? source.text : '';
 
     if (currentMemory) {
         // Mostrar solo una vez según el lado elegido
-        const side = (serverDesc && serverDesc.side) || (override && override.side) || 'top';
+        const side = source && source.side ? source.side : 'top';
         if (side === 'right' || side === 'bottom') {
             memoryTop.classList.remove('visible');
             renderOverlay(memoryBottom, currentMemory);
