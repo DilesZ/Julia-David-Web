@@ -115,7 +115,7 @@ const setupDatabase = async () => {
     }
 };
 
-// Solo ejecutar si el script es llamado directamente
+// Solo ejecutar si el script es llamado directamente (CLI)
 if (require.main === module) {
     // Cargar variables de entorno si están en un archivo .env (para ejecución local)
     try {
@@ -125,3 +125,13 @@ if (require.main === module) {
     }
     setupDatabase();
 }
+
+// Exportar como handler para Vercel (HTTP)
+module.exports = async (req, res) => {
+    try {
+        await setupDatabase();
+        res.status(200).send("Configuración de base de datos completada. Tablas verificadas/creadas.");
+    } catch (error) {
+        res.status(500).send("Error configurando base de datos: " + error.message);
+    }
+};
