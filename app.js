@@ -467,9 +467,13 @@ function setupGalleryControls() {
         renderGrid();
     };
 
-    const uploadInput = document.getElementById('upload-image');
-    if (uploadInput) {
-        uploadInput.addEventListener('change', (e) => handleImageUpload(e.target));
+    const uploadBtn = document.getElementById('submit-upload-btn');
+    if (uploadBtn) {
+        uploadBtn.onclick = () => {
+            const fileInput = document.getElementById('upload-image');
+            const descInput = document.getElementById('upload-description');
+            handleImageUpload(fileInput, descInput ? descInput.value : '');
+        };
     }
 
     document.querySelector('.slider-prev').onclick = () => moveSlider(-1);
@@ -517,7 +521,7 @@ function renderSlider() {
         // Main slide
         const slide = document.createElement('div');
         slide.classList.add('slider-slide');
-        slide.innerHTML = `<img src="${img.cloudinary_url}" alt="Recuerdo">
+        slide.innerHTML = `<img src="${img.cloudinary_url}" alt="Recuerdo" loading="lazy">
                            <button class="delete-btn" style="display:none;" onclick="handleImageDelete(${img.id})"><i class="fa-solid fa-trash"></i></button>`;
 
         slide.querySelector('img').onclick = () => openLightbox(img.cloudinary_url);
@@ -560,14 +564,36 @@ function renderGrid() {
 }
 
 function moveSlider(step) {
+    if (!galleryImages.length) return;
     currentImageIndex = (currentImageIndex + step + galleryImages.length) % galleryImages.length;
     updateSliderDisplay();
 }
 
 function updateSliderDisplay() {
     const track = document.getElementById('slider-track');
-    if (!track) return;
+    const memoryTop = document.getElementById('memory-overlay-top');
+    const memoryBottom = document.getElementById('memory-overlay-bottom');
+
+    if (!track || !galleryImages.length) return;
+
+    // Track movement
     track.style.transform = `translateX(-${currentImageIndex * 100}%)`;
+
+    // Memory Display
+    const currentMemory = galleryImages[currentImageIndex].description || '';
+
+    if (currentMemory) {
+        // Toggle which overlay is used based on length or just use both elegantly
+        // For now, let's put it in both or choose one. 
+        // Let's use Top for short ones and Bottom for long ones? Or just Top as primary.
+        memoryTop.innerText = currentMemory;
+        memoryTop.classList.add('visible');
+        memoryBottom.innerText = currentMemory; // Parallel for now to see which looks better
+        memoryBottom.classList.add('visible');
+    } else {
+        memoryTop.classList.remove('visible');
+        memoryBottom.classList.remove('visible');
+    }
 
     // Highlight active thumbnail
     document.querySelectorAll('.thumb').forEach((t, i) => {
@@ -576,7 +602,7 @@ function updateSliderDisplay() {
     });
 }
 
-async function handleImageUpload(fileInput) {
+async function handleImageUpload(fileInput, description = '') {
     const token = localStorage.getItem('token');
     if (!token) {
         if (confirm('Necesitas iniciar sesión. ¿Ir al login?')) window.location.href = 'login.html';
@@ -584,9 +610,13 @@ async function handleImageUpload(fileInput) {
     }
 
     const file = fileInput.files[0];
-    if (!file) return;
+    if (!file) {
+        alert('Por favor selecciona una foto.');
+        return;
+    }
     const formData = new FormData();
     formData.append('image', file);
+    formData.append('description', description);
 
     try {
         const res = await fetch(`/api/images`, {
@@ -658,12 +688,12 @@ async function loadNestBoxes() {
     if (!container) return;
     container.innerHTML = '<p>Cargando cajitas...</p>';
     container.className = 'nest-grid'; // Ensure grid layout
-    
+
     try {
         const res = await fetch('/api/nidito');
         const boxes = await res.json();
         container.innerHTML = '';
-        
+
         if (boxes.length === 0) {
             container.innerHTML = '<p style="grid-column: 1/-1; text-align: center;">No hay cajitas aún. ¡Crea una!</p>';
             return;
@@ -672,11 +702,11 @@ async function loadNestBoxes() {
         boxes.forEach(box => {
             const div = document.createElement('div');
             div.className = 'nest-box';
-            
+
             // Generate Preview Grid
             let previewHTML = '<div class="nest-preview-grid">';
             const files = box.preview_files || [];
-            
+
             for (let i = 0; i < 4; i++) {
                 if (i < files.length) {
                     const f = files[i];
@@ -708,8 +738,8 @@ async function loadNestBoxes() {
                 </div>
             `;
             div.onclick = (e) => {
-                 if (e.target.closest('.delete-btn')) return;
-                 openNestBoxModal(box);
+                if (e.target.closest('.delete-btn')) return;
+                openNestBoxModal(box);
             };
             container.appendChild(div);
         });
@@ -748,10 +778,10 @@ async function createNestBox(name) {
     } catch (e) { console.error(e); alert('Error de conexión: ' + e.message); }
 }
 
-window.deleteNestBox = async function(id, event) {
+window.deleteNestBox = async function (id, event) {
     if (event) event.stopPropagation();
     if (!confirm('¿Eliminar esta cajita y todo su contenido?')) return;
-    
+
     const token = localStorage.getItem('token');
     if (!token) return;
 
@@ -769,17 +799,17 @@ async function openNestBoxModal(box) {
     const modal = document.getElementById('nest-box-modal');
     const title = document.getElementById('nest-box-modal-title');
     const content = document.getElementById('nest-box-content');
-    
+
     if (!modal) return;
-    
+
     title.innerText = box.name;
     content.innerHTML = 'Cargando contenido...';
     modal.style.display = 'block';
-    
+
     try {
         const res = await fetch(`/api/nidito?boxId=${box.id}`);
         const files = await res.json();
-        
+
         content.innerHTML = '';
         if (files.length === 0) {
             content.innerHTML = '<p>Esta cajita está vacía.</p>';
@@ -788,7 +818,7 @@ async function openNestBoxModal(box) {
             list.className = 'nest-files-list';
             files.forEach(f => {
                 const li = document.createElement('li');
-                
+
                 let thumb = '';
                 if (f.file_type && f.file_type.startsWith('image/')) {
                     thumb = `<img src="${f.file_url}" class="file-thumbnail" alt="${f.file_name}">`;
@@ -845,27 +875,27 @@ async function uploadNestFile() {
                 const data = JSON.parse(bodyText);
                 msg = data.error || bodyText;
             } catch (_) {
-                msg = `${res.status} ${res.statusText}: ${bodyText.slice(0,200)}`;
+                msg = `${res.status} ${res.statusText}: ${bodyText.slice(0, 200)}`;
             }
             alert('Error al subir: ' + msg);
         }
     } catch (e) { alert(e.message); }
-    
+
     btn.disabled = false;
     btn.innerText = 'Subir Archivo';
 }
 
-window.deleteNestFile = async function(id) {
+window.deleteNestFile = async function (id) {
     if (!confirm('¿Eliminar archivo?')) return;
     const token = localStorage.getItem('token');
-    
+
     try {
         const res = await fetch(`/api/nidito?fileId=${id}`, {
             method: 'DELETE',
             headers: { 'Authorization': `Bearer ${token}` }
         });
         if (res.ok) {
-             openNestBoxModal({ id: currentBoxId, name: document.getElementById('nest-box-modal-title').innerText });
+            openNestBoxModal({ id: currentBoxId, name: document.getElementById('nest-box-modal-title').innerText });
         }
     } catch (e) { console.error(e); }
 }
