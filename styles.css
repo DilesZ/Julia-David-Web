@@ -193,6 +193,21 @@ body.dark-mode .content-card {
     border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
+/* Historia: imagen en lugar de texto */
+#historia-page .content-card {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.historia-image {
+    max-width: 90%;
+    height: auto;
+    border-radius: 16px;
+    box-shadow: 0 10px 26px rgba(214, 90, 123, 0.25);
+}
+body.dark-mode .historia-image {
+    box-shadow: 0 10px 26px rgba(255, 111, 97, 0.25);
+}
 /* Hero Section (Index) */
 .hero-header {
     background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url('IMG/IMG1.jpg');
