@@ -1810,14 +1810,16 @@ body.dark-mode .memory-overlay {
         position: static;
         order: 0;
         margin: 0;
+        margin-bottom: -2px;
         width: 100%;
         max-width: 100%;
         box-sizing: border-box;
+        padding: 8px 12px;
     }
     .memory-overlay:not(.visible) { display: none; }
-    .memory-content { flex-direction: row; align-items: center; justify-content: center; gap: 6px; width: 100%; flex-wrap: wrap; }
+    .memory-content { flex-direction: row; align-items: center; justify-content: center; gap: 6px; width: 100%; flex-wrap: nowrap; }
     .memory-hearts-row { width: auto; display: flex; gap: 6px; }
-    .memory-text { white-space: normal; overflow: visible; text-overflow: clip; max-width: 100%; word-break: break-word; }
+    .memory-text { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
     .add-memory-btn .add-text {
         display: none;
     }
