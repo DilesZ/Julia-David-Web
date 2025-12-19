@@ -606,13 +606,13 @@ function updateSliderDisplay() {
 
     // Memory Display
     const img = galleryImages[currentImageIndex];
-    const override = getMemoryForId(img.id);
     const serverDesc = parseServerMemory(img.description);
-    const currentMemory = (override && override.text) || (serverDesc && serverDesc.text) || img.description || '';
+    const override = getMemoryForId(img.id);
+    const currentMemory = (serverDesc && serverDesc.text) || (override && override.text) || img.description || '';
 
     if (currentMemory) {
         // Mostrar solo una vez según el lado elegido
-        const side = (override && override.side) || (serverDesc && serverDesc.side) || 'top';
+        const side = (serverDesc && serverDesc.side) || (override && override.side) || 'top';
         if (side === 'right' || side === 'bottom') {
             memoryTop.classList.remove('visible');
             renderOverlay(memoryBottom, currentMemory);
@@ -640,8 +640,14 @@ function renderOverlay(container, text) {
     wrap.className = 'memory-content';
     const heartGif = document.createElement('img');
     heartGif.className = 'overlay-heart-gif';
-    heartGif.src = 'Gemini_Generated_Image_vp3ffxvp3ffxvp3f.png';
+    heartGif.src = './Gemini_Generated_Image_vp3ffxvp3ffxvp3f.png';
     heartGif.alt = 'heart';
+    heartGif.onerror = () => {
+        // Fallback a icono si el recurso no carga
+        const fallback = document.createElement('i');
+        fallback.className = 'fa-solid fa-heart overlay-heart';
+        wrap.appendChild(fallback);
+    };
     const span = document.createElement('span');
     span.className = 'memory-text';
     span.textContent = text;
@@ -676,7 +682,20 @@ function saveMemory(id, text, side = 'top') {
                 'Authorization': `Bearer ${token}`
             },
             body: JSON.stringify(payload)
-        }).catch(() => {});
+        }).then((res) => {
+            if (res && res.ok) {
+                // Sincronizar array en memoria con el servidor
+                const idx = currentImageIndex;
+                if (galleryImages[idx]) {
+                    galleryImages[idx].description = payload.description;
+                }
+                // Limpiar override local (ya está en servidor)
+                const mm = getMemoriesMap();
+                delete mm[id];
+                localStorage.setItem('memories', JSON.stringify(mm));
+            }
+            updateSliderDisplay();
+        }).catch(() => { updateSliderDisplay(); });
     }
 }
 
