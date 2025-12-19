@@ -646,6 +646,10 @@ function renderOverlay(container, text) {
     container.innerHTML = '';
     const wrap = document.createElement('div');
     wrap.className = 'memory-content';
+    const delBtn = document.createElement('button');
+    delBtn.className = 'memory-delete-btn';
+    delBtn.innerHTML = '<i class="fa-solid fa-trash"></i>';
+    delBtn.onclick = () => deleteMemory();
     const heartsRow = document.createElement('div');
     heartsRow.className = 'memory-hearts-row';
     const left = document.createElement('i');
@@ -659,6 +663,7 @@ function renderOverlay(container, text) {
     span.textContent = text;
     wrap.appendChild(heartsRow);
     wrap.appendChild(span);
+    container.appendChild(delBtn);
     container.appendChild(wrap);
 }
 
@@ -673,6 +678,37 @@ function parseServerMemory(desc) {
         if (obj && typeof obj === 'object' && 'text' in obj) return { text: obj.text || '', side: obj.side || 'top' };
     } catch (e) { /* plain text */ }
     return null;
+}
+
+function deleteMemory() {
+    if (!galleryImages.length) return;
+    const idx = currentImageIndex;
+    const img = galleryImages[idx];
+    const mm = getMemoriesMap();
+    if (mm[img.id]) {
+        delete mm[img.id];
+        localStorage.setItem('memories', JSON.stringify(mm));
+    }
+    const token = localStorage.getItem('token');
+    if (token) {
+        fetch('/api/images', {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({ id: img.id, description: '' })
+        }).then(() => {
+            galleryImages[idx].description = '';
+            updateSliderDisplay();
+        }).catch(() => {
+            galleryImages[idx].description = '';
+            updateSliderDisplay();
+        });
+    } else {
+        galleryImages[idx].description = '';
+        updateSliderDisplay();
+    }
 }
 function saveMemory(id, text, side = 'top') {
     const m = getMemoriesMap();

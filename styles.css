@@ -1743,6 +1743,28 @@ body.dark-mode .slider {
     position: absolute;
 }
 
+.memory-delete-btn {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    border: none;
+    background: #d65a7b;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(214, 90, 123, 0.35);
+    z-index: 15;
+}
+
+body.dark-mode .memory-delete-btn {
+    background: #ff6f61;
+}
+
 .memory-overlay.visible {
     opacity: 1;
     transform: translateY(0);
@@ -1807,7 +1829,7 @@ body.dark-mode .overlay-heart {
 .memory-text {
     line-height: 1.5;
     font-weight: 700;
-    font-size: 0.66em;
+    font-size: 0.8em;
 }
 
 @keyframes pulseHeart {
