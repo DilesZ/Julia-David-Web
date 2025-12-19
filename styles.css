@@ -1804,43 +1804,20 @@ body.dark-mode .memory-overlay {
 }
 
 @media (max-width: 1000px) {
-    .slider-container {
-        display: flex;
-        flex-direction: column;
-    }
-    .slider {
-        order: 1;
-    }
+    .slider-container { display: flex; flex-direction: column; gap: 8px; }
+    .slider { order: 1; }
     .memory-overlay {
         position: static;
         order: 0;
-        margin: 8px 0;
-        max-width: calc(100% - 20px);
+        margin: 0;
+        width: 100%;
+        max-width: 100%;
+        box-sizing: border-box;
     }
-    .memory-overlay.top {
-        left: auto;
-        top: auto;
-    }
-    .memory-overlay.bottom {
-        right: auto;
-        top: auto;
-    }
-    .memory-content {
-        flex-direction: row;
-        align-items: center;
-        justify-content: center;
-        gap: 6px;
-    }
-    .memory-hearts-row {
-        width: auto;
-        display: flex;
-        gap: 6px;
-    }
-    .memory-text {
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-    }
+    .memory-overlay:not(.visible) { display: none; }
+    .memory-content { flex-direction: row; align-items: center; justify-content: center; gap: 6px; width: 100%; }
+    .memory-hearts-row { width: auto; display: flex; gap: 6px; }
+    .memory-text { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
     .add-memory-btn .add-text {
         display: none;
     }
