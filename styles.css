@@ -2307,12 +2307,12 @@ body.dark-mode #upload-description {
 
 .add-memory-left {
     left: -70px;
-    top: calc(25% + 30px);
+    top: calc(25% + 69px);
 }
 
 .add-memory-right {
     right: -70px;
-    top: calc(50% + 30px);
+    top: calc(50% + 69px);
 }
 
 @media (max-width: 1000px) {
