@@ -199,15 +199,18 @@ body.dark-mode .content-card {
     align-items: center;
     justify-content: center;
 }
+
 .historia-image {
     max-width: 90%;
     height: auto;
     border-radius: 16px;
     box-shadow: 0 10px 26px rgba(214, 90, 123, 0.25);
 }
+
 body.dark-mode .historia-image {
     box-shadow: 0 10px 26px rgba(255, 111, 97, 0.25);
 }
+
 /* Hero Section (Index) */
 .hero-header {
     background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url('IMG/IMG1.jpg');
@@ -1776,6 +1779,7 @@ body.dark-mode .slider {
     z-index: 15;
     animation: aspaPulse 2s infinite ease-in-out;
 }
+
 /* Subir aspa 40px en overlay izquierdo (top) */
 .memory-overlay.top .memory-delete-btn {
     bottom: 46px;
@@ -1784,15 +1788,27 @@ body.dark-mode .slider {
 body.dark-mode .memory-delete-btn {
     background: #ff6f61;
 }
+
 .memory-delete-btn i {
     font-size: 10px;
     line-height: 1;
 }
 
 @keyframes aspaPulse {
-    0% { transform: scale(1) rotate(0deg); opacity: 0.9; }
-    50% { transform: scale(1.1) rotate(10deg); opacity: 1; }
-    100% { transform: scale(1) rotate(0deg); opacity: 0.9; }
+    0% {
+        transform: scale(1) rotate(0deg);
+        opacity: 0.9;
+    }
+
+    50% {
+        transform: scale(1.1) rotate(10deg);
+        opacity: 1;
+    }
+
+    100% {
+        transform: scale(1) rotate(0deg);
+        opacity: 0.9;
+    }
 }
 
 .memory-overlay.visible {
@@ -1812,6 +1828,7 @@ body.dark-mode .memory-overlay {
     top: calc(25% - 50px);
     max-width: 180px;
 }
+
 .memory-overlay.bottom {
     right: 100px;
     top: calc(50% + 50px);
@@ -1819,8 +1836,17 @@ body.dark-mode .memory-overlay {
 }
 
 @media (max-width: 1000px) {
-    .slider-container { display: flex; flex-direction: column; gap: 0; max-width: 100%; }
-    .slider { order: 1; }
+    .slider-container {
+        display: flex;
+        flex-direction: column;
+        gap: 0;
+        max-width: 100%;
+    }
+
+    .slider {
+        order: 1;
+    }
+
     .memory-overlay {
         position: static;
         order: 0;
@@ -1831,13 +1857,38 @@ body.dark-mode .memory-overlay {
         box-sizing: border-box;
         padding: 8px 12px;
     }
-    .memory-overlay:not(.visible) { display: none; }
-    .memory-content { flex-direction: row; align-items: center; justify-content: center; gap: 6px; width: 100%; flex-wrap: wrap; }
-    .memory-hearts-row { width: auto; display: flex; gap: 6px; }
-    .memory-text { white-space: normal; overflow: visible; text-overflow: clip; max-width: 100%; word-break: break-word; }
+
+    .memory-overlay:not(.visible) {
+        display: none;
+    }
+
+    .memory-content {
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        width: 100%;
+        flex-wrap: wrap;
+    }
+
+    .memory-hearts-row {
+        width: auto;
+        display: flex;
+        gap: 6px;
+    }
+
+    .memory-text {
+        white-space: normal;
+        overflow: visible;
+        text-overflow: clip;
+        max-width: 100%;
+        word-break: break-word;
+    }
+
     .add-memory-btn .add-text {
         display: none;
     }
+
     .add-memory-btn {
         padding: 8px 10px;
         gap: 6px;
@@ -1878,9 +1929,20 @@ body.dark-mode .overlay-heart {
 }
 
 @keyframes pulseHeart {
-    0% { transform: scale(1); opacity: 0.9; }
-    50% { transform: scale(1.15); opacity: 1; }
-    100% { transform: scale(1); opacity: 0.9; }
+    0% {
+        transform: scale(1);
+        opacity: 0.9;
+    }
+
+    50% {
+        transform: scale(1.15);
+        opacity: 1;
+    }
+
+    100% {
+        transform: scale(1);
+        opacity: 0.9;
+    }
 }
 
 /* Slider Controls */
@@ -2245,12 +2307,12 @@ body.dark-mode #upload-description {
 
 .add-memory-left {
     left: -70px;
-    top: 25%;
+    top: calc(25% + 30px);
 }
 
 .add-memory-right {
     right: -70px;
-    top: 50%;
+    top: calc(50% + 30px);
 }
 
 @media (max-width: 1000px) {
@@ -2258,6 +2320,7 @@ body.dark-mode #upload-description {
         left: 10px;
         top: calc(25% + 40px);
     }
+
     .add-memory-right {
         right: 10px;
         top: calc(50% + 40px);
