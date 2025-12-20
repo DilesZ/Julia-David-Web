@@ -1759,6 +1759,7 @@ body.dark-mode .slider {
     transition: all 0.5s ease;
     z-index: 10;
     position: absolute;
+    pointer-events: none;
 }
 
 .memory-delete-btn {
@@ -1814,6 +1815,7 @@ body.dark-mode .memory-delete-btn {
 .memory-overlay.visible {
     opacity: 1;
     transform: translateY(0);
+    pointer-events: auto;
 }
 
 body.dark-mode .memory-overlay {
