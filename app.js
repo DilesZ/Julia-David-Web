@@ -482,23 +482,23 @@ function setupGalleryControls() {
     const addLeft = document.querySelector('.add-memory-left');
     const addRight = document.querySelector('.add-memory-right');
     if (addLeft) addLeft.onclick = () => {
-            if (!galleryImages.length) return;
-            const img = galleryImages[currentImageIndex];
-            const token = localStorage.getItem('token');
-            if (!token) {
-                if (confirm('Para sincronizar este recuerdo en todos tus dispositivos, inicia sesión. ¿Ir al login?')) {
-                    window.location.href = 'login.html';
-                }
-                return;
+        if (!galleryImages.length) return;
+        const img = galleryImages[currentImageIndex];
+        const token = localStorage.getItem('token');
+        if (!token) {
+            if (confirm('Para sincronizar este recuerdo en todos tus dispositivos, inicia sesión. ¿Ir al login?')) {
+                window.location.href = 'login.html';
             }
-            const existing = getMemoryForId(img.id);
-            const server = parseServerMemories(img.description);
-            const base = (existing && existing.left) || (server && server.left) || '';
-            const val = prompt('Añade un recuerdo para esta foto:', base);
-            if (val !== null) {
-                saveMemory(img.id, val, 'left');
-                updateSliderDisplay();
-            }
+            return;
+        }
+        const existing = getMemoryForId(img.id);
+        const server = parseServerMemories(img.description);
+        const base = (existing && existing.left) || (server && server.left) || '';
+        const val = prompt('Añade un recuerdo para esta foto:', base);
+        if (val !== null) {
+            saveMemory(img.id, val, 'left');
+            updateSliderDisplay();
+        }
     };
     if (addRight) addRight.onclick = () => {
         if (!galleryImages.length) return;
@@ -1017,21 +1017,38 @@ async function openNestBoxModal(box) {
             list.className = 'nest-files-list';
             files.forEach(f => {
                 const li = document.createElement('li');
+                const isAudio = f.file_type && f.file_type.startsWith('audio/');
+                const isImage = f.file_type && f.file_type.startsWith('image/');
 
-                let thumb = '';
-                if (f.file_type && f.file_type.startsWith('image/')) {
-                    thumb = `<img src="${f.file_url}" class="file-thumbnail" alt="${f.file_name}">`;
+                let content = '';
+                if (isImage) {
+                    content = `
+                            <a href="${f.file_url}" target="_blank" style="text-decoration:none; color:inherit; display:flex; flex-direction:column; align-items:center;">
+                                <img src="${f.file_url}" class="file-thumbnail" alt="${f.file_name}">
+                                <div class="file-name">${f.file_name}</div>
+                            </a>`;
+                } else if (isAudio) {
+                    content = `
+                            <div style="display:flex; flex-direction:column; align-items:center; width: 100%;">
+                                <div class="file-thumbnail"><i class="fa-solid fa-music fa-2x" style="color:#d65a7b;"></i></div>
+                                <div class="file-name">${f.file_name}</div>
+                                <audio controls style="width: 100%; margin-top: 10px;">
+                                    <source src="${f.file_url}" type="${f.file_type}">
+                                    Tu navegador no soporta audio.
+                                </audio>
+                            </div>`;
                 } else {
-                    thumb = `<div class="file-thumbnail"><i class="${getFileIconClass(f.file_type)} fa-2x" style="color:#d65a7b;"></i></div>`;
+                    content = `
+                            <a href="${f.file_url}" target="_blank" style="text-decoration:none; color:inherit; display:flex; flex-direction:column; align-items:center;">
+                                <div class="file-thumbnail"><i class="${getFileIconClass(f.file_type)} fa-2x" style="color:#d65a7b;"></i></div>
+                                <div class="file-name">${f.file_name}</div>
+                            </a>`;
                 }
 
                 li.innerHTML = `
-                    <a href="${f.file_url}" target="_blank" style="text-decoration:none; color:inherit; display:flex; flex-direction:column; align-items:center;">
-                        ${thumb}
-                        <div class="file-name">${f.file_name}</div>
-                    </a>
-                    <button class="delete-btn" style="display:none; margin-top:5px;" onclick="deleteNestFile(${f.id})"><i class="fa-solid fa-trash"></i></button>
-                `;
+                        ${content}
+                        <button class="delete-btn" style="display:none; margin-top:5px;" onclick="deleteNestFile(${f.id})"><i class="fa-solid fa-trash"></i></button>
+                    `;
                 list.appendChild(li);
             });
             content.appendChild(list);
