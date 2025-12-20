@@ -4,6 +4,7 @@ const cloudinary = require('cloudinary').v2;
 const multer = require('multer');
 const { CloudinaryStorage } = require('multer-storage-cloudinary');
 const { Readable } = require('stream');
+const { uploadToDrive } = require('./drive');
 
 const pool = new Pool({
     connectionString: process.env.POSTGRES_URL,
@@ -21,8 +22,8 @@ const storage = new CloudinaryStorage({
     cloudinary,
     params: async (req, file) => {
         let resourceType = 'auto';
-        const isAudio = file.mimetype.startsWith('audio/') || 
-                        file.originalname.match(/\.(mp3|wav|ogg|m4a|aac)$/i);
+        const isAudio = file.mimetype.startsWith('audio/') ||
+            file.originalname.match(/\.(mp3|wav|ogg|m4a|aac)$/i);
         if (isAudio) {
             resourceType = 'video';
         }
@@ -32,7 +33,7 @@ const storage = new CloudinaryStorage({
             type: 'upload',
             use_filename: true,
             unique_filename: true,
-            allowed_formats: ['jpg','jpeg','png','gif','webp','mp4','mov','avi','mkv','mp3','wav','ogg','m4a','aac']
+            allowed_formats: ['jpg', 'jpeg', 'png', 'gif', 'webp', 'mp4', 'mov', 'avi', 'mkv', 'mp3', 'wav', 'ogg', 'm4a', 'aac']
         };
     }
 });
@@ -68,7 +69,7 @@ async function handleGet(req, res) {
         if (boxId) {
             // Obtener archivos de una cajita específica
             const filesResult = await client.query(
-                'SELECT * FROM nest_files WHERE box_id = $1 ORDER BY created_at DESC', 
+                'SELECT * FROM nest_files WHERE box_id = $1 ORDER BY created_at DESC',
                 [boxId]
             );
             res.status(200).json(filesResult.rows);
@@ -122,9 +123,30 @@ async function handlePost(req, res) {
                 const isAudio = mimeType.startsWith('audio/') || /\.(mp3|wav|ogg|m4a|aac)$/i.test(fileName);
                 const isVideo = mimeType.startsWith('video/');
                 const isImage = mimeType.startsWith('image/');
-                const resourceType = isAudio || isVideo ? 'video' : (isImage ? 'image' : 'auto');
 
                 try {
+                    // AUDIO: Usar Google Drive
+                    if (isAudio) {
+                        try {
+                            const driveResult = await uploadToDrive(fileBuffer, fileName, mimeType);
+                            const newFile = await client.query(`
+                                INSERT INTO nest_files (box_id, file_name, file_url, file_type, cloudinary_id, user_id)
+                                VALUES ($1, $2, $3, $4, $5, $6) RETURNING *
+                            `, [boxId, fileName, driveResult.url, mimeType, `drive:${driveResult.fileId}`, req.user.userId]);
+
+                            res.status(201).json(newFile.rows[0]);
+                            client.release();
+                            return resolve();
+                        } catch (driveErr) {
+                            console.error("Error subiendo audio a Drive:", driveErr);
+                            client.release();
+                            res.status(500).json({ error: 'Error al subir audio a Google Drive: ' + driveErr.message });
+                            return resolve();
+                        }
+                    }
+
+                    // NO AUDIO: Usar Cloudinary
+                    const resourceType = isVideo ? 'video' : (isImage ? 'image' : 'auto');
                     const uploadOpts = {
                         folder: 'nidito',
                         resource_type: resourceType,
@@ -134,48 +156,10 @@ async function handlePost(req, res) {
 
                     const uploadStream = cloudinary.uploader.upload_stream(uploadOpts, async (cloudErr, result) => {
                         if (cloudErr) {
-                            if (cloudErr.http_code === 403 && resourceType === 'video') {
-                                const rawOpts = { ...uploadOpts, resource_type: 'raw' };
-                                const rawStream = cloudinary.uploader.upload_stream(rawOpts, async (rawErr, rawRes) => {
-                                    if (rawErr) {
-                                        client.release();
-                                        if (rawErr.http_code === 403) {
-                                            res.status(403).send(rawErr.message || 'Forbidden');
-                                        } else {
-                                            res.status(500).json({ error: 'Error al subir a Cloudinary: ' + (rawErr.message || 'Error') });
-                                        }
-                                        return resolve();
-                                    }
-                                    try {
-                                        const file_url = rawRes.secure_url || rawRes.url;
-                                        const cloudinary_id = rawRes.public_id;
-                                        const newFile = await client.query(`
-                                            INSERT INTO nest_files (box_id, file_name, file_url, file_type, cloudinary_id, user_id)
-                                            VALUES ($1, $2, $3, $4, $5, $6) RETURNING *
-                                        `, [boxId, fileName, file_url, mimeType, cloudinary_id, req.user.userId]);
-                                        res.status(201).json(newFile.rows[0]);
-                                        resolve();
-                                    } catch (dbErr) {
-                                        res.status(500).json({ error: 'Error al guardar referencia del archivo' });
-                                        resolve();
-                                    } finally {
-                                        client.release();
-                                    }
-                                });
-                                const readable2 = new Readable();
-                                readable2.push(fileBuffer);
-                                readable2.push(null);
-                                readable2.pipe(rawStream);
-                                return;
-                            } else {
-                                client.release();
-                                if (cloudErr.http_code === 403) {
-                                    res.status(403).send(cloudErr.message || 'Forbidden');
-                                } else {
-                                    res.status(500).json({ error: 'Error al subir a Cloudinary: ' + (cloudErr.message || 'Error') });
-                                }
-                                return resolve();
-                            }
+                            client.release();
+                            console.error("Error Cloudinary:", cloudErr);
+                            res.status(500).json({ error: 'Error al subir a Cloudinary: ' + (cloudErr.message || 'Error') });
+                            return resolve();
                         }
 
                         try {
@@ -210,8 +194,8 @@ async function handlePost(req, res) {
                 }
             });
         });
-    } 
-    
+    }
+
     // Caso 2: Crear Cajita (JSON)
     try {
         const { name, description } = req.body || {};
